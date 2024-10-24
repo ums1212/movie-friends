@@ -19,6 +19,7 @@ lifecycleViewmodelCompose = "2.8.6"
 kakaoV2User = "2.20.6"
 lottie = "6.5.2"
 shimmer = "0.5.0"
+coil = "3.0.0-rc01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,8 +51,14 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+
+[bundles]
+coil = ["coil-compose", "coil-network-okhttp"]
+
 

@@ -100,6 +100,9 @@ dependencies {
     // 카카오 로그인 api
     implementation(libs.kakao.v2.user)
 
+    // 코일(이미지 라이브러리)
+    implementation(libs.bundles.coil)
+
     // 스켈레톤 UI
     implementation(libs.shimmer)
     // lottie 애니메이션
