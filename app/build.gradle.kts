@@ -52,11 +52,12 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
+        kotlinCompilerExtensionVersion = "1.5.14"
     }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/DEPENDENCIES"
         }
     }
 }
@@ -109,4 +110,7 @@ dependencies {
     implementation(libs.lottie)
     // 원형 이미지 라이브러리
     implementation(libs.circleimageview)
+
+    // splash screen
+    implementation(libs.androidx.core.splashscreen)
 }
