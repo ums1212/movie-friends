@@ -1,3 +1,81 @@
 <resources>
     <string name="app_name">MovieFriends</string>
+    <string name="button_without_login">로그인 없이 시작하기</string>
+    <string name="label_input_nickname">사용할 닉네임</string>
+    <string name="hint_input_nickname">20자 미만으로 입력해주세요</string>
+
+    <string name="button_confirm">확인</string>
+    <string name="button_cancel">취소</string>
+    <string name="title_quit">종료하시겠습니까?</string>
+
+    <string name="title_now_playing">상영중인 영화</string>
+    <string name="title_popular">인기 영화</string>
+    <string name="title_top_rated">랭킹</string>
+    <string name="title_upcoming">개봉 예정작</string>
+
+    <string name="button_want_this_movie">이 영화를 보고 싶다</string>
+    <string name="title_user_want_this_movie">이 영화를 보고 싶은 사람</string>
+    <string name="button_more">더 보기</string>
+    <string name="button_watch_together">같이 보기</string>
+
+    <string name="title_credits">주요 출연진</string>
+    <string name="title_user_rate">유저 평점</string>
+    <string name="button_user_rate">평점 주기</string>
+    <string name="label_user_rate">평점 남기기</string>
+    <string name="title_user_review">유저 리뷰</string>
+    <string name="button_more_user_review">리뷰 더 보기</string>
+    <string name="hint_user_review">리뷰 입력</string>
+    <string name="button_user_review">입력</string>
+
+    <string name="label_menu_community">커뮤니티</string>
+    <string name="title_write">글 작성</string>
+    <string name="button_write_add">등록</string>
+    <string name="label_write_category">카테고리</string>
+    <string name="label_write_category_movie">영화 토론</string>
+    <string name="label_write_title">제목</string>
+    <string name="label_write_content">내용</string>
+    <string name="label_write_add_image">사진 추가</string>
+    <string name="label_write_view_count">조회수</string>
+    <string name="label_write_like">좋아요</string>
+    <string name="label_write_reply">댓글</string>
+    <string name="label_write_total_reply">전체 댓글</string>
+
+
+    <string name="label_menu_watch_together">영화 같이 보기</string>
+    <string name="label_request_list">요청 내역</string>
+    <string name="button_request_cancel">요청 취소</string>
+    <string name="button_request_denied">거절 됨</string>
+    <string name="label_receive_list">받은 내역</string>
+    <string name="label_receive_confirm">승인</string>
+    <string name="label_receive_deny">거절</string>
+    <string name="label_chat_room">채팅방</string>
+    <string name="title_user_want_movies">아래의 유저가 영화를 보고 싶어 합니다</string>
+
+    <string name="label_menu_recommendation">영화 추천</string>
+    <string name="label_menu_worldcup">영화 월드컵</string>
+
+    <string name="title_profile">프로필</string>
+    <string name="button_profile_want_movie">보고 싶은 영화</string>
+    <string name="button_profile_rate">남긴 평점</string>
+    <string name="button_profile_review">남긴 리뷰</string>
+    <string name="button_profile_community_write">남긴 커뮤니티 글</string>
+    <string name="button_profile_community_reply">남긴 커뮤니티 댓글</string>
+    <string name="button_profile_report">신고하기</string>
+    <string name="button_profile_block">차단하기</string>
+    <string name="title_profile_report">유저를 신고하시겠습니까?</string>
+    <string name="label_profile_report_reason">신고사유</string>
+    <string name="label_profile_report_reason_insult">성희롱, 모욕 발언</string>
+    <string name="label_profile_report_reason_etc">기타</string>
+    <string name="title_profile_block">유저를 차단하시겠습니까?</string>
+
+    <string name="title_profile_setting">내 정보 설정</string>
+    <string name="label_receive_push">내 정보 설정</string>
+    <string name="label_receive_watch_together_push">내 정보 설정</string>
+    <string name="button_contact">문의하기</string>
+    <string name="button_logout">로그아웃</string>
+    <string name="button_delete">회원탈퇴</string>
+
+    <string name="button_edit">수정</string>
+
+
 </resources>
