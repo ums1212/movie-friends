@@ -3,6 +3,7 @@ package org.comon.moviefriends.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kakao.sdk.common.KakaoSdk.init
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -27,6 +28,13 @@ class HomeViewModel: ViewModel() {
 
     private val _upcomingList = MutableStateFlow<List<MovieInfo>>(emptyList())
     val upcomingList get() = _upcomingList.asStateFlow()
+
+    fun sendList(category: MovieCategory) = when(category){
+        MovieCategory.NOW_PLAYING -> nowList
+        MovieCategory.POPULAR -> popList
+        MovieCategory.TOP_RATED -> topList
+        MovieCategory.UP_COMING -> upcomingList
+    }
 
     init {
         getAllMovies()

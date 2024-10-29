@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -49,13 +48,9 @@ fun MovieList(category: MovieCategory, list: StateFlow<List<MovieInfo>>) {
     }
 
     Column(
-        Modifier
-            .height(280.dp)
+        Modifier.height(280.dp)
     ) {
-        Text(
-            text = category.str,
-            color = colorResource(id = R.color.friends_white)
-            )
+        Text(text = category.str)
         LazyRow(
             Modifier.fillMaxWidth()
         ) {

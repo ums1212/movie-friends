@@ -9,9 +9,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.core.animation.doOnEnd
@@ -30,16 +30,10 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         settingSplashScreenAnimation()
         setContent {
-            MovieFriendsTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize()
-                        .background(colorResource(id = R.color.friends_black)),
-                ) { innerPadding ->
-                    HomeScreen(
-                        innerPadding = innerPadding,
-                        viewModel = viewModel
-                    )
-                }
+            MovieFriendsTheme(
+                darkTheme = true
+            ) {
+                HomeScreen(viewModel)
             }
         }
     }
