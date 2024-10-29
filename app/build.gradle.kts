@@ -30,6 +30,9 @@ android {
         if (localPropertiesFile.exists()) {
             localProperties.load(localPropertiesFile.inputStream())
         }
+
+        buildConfigField("String", "TMDB_ACCESS_TOKEN", localProperties.getProperty("TMDB_ACCESS_TOKEN"))
+        buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
     }
 
     buildTypes {
@@ -50,6 +53,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.14"
@@ -101,8 +105,14 @@ dependencies {
     // 카카오 로그인 api
     implementation(libs.kakao.v2.user)
 
-    // 코일(이미지 라이브러리)
-    implementation(libs.bundles.coil)
+    // Networking
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    // gson
+    implementation (libs.gson)
+    // coil
+    implementation(libs.coil.compose)
+    implementation(libs.coil.network.okhttp)
 
     // 스켈레톤 UI
     implementation(libs.shimmer)

@@ -1,5 +1,9 @@
 [versions]
 agp = "8.5.2"
+coilCompose = "3.0.0-rc02"
+coilNetworkOkhttp = "3.0.0-rc02"
+converterGson = "2.9.0"
+gson = "2.10.1"
 circleimageview = "3.1.0"
 coreSplashscreen = "1.0.1"
 firebaseBom = "33.5.1"
@@ -20,7 +24,7 @@ lifecycleViewmodelCompose = "2.8.6"
 kakaoV2User = "2.20.6"
 lottie = "6.5.2"
 shimmer = "0.5.0"
-coil = "3.0.0-rc01"
+retrofit = "2.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -53,14 +57,16 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
-coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 
 [bundles]
-coil = ["coil-compose", "coil-network-okhttp"]
 
 
