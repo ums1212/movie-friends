@@ -25,10 +25,10 @@ class MainActivity : ComponentActivity() {
     private val viewModel: HomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         installSplashScreen()
         settingSplashScreenAnimation()
+        super.onCreate(savedInstanceState)
+//        enableEdgeToEdge()
         setContent {
             MovieFriendsTheme(
                 darkTheme = true
@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
     private fun settingSplashScreenAnimation(){
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.S){
             splashScreen.setOnExitAnimationListener { splashScreenView ->
-                // Create your custom animation.
+            // Create your custom animation.
                 val slideUp = ObjectAnimator.ofFloat(
                     splashScreenView,
                     View.TRANSLATION_Y,
