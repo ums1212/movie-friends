@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.MovieCategory
 import org.comon.moviefriends.ui.viewmodel.HomeViewModel
@@ -21,8 +22,9 @@ import org.comon.moviefriends.ui.widget.MFTopAppBar
 import org.comon.moviefriends.ui.widget.MovieList
 
 @Composable
-fun HomeScreen(viewModel: HomeViewModel) {
+fun HomeScreen() {
 
+    val viewModel: HomeViewModel = viewModel()
     val scrollState = rememberScrollState()
 
     Scaffold(
@@ -44,6 +46,4 @@ fun HomeScreen(viewModel: HomeViewModel) {
             }
         }
     }
-
-
 }

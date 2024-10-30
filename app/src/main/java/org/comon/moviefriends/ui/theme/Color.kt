@@ -18,3 +18,5 @@ val FriendsBlack = Color(0xFF0f0f0f)
 val FriendsWhite = Color(0xFFB9B7B7)
 val FriendsTextGrey = Color(0xFF676767)
 val FriendsBoxGrey = Color(0xFF333333)
+
+val KakaoColor = Color(0xFFFEE500)

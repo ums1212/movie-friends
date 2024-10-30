@@ -7,22 +7,17 @@ import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import org.comon.moviefriends.ui.screen.HomeScreen
+import org.comon.moviefriends.ui.screen.LoginScreen
 import org.comon.moviefriends.ui.theme.MovieFriendsTheme
-import org.comon.moviefriends.ui.viewmodel.HomeViewModel
+import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: HomeViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -33,7 +28,11 @@ class MainActivity : ComponentActivity() {
             MovieFriendsTheme(
                 darkTheme = true
             ) {
-                HomeScreen(viewModel)
+                if(loginViewModel.checkLogin()){
+                    HomeScreen()
+                }else{
+                    LoginScreen()
+                }
             }
         }
     }
