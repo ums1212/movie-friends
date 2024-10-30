@@ -123,4 +123,8 @@ dependencies {
 
     // splash screen
     implementation(libs.androidx.core.splashscreen)
+
+    // 컴포즈 네비게이션
+    implementation("androidx.navigation:navigation-compose:2.8.0")
+
 }

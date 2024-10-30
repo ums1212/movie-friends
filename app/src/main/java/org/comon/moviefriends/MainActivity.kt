@@ -10,8 +10,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import org.comon.moviefriends.ui.screen.HomeScreen
 import org.comon.moviefriends.ui.screen.LoginScreen
+import org.comon.moviefriends.ui.screen.NAV_ROUTE
+import org.comon.moviefriends.ui.screen.SubmitNickNameScreen
 import org.comon.moviefriends.ui.theme.MovieFriendsTheme
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 
@@ -28,10 +33,31 @@ class MainActivity : ComponentActivity() {
             MovieFriendsTheme(
                 darkTheme = true
             ) {
+                val navController = rememberNavController()
+
+                NavHost(navController = navController, startDestination = NAV_ROUTE.LOGIN.route) {
+                    composable(NAV_ROUTE.HOME.route) {
+                        HomeScreen(navController)
+                    }
+                    composable(NAV_ROUTE.LOGIN.route) {
+                        LoginScreen(
+                            { navController.navigate(NAV_ROUTE.HOME.route) },
+                            { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+                        )
+                    }
+                    composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
+                        SubmitNickNameScreen { navController.navigate(NAV_ROUTE.HOME.route) }
+                    }
+                    // Add more destinations similarly.
+                }
+
                 if(loginViewModel.checkLogin()){
-                    HomeScreen()
+                    HomeScreen(navController)
                 }else{
-                    LoginScreen()
+                    LoginScreen(
+                        { navController.navigate(NAV_ROUTE.HOME.route) },
+                        { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+                    )
                 }
             }
         }

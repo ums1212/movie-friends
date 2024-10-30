@@ -1,6 +1,5 @@
 package org.comon.moviefriends.ui.screen
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
@@ -25,9 +23,11 @@ import org.comon.moviefriends.ui.widget.GoogleLoginButton
 import org.comon.moviefriends.ui.widget.KakaoLoginButton
 import org.comon.moviefriends.ui.widget.MFButton
 
-@Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onNavigateToHome: () -> Unit,
+    onNavigateToSubmitNickName: () -> Unit
+) {
     val viewModel: LoginViewModel = viewModel()
 
     Column(
@@ -44,24 +44,14 @@ fun LoginScreen() {
                 .fillMaxWidth()
                 .padding(bottom = 72.dp)
         )
-        MFButton({ startWithoutLogin() }, stringResource(R.string.button_without_login))
+        MFButton(onNavigateToHome, stringResource(R.string.button_without_login))
         HorizontalDivider(Modifier
             .padding(horizontal = 36.dp, vertical = 24.dp)
         )
-        KakaoLoginButton { kakaoLogin() }
+        KakaoLoginButton(onNavigateToSubmitNickName)
         Spacer(Modifier.padding(vertical = 12.dp))
-        GoogleLoginButton { googleLogin() }
+        GoogleLoginButton(onNavigateToSubmitNickName)
     }
+
 }
 
-fun startWithoutLogin() {
-    Log.d("startWithoutLogin", "로그인 없이 시작")
-}
-
-fun kakaoLogin() {
-    Log.d("kakaoLogin", "카카오 로그인")
-}
-
-fun googleLogin() {
-    Log.d("googleLogin", "구글 로그인")
-}
