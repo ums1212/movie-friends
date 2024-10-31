@@ -1,6 +1,7 @@
 package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -31,14 +32,14 @@ import kotlinx.coroutines.flow.collectLatest
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.api.MovieCategory
-import org.comon.moviefriends.model.MovieInfo
+import org.comon.moviefriends.model.TMDBMovies
 
 
 @Composable
-fun MovieList(category: MovieCategory, list: StateFlow<List<MovieInfo>>) {
+fun MovieList(category: MovieCategory, list: StateFlow<List<TMDBMovies.MovieInfo>>, onNavigateToMovieDetail: (movieId: Int) -> Unit) {
 
     val isLoading = remember { mutableStateOf(true) }
-    val mutableList = remember { listOf<MovieInfo>() }
+    val mutableList = remember { listOf<TMDBMovies.MovieInfo>() }
     val stateLists = remember { mutableStateOf(mutableList) }
 
     LaunchedEffect(isLoading.value){
@@ -63,8 +64,8 @@ fun MovieList(category: MovieCategory, list: StateFlow<List<MovieInfo>>) {
                         modifier = Modifier
                             .width(150.dp)
                             .height(200.dp)
-                            .padding(8.dp),
-//                    .clickable {onItemClick()},
+                            .padding(8.dp)
+                            .clickable { onNavigateToMovieDetail(item.id) },
                         shape = RoundedCornerShape(8.dp),
                         border = BorderStroke(1.dp, Color.LightGray),
                         elevation = CardDefaults.cardElevation(

@@ -3,30 +3,28 @@ package org.comon.moviefriends.ui.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kakao.sdk.common.KakaoSdk.init
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.api.MovieCategory
 import org.comon.moviefriends.api.TMDBResult
-import org.comon.moviefriends.model.MovieInfo
 import org.comon.moviefriends.model.TMDBMovies
 import org.comon.moviefriends.repo.TMDBRepository
 import retrofit2.Response
 
 class HomeViewModel: ViewModel() {
 
-    private val _nowList = MutableStateFlow<List<MovieInfo>>(emptyList())
+    private val _nowList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
     val nowList get() = _nowList.asStateFlow()
 
-    private val _popList = MutableStateFlow<List<MovieInfo>>(emptyList())
+    private val _popList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
     val popList get() = _popList.asStateFlow()
 
-    private val _topList = MutableStateFlow<List<MovieInfo>>(emptyList())
+    private val _topList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
     val topList get() = _topList.asStateFlow()
 
-    private val _upcomingList = MutableStateFlow<List<MovieInfo>>(emptyList())
+    private val _upcomingList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
     val upcomingList get() = _upcomingList.asStateFlow()
 
     fun sendList(category: MovieCategory) = when(category){
@@ -68,7 +66,7 @@ class HomeViewModel: ViewModel() {
         }
     }
 
-    private suspend fun addListByCategory(list: List<MovieInfo>, category: MovieCategory){
+    private suspend fun addListByCategory(list: List<TMDBMovies.MovieInfo>, category: MovieCategory){
         when(category){
             MovieCategory.NOW_PLAYING -> _nowList.emit(list)
             MovieCategory.POPULAR -> _popList.emit(list)

@@ -30,7 +30,6 @@ import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
-import org.comon.moviefriends.model.MovieInfo
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.widget.MFButton
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
@@ -39,7 +38,7 @@ import org.comon.moviefriends.ui.widget.UserWantListItem
 
 @Preview
 @Composable
-fun MovieDetailScreen(movieInfo: MovieInfo = MovieInfo(1,"","","","","",0f)) {
+fun MovieDetailScreen(movieId: Int) {
 
     val movieRating = remember { mutableIntStateOf(4) }
     val scrollState = rememberScrollState()
@@ -47,14 +46,16 @@ fun MovieDetailScreen(movieInfo: MovieInfo = MovieInfo(1,"","","","","",0f)) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
+            .padding(horizontal = 24.dp, vertical = 8.dp)
             .verticalScroll(scrollState)
     ) {
         /** 영화 정보 */
         AsyncImage(
-            modifier = Modifier.fillMaxWidth().height(250.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
             model = ImageRequest.Builder(LocalContext.current)
-                .data("$BASE_TMDB_IMAGE_URL${movieInfo.posterPath}")
+                .data(BASE_TMDB_IMAGE_URL)
                 .crossfade(true)
                 .error(R.drawable.logo)
                 .build(),
@@ -74,17 +75,19 @@ fun MovieDetailScreen(movieInfo: MovieInfo = MovieInfo(1,"","","","","",0f)) {
         Spacer(Modifier.padding(vertical = 12.dp))
         MFText(stringResource(R.string.title_credits))
         LazyRow {
-            items(listOf("배우1","배우2")){ item ->
+            items(listOf("배우1", "배우2")) { item ->
                 Column(
                     modifier = Modifier
                         .padding(end = 8.dp)
-                        .clickable {  },
+                        .clickable { },
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AsyncImage(
-                        modifier = Modifier.size(48.dp).padding(end = 4.dp),
+                        modifier = Modifier
+                            .size(48.dp)
+                            .padding(end = 4.dp),
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data("$BASE_TMDB_IMAGE_URL${movieInfo.posterPath}")
+                            .data(BASE_TMDB_IMAGE_URL)
                             .crossfade(true)
                             .error(R.drawable.logo)
                             .build(),
@@ -106,7 +109,7 @@ fun MovieDetailScreen(movieInfo: MovieInfo = MovieInfo(1,"","","","","",0f)) {
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             LazyRow {
-                items(listOf("유저1","유저2")){ item ->
+                items(listOf("유저1", "유저2")) { item ->
                     UserWantListItem()
                 }
             }
