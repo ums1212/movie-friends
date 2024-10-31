@@ -14,18 +14,15 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
-import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -34,9 +31,11 @@ import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.ui.theme.FriendsRed
+import org.comon.moviefriends.ui.widget.MFBottomSheet
 import org.comon.moviefriends.ui.widget.MFButton
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
 import org.comon.moviefriends.ui.widget.MFText
+import org.comon.moviefriends.ui.widget.RateModal
 import org.comon.moviefriends.ui.widget.UserWantListItem
 
 @Composable
@@ -44,6 +43,10 @@ fun MovieDetailScreen(movieId: Int) {
 
     val movieRating = remember { mutableIntStateOf(4) }
     val scrollState = rememberScrollState()
+
+    val showRateModal = remember { mutableIntStateOf(0) }
+    val showBottomSheet = remember { mutableStateOf(false) }
+
 
     Column(
         modifier = Modifier
@@ -131,7 +134,16 @@ fun MovieDetailScreen(movieId: Int) {
                 ratedStarsColor = FriendsRed,
             )
         }
-        MFButton({}, stringResource(R.string.button_user_rate))
+
+        MFButton({
+            showRateModal.intValue = 1
+        }, stringResource(R.string.button_user_rate))
+
+        if (showRateModal.intValue == 1) {
+            RateModal {
+                showRateModal.intValue = 0
+            }
+        }
 
         /** 유저 리뷰 */
         Spacer(Modifier.padding(vertical = 12.dp))
@@ -146,7 +158,15 @@ fun MovieDetailScreen(movieId: Int) {
             MFText("유저1: 너무 재밌어요")
             MFText("유저1: 너무 재밌어요")
         }
-        MFButton({}, stringResource(R.string.button_more_user_review))
+        MFButton({
+            showBottomSheet.value = true
+        }, stringResource(R.string.button_more_user_review))
+
+        if(showBottomSheet.value){
+            MFBottomSheet {
+                showBottomSheet.value = false
+            }
+        }
     }
 
 }

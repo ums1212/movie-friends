@@ -11,6 +11,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -21,12 +23,17 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.theme.FriendsBoxGrey
+import org.comon.moviefriends.ui.theme.FriendsRed
 
 @Preview
 @Composable
-fun RateModal(){
+fun RateModal(dismissModal: () -> Unit) {
+
+    val rating = remember{ mutableIntStateOf(0) }
+
     Dialog(
-        onDismissRequest = {  },
+        onDismissRequest = dismissModal,
     ) {
         Card(
             modifier = Modifier
@@ -46,16 +53,20 @@ fun RateModal(){
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                RatingBarView()
+                RatingBarView(
+                    isRatingEditable = true,
+                    rating = rating,
+                    ratedStarsColor = FriendsRed,
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    MFButtonCancel({}, stringResource(R.string.button_cancel), 80.dp)
+                    MFButtonCancel(dismissModal, stringResource(R.string.button_cancel), 80.dp)
                     Spacer(Modifier.padding(end = 8.dp))
-                    MFButtonWidthResizable({}, stringResource(R.string.button_confirm), 80.dp)
+                    MFButtonWidthResizable(dismissModal, stringResource(R.string.button_confirm), 80.dp)
                 }
             }
 
