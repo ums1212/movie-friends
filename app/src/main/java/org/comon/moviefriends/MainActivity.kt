@@ -70,29 +70,21 @@ class MainActivity : ComponentActivity() {
         MovieFriendsTheme(
             darkTheme = true
         ) {
+            val navController = rememberNavController()
+            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.HOME.route else NAV_ROUTE.LOGIN.route
 
-            Scaffold(
-                modifier = Modifier.fillMaxSize(),
-                topBar = { MFTopAppBar() },
-                bottomBar = { MFNavigationBar() },
-            ) { innerPadding ->
-
-                val navController = rememberNavController()
-                val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.HOME.route else NAV_ROUTE.LOGIN.route
-
-                NavHost(navController = navController, startDestination = startDestination, modifier = Modifier.padding(innerPadding)) {
-                    composable(NAV_ROUTE.LOGIN.route) {
-                        LoginScreen(navController)
-                    }
-                    composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
-                        SubmitNickNameScreen(navController)
-                    }
-                    composable(NAV_ROUTE.HOME.route) {
-                        HomeScreen(navController)
-                    }
-                    composable("${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}") { backStackEntry ->
-                        MovieDetailScreen(movieId = backStackEntry.arguments?.getInt("movieId") ?: 0)
-                    }
+            NavHost(navController = navController, startDestination = startDestination) {
+                composable(NAV_ROUTE.LOGIN.route) {
+                    LoginScreen(navController)
+                }
+                composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
+                    SubmitNickNameScreen(navController)
+                }
+                composable(NAV_ROUTE.HOME.route) {
+                    HomeScreen(navController)
+                }
+                composable("${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}") { backStackEntry ->
+                    MovieDetailScreen(movieId = backStackEntry.arguments?.getInt("movieId") ?: 0)
                 }
             }
 
