@@ -57,15 +57,16 @@ fun MovieList(category: MovieCategory, list: StateFlow<List<TMDBMovies.MovieInfo
         ) {
             items(stateLists.value) { item ->
                 Column(
-                    modifier = Modifier.width(160.dp),
+                    modifier = Modifier
+                        .width(160.dp)
+                        .clickable { onNavigateToMovieDetail(item.id) },
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Card(
                         modifier = Modifier
                             .width(150.dp)
                             .height(200.dp)
-                            .padding(8.dp)
-                            .clickable { onNavigateToMovieDetail(item.id) },
+                            .padding(8.dp),
                         shape = RoundedCornerShape(8.dp),
                         border = BorderStroke(1.dp, Color.LightGray),
                         elevation = CardDefaults.cardElevation(
