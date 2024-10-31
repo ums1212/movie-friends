@@ -125,6 +125,10 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     // 컴포즈 네비게이션
-    implementation("androidx.navigation:navigation-compose:2.8.0")
+    implementation(libs.androidx.navigation.compose)
+
+    // 컴포즈 별점 라이브러리
+    implementation(libs.compose.ratingbar.library)
+
 
 }

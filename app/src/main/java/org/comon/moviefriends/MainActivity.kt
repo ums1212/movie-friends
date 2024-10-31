@@ -46,7 +46,8 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
-                        SubmitNickNameScreen { navController.navigate(NAV_ROUTE.HOME.route) }
+//                        SubmitNickNameScreen { navController.navigate(NAV_ROUTE.HOME.route) }
+                        SubmitNickNameScreen()
                     }
                     // Add more destinations similarly.
                 }

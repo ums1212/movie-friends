@@ -18,15 +18,17 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 import org.comon.moviefriends.ui.widget.MFButton
 
+@Preview
 @Composable
 fun SubmitNickNameScreen(
-    onNavigateToHome: () -> Unit
+
 ) {
     val viewModel: LoginViewModel = viewModel()
 
@@ -62,10 +64,10 @@ fun SubmitNickNameScreen(
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = true,
-                keyboardActions = KeyboardActions(onDone = { onNavigateToHome() }),
+                keyboardActions = KeyboardActions(onDone = { }),
 
             )
         }
-        MFButton(onNavigateToHome, stringResource(R.string.button_confirm))
+        MFButton({}, stringResource(R.string.button_confirm))
     }
 }

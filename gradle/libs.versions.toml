@@ -2,6 +2,7 @@
 agp = "8.5.2"
 coilCompose = "3.0.0-rc02"
 coilNetworkOkhttp = "3.0.0-rc02"
+composeRatingbarLibrary = "0.1.0"
 converterGson = "2.9.0"
 gson = "2.10.1"
 circleimageview = "3.1.0"
@@ -23,6 +24,7 @@ composeBom = "2024.10.00"
 lifecycleViewmodelCompose = "2.8.6"
 kakaoV2User = "2.20.6"
 lottie = "6.5.2"
+navigationCompose = "2.8.3"
 shimmer = "0.5.0"
 retrofit = "2.9.0"
 
@@ -30,7 +32,9 @@ retrofit = "2.9.0"
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
+compose-ratingbar-library = { module = "com.github.MhmoudAlim:Compose-Ratingbar-library", version.ref = "composeRatingbarLibrary" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
