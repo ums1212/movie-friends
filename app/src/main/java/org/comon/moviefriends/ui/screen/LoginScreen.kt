@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 import org.comon.moviefriends.ui.widget.GoogleLoginButton
@@ -26,7 +25,8 @@ import org.comon.moviefriends.ui.widget.MFButton
 
 @Composable
 fun LoginScreen(
-    navController: NavHostController
+    moveToScaffoldScreen: () -> Unit,
+    moveToSubmitNickNameScreen: () -> Unit,
 ) {
     val viewModel: LoginViewModel = viewModel()
 
@@ -44,13 +44,13 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(bottom = 72.dp)
         )
-        MFButton( { navController.navigate(NAV_ROUTE.HOME.route) }, stringResource(R.string.button_without_login))
+        MFButton( moveToScaffoldScreen, stringResource(R.string.button_without_login))
         HorizontalDivider(Modifier
             .padding(horizontal = 36.dp, vertical = 24.dp)
         )
-        KakaoLoginButton { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+        KakaoLoginButton { moveToSubmitNickNameScreen() }
         Spacer(Modifier.padding(vertical = 12.dp))
-        GoogleLoginButton { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+        GoogleLoginButton { moveToSubmitNickNameScreen() }
     }
 
 }

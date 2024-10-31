@@ -34,6 +34,7 @@
     <string name="button_user_review">입력</string>
 
     <string name="label_menu_community">커뮤니티</string>
+    <string name="label_community_notification">공지사항</string>
     <string name="title_write">글 작성</string>
     <string name="button_write_add">등록</string>
     <string name="label_write_category">카테고리</string>

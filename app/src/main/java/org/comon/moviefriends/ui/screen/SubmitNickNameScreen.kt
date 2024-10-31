@@ -27,7 +27,7 @@ import org.comon.moviefriends.ui.widget.MFButton
 
 @Composable
 fun SubmitNickNameScreen(
-    navController: NavHostController
+    moveToScaffoldScreen: () -> Unit,
 ) {
     val viewModel: LoginViewModel = viewModel()
 
@@ -67,6 +67,6 @@ fun SubmitNickNameScreen(
 
             )
         }
-        MFButton({ navController.navigate(NAV_ROUTE.HOME.route) }, stringResource(R.string.button_confirm))
+        MFButton(moveToScaffoldScreen, stringResource(R.string.button_confirm))
     }
 }

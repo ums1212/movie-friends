@@ -14,11 +14,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.screen.NAV_ROUTE
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun MFTopAppBar() {
+fun MFTopAppBar(
+    navigateToSearch: () -> Unit,
+) {
     TopAppBar(
         colors = topAppBarColors(
             containerColor = colorResource(R.color.friends_black),
@@ -35,7 +39,7 @@ fun MFTopAppBar() {
         actions = {
             /** 검색 버튼 */
             IconButton(
-                onClick = {}
+                onClick = navigateToSearch
             ) {
                 Icon(
                     Icons.Filled.Search,

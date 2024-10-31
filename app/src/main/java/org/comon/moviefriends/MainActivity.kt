@@ -8,25 +8,25 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.comon.moviefriends.ui.screen.CommunityDetailScreen
+import org.comon.moviefriends.ui.screen.CommunityScreen
 import org.comon.moviefriends.ui.screen.HomeScreen
 import org.comon.moviefriends.ui.screen.LoginScreen
 import org.comon.moviefriends.ui.screen.MovieDetailScreen
 import org.comon.moviefriends.ui.screen.NAV_ROUTE
+import org.comon.moviefriends.ui.screen.ScaffoldScreen
+import org.comon.moviefriends.ui.screen.SearchScreen
 import org.comon.moviefriends.ui.screen.SubmitNickNameScreen
 import org.comon.moviefriends.ui.theme.MovieFriendsTheme
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
-import org.comon.moviefriends.ui.widget.MFNavigationBar
-import org.comon.moviefriends.ui.widget.MFTopAppBar
 
 class MainActivity : ComponentActivity() {
 
@@ -71,20 +71,24 @@ class MainActivity : ComponentActivity() {
             darkTheme = true
         ) {
             val navController = rememberNavController()
-            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.HOME.route else NAV_ROUTE.LOGIN.route
+
+            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
 
             NavHost(navController = navController, startDestination = startDestination) {
                 composable(NAV_ROUTE.LOGIN.route) {
-                    LoginScreen(navController)
+                    LoginScreen(
+                        { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
+                        { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+                    )
                 }
                 composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
-                    SubmitNickNameScreen(navController)
+                    SubmitNickNameScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
                 }
-                composable(NAV_ROUTE.HOME.route) {
-                    HomeScreen(navController)
+                composable(NAV_ROUTE.SCAFFOLD.route) {
+                    ScaffoldScreen(navController)
                 }
-                composable("${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}") { backStackEntry ->
-                    MovieDetailScreen(movieId = backStackEntry.arguments?.getInt("movieId") ?: 0)
+                composable(NAV_ROUTE.SEARCH.route) {
+                    SearchScreen()
                 }
             }
 
