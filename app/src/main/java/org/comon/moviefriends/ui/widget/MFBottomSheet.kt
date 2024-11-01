@@ -6,8 +6,11 @@ import androidx.compose.runtime.Composable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MFBottomSheet(dismissSheet: () -> Unit) {
+fun MFBottomSheet(content: MFBottomSheetContent, dismissSheet: () -> Unit) {
     ModalBottomSheet(onDismissRequest = dismissSheet) {
-        UserReviewList()
+        when(content){
+            MFBottomSheetContent.UserReview -> UserReviewList()
+            MFBottomSheetContent.UserWantList -> UserWantThisMovieList()
+        }
     }
 }

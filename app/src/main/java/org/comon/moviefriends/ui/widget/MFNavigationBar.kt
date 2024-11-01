@@ -14,7 +14,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
-import androidx.navigation.NavHostController
 import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.screen.NAV_MENU
 

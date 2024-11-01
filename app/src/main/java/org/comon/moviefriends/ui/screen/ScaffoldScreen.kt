@@ -15,6 +15,7 @@ import org.comon.moviefriends.ui.widget.MFTopAppBar
 @Composable
 fun ScaffoldScreen(mainNavController: NavHostController){
     val scaffoldNavController = rememberNavController()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -23,7 +24,7 @@ fun ScaffoldScreen(mainNavController: NavHostController){
             }
         },
         bottomBar = {
-            MFNavigationBar{ route ->
+            MFNavigationBar { route ->
                 scaffoldNavController.navigate(route) {
                     scaffoldNavController.graph.startDestinationRoute?.let {
                         popUpTo(it) {

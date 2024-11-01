@@ -30,8 +30,10 @@ import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.common.showToast
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.widget.MFBottomSheet
+import org.comon.moviefriends.ui.widget.MFBottomSheetContent
 import org.comon.moviefriends.ui.widget.MFButton
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
 import org.comon.moviefriends.ui.widget.MFText
@@ -41,11 +43,14 @@ import org.comon.moviefriends.ui.widget.UserWantListItem
 @Composable
 fun MovieDetailScreen(movieId: Int) {
 
+    val context = LocalContext.current
+
     val movieRating = remember { mutableIntStateOf(4) }
     val scrollState = rememberScrollState()
 
     val showRateModal = remember { mutableIntStateOf(0) }
-    val showBottomSheet = remember { mutableStateOf(false) }
+    val showReviewBottomSheet = remember { mutableStateOf(false) }
+    val showUserWantBottomSheet = remember { mutableStateOf(false) }
 
 
     Column(
@@ -59,7 +64,7 @@ fun MovieDetailScreen(movieId: Int) {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(250.dp),
-            model = ImageRequest.Builder(LocalContext.current)
+            model = ImageRequest.Builder(context)
                 .data(BASE_TMDB_IMAGE_URL)
                 .crossfade(true)
                 .error(R.drawable.logo)
@@ -105,7 +110,9 @@ fun MovieDetailScreen(movieId: Int) {
 
         /** 이 영화를 보고 싶다 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFButton({}, stringResource(R.string.button_want_this_movie))
+        MFButton({
+            showToast(context, "이 영화를 보고 싶다")
+        }, stringResource(R.string.button_want_this_movie))
         Spacer(Modifier.padding(vertical = 12.dp))
         MFText(stringResource(R.string.title_user_want_this_movie))
         Row(
@@ -118,7 +125,15 @@ fun MovieDetailScreen(movieId: Int) {
                     UserWantListItem()
                 }
             }
-            MFButtonWidthResizable({}, stringResource(R.string.button_more), 90.dp)
+            MFButtonWidthResizable({
+                showUserWantBottomSheet.value = true
+            }, stringResource(R.string.button_more), 90.dp)
+        }
+
+        if(showUserWantBottomSheet.value){
+            MFBottomSheet(MFBottomSheetContent.UserWantList) {
+                showUserWantBottomSheet.value = false
+            }
         }
 
         /** 유저 평점 */
@@ -159,14 +174,13 @@ fun MovieDetailScreen(movieId: Int) {
             MFText("유저1: 너무 재밌어요")
         }
         MFButton({
-            showBottomSheet.value = true
+            showReviewBottomSheet.value = true
         }, stringResource(R.string.button_more_user_review))
 
-        if(showBottomSheet.value){
-            MFBottomSheet {
-                showBottomSheet.value = false
+        if(showReviewBottomSheet.value){
+            MFBottomSheet(MFBottomSheetContent.UserReview) {
+                showReviewBottomSheet.value = false
             }
         }
     }
-
 }
