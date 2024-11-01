@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.comon.moviefriends.ui.widget.MFNavigationBar
 import org.comon.moviefriends.ui.widget.MFTopAppBar
@@ -15,11 +16,12 @@ import org.comon.moviefriends.ui.widget.MFTopAppBar
 @Composable
 fun ScaffoldScreen(mainNavController: NavHostController){
     val scaffoldNavController = rememberNavController()
+    val currentRoute = scaffoldNavController.currentBackStackEntryAsState().value?.destination?.route?.split("/")?.first()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MFTopAppBar{
+            MFTopAppBar(currentRoute ?: NAV_ROUTE.HOME.route){
                 mainNavController.navigate(NAV_ROUTE.SEARCH.route)
             }
         },
