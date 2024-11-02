@@ -15,7 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.comon.moviefriends.ui.screen.LoginScreen
-import org.comon.moviefriends.ui.screen.NAV_ROUTE
+import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.ui.screen.ScaffoldScreen
 import org.comon.moviefriends.ui.screen.SearchScreen
 import org.comon.moviefriends.ui.screen.SubmitNickNameScreen

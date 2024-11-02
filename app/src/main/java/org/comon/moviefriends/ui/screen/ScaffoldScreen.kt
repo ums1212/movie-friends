@@ -10,6 +10,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.comon.moviefriends.common.COMMUNITY_MENU
+import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.ui.widget.CommunityFab
 import org.comon.moviefriends.ui.widget.MFNavigationBar
 import org.comon.moviefriends.ui.widget.MFTopAppBar
@@ -22,12 +24,18 @@ fun ScaffoldScreen(mainNavController: NavHostController){
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
-            MFTopAppBar(currentRoute ?: NAV_ROUTE.HOME.route){
-                mainNavController.navigate(NAV_ROUTE.SEARCH.route)
-            }
+            MFTopAppBar(
+                currentRoute ?: NAV_ROUTE.HOME.route,
+                navigateToCommunityMenu = { route ->
+                    scaffoldNavController.navigate(route)
+                },
+                navigateToSearch = {
+                    mainNavController.navigate(NAV_ROUTE.SEARCH.route)
+                }
+            )
         },
         floatingActionButton = {
-            if(currentRoute==NAV_ROUTE.COMMUNITY.route){
+            if(currentRoute== NAV_ROUTE.COMMUNITY.route){
                 CommunityFab {
                     scaffoldNavController.navigate(NAV_ROUTE.WRITE_POST.route)
                 }
@@ -56,10 +64,19 @@ fun ScaffoldScreen(mainNavController: NavHostController){
             composable("${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}") { backStackEntry ->
                 MovieDetailScreen(movieId = backStackEntry.arguments?.getInt("movieId") ?: 0)
             }
-            composable(NAV_ROUTE.COMMUNITY.route) {
-                CommunityScreen { communityId ->
+            composable(COMMUNITY_MENU.COMMUNITY.route) {
+                CommunityScreen({}) { communityId ->
                     scaffoldNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
                 }
+            }
+            composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {
+                WatchTogetherScreen()
+            }
+            composable(COMMUNITY_MENU.RECOMMEND.route) {
+                RecommendScreen()
+            }
+            composable(COMMUNITY_MENU.WORLD_CUP.route) {
+                WorldCupScreen()
             }
             composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
                 CommunityDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
@@ -69,9 +86,6 @@ fun ScaffoldScreen(mainNavController: NavHostController){
             }
             composable(NAV_ROUTE.MY_INFO.route) {
                 MyInfoScreen()
-            }
-            composable(NAV_ROUTE.SEARCH.route) {
-                SearchScreen()
             }
         }
     }

@@ -1,4 +1,4 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.common
 
 enum class NAV_ROUTE(val route: String, val description: String){
     SCAFFOLD("scaffold", "스캐폴드 화면"),
@@ -17,4 +17,11 @@ enum class NAV_MENU(val route: String, val description: String){
     HOME("home", "홈"),
     COMMUNITY("community", "커뮤니티"),
     MY_INFO("my_info", "내 정보"),
+}
+
+enum class COMMUNITY_MENU(val route: String, val description: String){
+    COMMUNITY("community", "커뮤니티"),
+    WATCH_TOGETHER("watch_together", "같이 보기"),
+    RECOMMEND("recommend", "영화 추천"),
+    WORLD_CUP("world_cup", "월드컵"),
 }
