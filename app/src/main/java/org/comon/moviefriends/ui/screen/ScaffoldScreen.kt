@@ -83,7 +83,7 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                 WorldCupScreen()
             }
             composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
-                CommunityDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
+                PostDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
             }
             composable(NAV_ROUTE.WRITE_POST.route) {
                 WritePostScreen()
