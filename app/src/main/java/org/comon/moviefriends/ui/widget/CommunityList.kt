@@ -40,7 +40,7 @@ fun CommunityList(onNavigateToPostDetail: (postId: Int) -> Unit) {
 //                onNavigateToPostDetail(item.id)
                 onNavigateToPostDetail(0)
             }
-            Spacer(modifier = Modifier.padding(vertical = 12.dp))
+            Spacer(modifier = Modifier.padding(vertical = 6.dp))
         }
     }
 

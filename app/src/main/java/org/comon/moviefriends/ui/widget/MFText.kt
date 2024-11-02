@@ -24,7 +24,7 @@ fun MFPostTitle(text:String, modifier: Modifier = Modifier){
     Text(
         modifier = modifier,
         text = text,
-        color = FriendsBlack,
+        color = FriendsWhite,
         fontSize = 18.sp
     )
 }
@@ -46,7 +46,7 @@ fun MFPostView(text:String, modifier: Modifier = Modifier){
     Text(
         modifier = modifier,
         text = text,
-        color = FriendsBlack,
+        color = FriendsWhite,
         fontSize = 14.sp
     )
 }

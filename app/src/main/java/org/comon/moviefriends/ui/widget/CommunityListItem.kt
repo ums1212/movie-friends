@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsWhite
 
 @Preview
@@ -30,9 +31,8 @@ fun CommunityListItem(onNavigateToPostDetail: () -> Unit) {
             .height(160.dp)
             .clickable { onNavigateToPostDetail() },
         shape = RoundedCornerShape(8.dp),
-        border = BorderStroke(1.dp, Color.LightGray),
         colors = CardDefaults.cardColors(
-            containerColor = FriendsWhite
+            containerColor = FriendsBoxGrey
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp,
