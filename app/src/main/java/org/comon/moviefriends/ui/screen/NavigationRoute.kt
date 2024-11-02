@@ -8,6 +8,7 @@ enum class NAV_ROUTE(val route: String, val description: String){
     MOVIE_DETAIL("movie_detail", "영화 상세 정보 화면"),
     COMMUNITY("community", "커뮤니티 화면"),
     COMMUNITY_DETAIL("community_detail", "커뮤니티 상세 글 화면"),
+    WRITE_POST("write_post", "커뮤니티 글 작성 화면"),
     MY_INFO("my_info", "내 정보 화면"),
     SEARCH("search", "검색 화면"),
 }

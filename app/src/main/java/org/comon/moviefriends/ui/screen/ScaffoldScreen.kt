@@ -10,6 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import org.comon.moviefriends.ui.widget.CommunityFab
 import org.comon.moviefriends.ui.widget.MFNavigationBar
 import org.comon.moviefriends.ui.widget.MFTopAppBar
 
@@ -23,6 +24,13 @@ fun ScaffoldScreen(mainNavController: NavHostController){
         topBar = {
             MFTopAppBar(currentRoute ?: NAV_ROUTE.HOME.route){
                 mainNavController.navigate(NAV_ROUTE.SEARCH.route)
+            }
+        },
+        floatingActionButton = {
+            if(currentRoute==NAV_ROUTE.COMMUNITY.route){
+                CommunityFab {
+                    scaffoldNavController.navigate(NAV_ROUTE.WRITE_POST.route)
+                }
             }
         },
         bottomBar = {
@@ -55,6 +63,9 @@ fun ScaffoldScreen(mainNavController: NavHostController){
             }
             composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
                 CommunityDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
+            }
+            composable(NAV_ROUTE.WRITE_POST.route) {
+                WritePostScreen()
             }
             composable(NAV_ROUTE.MY_INFO.route) {
                 MyInfoScreen()

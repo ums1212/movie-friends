@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,8 +28,10 @@ fun CommunityScreen(
             .padding(horizontal = 12.dp)
             .background(colorResource(id = R.color.friends_black)),
     ) {
+        // 타이틀
         MFText(stringResource(R.string.label_menu_community))
         Spacer(Modifier.padding(vertical = 12.dp))
+        // 공지사항
         Card(
             modifier = Modifier.fillMaxWidth()
                 .height(50.dp),
@@ -45,6 +45,7 @@ fun CommunityScreen(
             )
         }
         Spacer(Modifier.padding(vertical = 4.dp))
+        // 글 목록
         CommunityList { postId ->
             moveToCommunityDetailScreen(postId)
         }
