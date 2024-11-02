@@ -26,11 +26,15 @@ fun ScaffoldScreen(mainNavController: NavHostController){
         topBar = {
             MFTopAppBar(
                 currentRoute ?: NAV_ROUTE.HOME.route,
+                navigatePop =  { scaffoldNavController.popBackStack() },
                 navigateToCommunityMenu = { route ->
                     scaffoldNavController.navigate(route)
                 },
                 navigateToSearch = {
                     mainNavController.navigate(NAV_ROUTE.SEARCH.route)
+                },
+                confirmPost = {
+                    scaffoldNavController.popBackStack()
                 }
             )
         },

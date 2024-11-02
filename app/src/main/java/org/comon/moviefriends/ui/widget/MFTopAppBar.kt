@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +29,10 @@ import org.comon.moviefriends.common.NAV_ROUTE
 @OptIn(ExperimentalMaterial3Api::class)
 fun MFTopAppBar(
     route: String,
+    navigatePop: () -> Unit,
     navigateToCommunityMenu: (String) -> Unit,
     navigateToSearch: () -> Unit,
+    confirmPost: () -> Unit,
 ) {
     val isTabMenuShown = remember { mutableStateOf(false) }
     val selectedTabItem = remember { mutableIntStateOf(0) }
@@ -51,11 +54,12 @@ fun MFTopAppBar(
                 }
             },
             navigationIcon = {
-                if(route== NAV_ROUTE.COMMUNITY_DETAIL.route || route== NAV_ROUTE.MOVIE_DETAIL.route){
+                if(route== NAV_ROUTE.COMMUNITY_DETAIL.route
+                    || route== NAV_ROUTE.MOVIE_DETAIL.route
+                    || route== NAV_ROUTE.WRITE_POST.route
+                    ){
                     IconButton(
-                        onClick = {
-                            // back
-                        }
+                        onClick = navigatePop
                     ) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
@@ -80,17 +84,41 @@ fun MFTopAppBar(
                         )
                     }
                 }
-
-                /** 검색 버튼 */
-                IconButton(
-                    onClick = navigateToSearch
-                ) {
-                    Icon(
-                        Icons.Filled.Search,
-                        contentDescription = "검색 버튼",
-                        tint = colorResource(R.color.friends_white)
-                    )
+                if(route== NAV_ROUTE.HOME.route
+                    || route== NAV_ROUTE.MOVIE_DETAIL.route
+                    || route== NAV_ROUTE.COMMUNITY.route
+                    || route== NAV_ROUTE.COMMUNITY_DETAIL.route
+                    || route== COMMUNITY_MENU.WATCH_TOGETHER.route
+                    || route== COMMUNITY_MENU.RECOMMEND.route
+                    || route== COMMUNITY_MENU.WORLD_CUP.route
+                    ){
+                    /** 검색 버튼 */
+                    IconButton(
+                        onClick = navigateToSearch
+                    ) {
+                        Icon(
+                            Icons.Filled.Search,
+                            contentDescription = "검색 버튼",
+                            tint = colorResource(R.color.friends_white)
+                        )
+                    }
                 }
+
+
+
+                if(route== NAV_ROUTE.WRITE_POST.route){
+                    /** 글 작성 버튼 */
+                    IconButton(
+                        onClick = confirmPost,
+                    ) {
+                        Icon(
+                            Icons.Filled.Check,
+                            contentDescription = "글 작성 버튼",
+                            tint = colorResource(R.color.friends_white)
+                        )
+                    }
+                }
+
             }
         )
 
