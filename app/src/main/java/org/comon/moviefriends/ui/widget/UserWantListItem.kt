@@ -22,12 +22,12 @@ import org.comon.moviefriends.R
 fun UserWantListItem(){
     Row(
         modifier = Modifier
-            .padding(end = 8.dp)
+            .padding(horizontal = 8.dp, vertical = 16.dp)
             .clickable {  },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            modifier = Modifier.size(36.dp).padding(end = 4.dp),
+            modifier = Modifier.size(48.dp).padding(end = 4.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .data("")
                 .crossfade(true)

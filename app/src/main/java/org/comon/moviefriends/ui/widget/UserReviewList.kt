@@ -2,6 +2,7 @@ package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -46,16 +47,7 @@ fun UserReviewList(){
             .padding(24.dp)
     ) {
         MFText(stringResource(R.string.title_user_review))
-        LazyColumn(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-                .height(180.dp)
-        ) {
-            items(reviewList){ review ->
-                MFText(review)
-            }
-        }
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
@@ -69,8 +61,17 @@ fun UserReviewList(){
                 singleLine = true,
                 enabled = true,
                 keyboardActions = KeyboardActions(onDone = { }),
-                )
+            )
             MFButtonWidthResizable({}, stringResource(R.string.button_user_review), 200.dp)
+        }
+        LazyColumn(
+            modifier = Modifier
+                .padding(12.dp)
+                .fillMaxSize()
+        ) {
+            items(reviewList){ review ->
+                MFText(review)
+            }
         }
     }
 }

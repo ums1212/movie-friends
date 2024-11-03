@@ -37,8 +37,7 @@ fun UserWantThisMovieList(){
         LazyColumn(
             modifier = Modifier
                 .padding(12.dp)
-                .fillMaxWidth()
-                .height(180.dp)
+                .fillMaxSize()
         ) {
             items(userList){ user ->
                 Row(
