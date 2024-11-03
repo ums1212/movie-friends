@@ -64,7 +64,6 @@ fun SubmitNickNameScreen(
                 singleLine = true,
                 enabled = true,
                 keyboardActions = KeyboardActions(onDone = { }),
-
             )
         }
         MFButton(moveToScaffoldScreen, stringResource(R.string.button_confirm))

@@ -1,5 +1,6 @@
 package org.comon.moviefriends.ui.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -43,6 +44,7 @@ import org.comon.moviefriends.ui.widget.UserWantListItem
 @Preview
 @Composable
 fun WatchTogetherScreen() {
+    val context = LocalContext.current
 
     val watchTogetherList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
 
@@ -108,7 +110,9 @@ fun WatchTogetherScreen() {
                         }
                         UserWantListItem()
                     }
-                    MFButtonWidthResizable({}, stringResource(R.string.button_watch_together), 120.dp)
+                    MFButtonWidthResizable({
+                        Toast.makeText(context, "같이 보기 신청", Toast.LENGTH_SHORT).show()
+                    }, stringResource(R.string.button_watch_together), 120.dp)
                 }
             }
         }

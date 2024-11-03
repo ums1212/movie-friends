@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
                     ScaffoldScreen(navController)
                 }
                 composable(NAV_ROUTE.SEARCH.route) {
-                    SearchScreen()
+                    SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
                 }
             }
 
