@@ -1,6 +1,7 @@
 package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -57,7 +58,14 @@ fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
             contentColor = White,
             disabledContainerColor = Color.Gray,
             disabledContentColor = Color.LightGray
+        ),
+        contentPadding = PaddingValues(
+            start = 2.dp,
+            top = 2.dp,
+            end = 2.dp,
+            bottom = 2.dp,
         )
+
     ) {
         Text(text)
     }
