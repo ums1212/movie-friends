@@ -12,6 +12,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.ui.widget.CommunityFab
 import org.comon.moviefriends.ui.widget.MFNavigationBar
 import org.comon.moviefriends.ui.widget.MFTopAppBar
@@ -73,20 +74,33 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                     scaffoldNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
                 }
             }
+            composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
+                PostDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
+            }
+            composable(NAV_ROUTE.WRITE_POST.route) {
+                WritePostScreen()
+            }
             composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {
-                WatchTogetherScreen()
+                WatchTogetherScreen(
+                    navigateToRequestList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.REQUEST_LIST.route) },
+                    navigateToReceiveList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) },
+                    navigateToChatRoomList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) },
+                )
+            }
+            composable(WATCH_TOGETHER_MENU.REQUEST_LIST.route) {
+                RequestListScreen()
+            }
+            composable(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) {
+                ReceiveListScreen()
+            }
+            composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
+                ChatRoomListScreen()
             }
             composable(COMMUNITY_MENU.RECOMMEND.route) {
                 RecommendScreen()
             }
             composable(COMMUNITY_MENU.WORLD_CUP.route) {
                 WorldCupScreen()
-            }
-            composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
-                PostDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
-            }
-            composable(NAV_ROUTE.WRITE_POST.route) {
-                WritePostScreen()
             }
             composable(NAV_ROUTE.MY_INFO.route) {
                 MyInfoScreen()

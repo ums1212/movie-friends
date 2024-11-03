@@ -36,6 +36,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
 import org.comon.moviefriends.ui.widget.MFText
@@ -43,7 +44,11 @@ import org.comon.moviefriends.ui.widget.UserWantListItem
 
 @Preview
 @Composable
-fun WatchTogetherScreen() {
+fun WatchTogetherScreen(
+    navigateToRequestList: () -> Unit,
+    navigateToReceiveList: () -> Unit,
+    navigateToChatRoomList: () -> Unit,
+) {
     val context = LocalContext.current
 
     val watchTogetherList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
@@ -54,19 +59,21 @@ fun WatchTogetherScreen() {
         MFText(text = stringResource(R.string.label_menu_watch_together))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
-        listOf(
-            stringResource(R.string.label_request_list),
-            stringResource(R.string.label_receive_list),
-            stringResource(R.string.label_chat_room)
-        ).forEach { menu ->
+        WATCH_TOGETHER_MENU.entries.forEach { menu ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .clickable {  },
+                    .clickable {
+                        when(menu){
+                            WATCH_TOGETHER_MENU.REQUEST_LIST -> navigateToRequestList()
+                            WATCH_TOGETHER_MENU.RECEIVE_LIST -> navigateToReceiveList()
+                            WATCH_TOGETHER_MENU.CHAT_ROOM_LIST -> navigateToChatRoomList()
+                        }
+                    },
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                MFText(menu)
+                MFText(menu.description)
             }
             HorizontalDivider()
         }

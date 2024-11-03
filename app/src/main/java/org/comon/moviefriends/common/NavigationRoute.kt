@@ -25,3 +25,9 @@ enum class COMMUNITY_MENU(val route: String, val description: String){
     RECOMMEND("recommend", "영화 추천"),
     WORLD_CUP("world_cup", "월드컵"),
 }
+
+enum class WATCH_TOGETHER_MENU(val route: String, val description: String){
+    REQUEST_LIST("request_list", "요청 내역"),
+    RECEIVE_LIST("receive_list", "받은 내역"),
+    CHAT_ROOM_LIST("chat_room_list", "채팅방"),
+}

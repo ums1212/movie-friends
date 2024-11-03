@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.sp
 import org.comon.moviefriends.R
 
 @Composable
-fun WorldCupScreen() {
+fun ChatRoomListScreen() {
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
