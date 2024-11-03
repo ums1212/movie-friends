@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
-import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsRed
 
 @Preview
@@ -64,9 +63,9 @@ fun RateModal(dismissModal: () -> Unit) {
                         .padding(12.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    MFButtonCancel(dismissModal, stringResource(R.string.button_cancel), 80.dp)
+                    MFButtonWidthResizable(dismissModal, stringResource(R.string.button_cancel), 80.dp)
                     Spacer(Modifier.padding(end = 8.dp))
-                    MFButtonWidthResizable(dismissModal, stringResource(R.string.button_confirm), 80.dp)
+                    MFButtonConfirm(dismissModal, stringResource(R.string.button_confirm), 80.dp)
                 }
             }
 

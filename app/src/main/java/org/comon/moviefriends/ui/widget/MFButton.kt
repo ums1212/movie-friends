@@ -1,5 +1,6 @@
 package org.comon.moviefriends.ui.widget
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -35,6 +36,7 @@ fun MFButton(clickEvent: () -> Unit, text: String) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 36.dp),
+        border = BorderStroke(1.dp, FriendsTextGrey),
         colors = ButtonColors(
             containerColor = FriendsBoxGrey,
             contentColor = White,
@@ -53,6 +55,7 @@ fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
         onClick = clickEvent,
         modifier = Modifier
             .width(width),
+        border = BorderStroke(1.dp, FriendsTextGrey),
         colors = ButtonColors(
             containerColor = FriendsBoxGrey,
             contentColor = White,
@@ -72,12 +75,13 @@ fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
 }
 
 @Composable
-fun MFButtonCancel(clickEvent: () -> Unit, text: String, width: Dp) {
+fun MFButtonConfirm(clickEvent: () -> Unit, text: String, width: Dp) {
     OutlinedButton (
         shape = RoundedCornerShape(25),
         onClick = clickEvent,
         modifier = Modifier
             .width(width),
+        border = BorderStroke(1.dp, FriendsTextGrey),
         colors = ButtonColors(
             containerColor = FriendsWhite,
             contentColor = Black,
