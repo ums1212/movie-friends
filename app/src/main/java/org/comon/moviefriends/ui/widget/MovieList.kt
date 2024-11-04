@@ -3,6 +3,7 @@ package org.comon.moviefriends.ui.widget
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import coil3.request.error
+import coil3.request.placeholder
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import org.comon.moviefriends.R
@@ -36,7 +40,11 @@ import org.comon.moviefriends.model.TMDBMovies
 
 
 @Composable
-fun MovieList(category: MovieCategory, list: StateFlow<List<TMDBMovies.MovieInfo>>, onNavigateToMovieDetail: (movieId: Int) -> Unit) {
+fun MovieList(
+    category: MovieCategory,
+    list: StateFlow<List<TMDBMovies.MovieInfo>>,
+    onNavigateToMovieDetail: (movieId: Int) -> Unit
+) {
 
     val isLoading = remember { mutableStateOf(true) }
     val mutableList = remember { listOf<TMDBMovies.MovieInfo>() }
@@ -75,12 +83,14 @@ fun MovieList(category: MovieCategory, list: StateFlow<List<TMDBMovies.MovieInfo
                         )
                     ) {
                         AsyncImage(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxSize(),
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data("${BASE_TMDB_IMAGE_URL}${item.posterPath}")
                                 .crossfade(true)
+                                .error(R.drawable.yoshicat)
                                 .build(),
                             contentDescription = "작품 정보",
+                            contentScale = ContentScale.Fit
                         )
                     }
                     Text(

@@ -66,7 +66,8 @@ class MainActivity : ComponentActivity() {
         ) {
             val navController = rememberNavController()
 
-            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
+//            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
+            val startDestination = NAV_ROUTE.SCAFFOLD.route
 
             NavHost(navController = navController, startDestination = startDestination) {
                 composable(NAV_ROUTE.LOGIN.route) {

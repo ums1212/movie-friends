@@ -1,6 +1,5 @@
 package org.comon.moviefriends.ui.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,10 +8,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.comon.moviefriends.R
 import org.comon.moviefriends.api.MovieCategory
 import org.comon.moviefriends.ui.viewmodel.HomeViewModel
 import org.comon.moviefriends.ui.widget.MovieList
@@ -28,9 +25,7 @@ fun HomeScreen(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(scrollState)
-            .padding(horizontal = 12.dp)
-            .background(colorResource(id = R.color.friends_black)),
+            .verticalScroll(scrollState),
     ) {
         MovieCategory.entries.forEach { category ->
             MovieList(category, viewModel.sendList(category)){ movieId ->

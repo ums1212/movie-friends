@@ -67,7 +67,6 @@ fun PostDetailScreen(communityId: Int) {
     Column(
         Modifier
             .fillMaxSize()
-            .padding(16.dp)
             .verticalScroll(scrollState),
     ) {
         MFPostTitle(

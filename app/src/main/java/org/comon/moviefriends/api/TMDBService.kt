@@ -1,11 +1,14 @@
 package org.comon.moviefriends.api
 
 import com.google.gson.GsonBuilder
+import org.comon.moviefriends.model.ResponseCreditDto
+import org.comon.moviefriends.model.TMDBMovieDetail
 import org.comon.moviefriends.model.TMDBMovies
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface TMDBService {
@@ -37,6 +40,20 @@ interface TMDBService {
         @Query("language") language:String = "ko-KR",
         @Query("region") region:String = "kr",
     ): Response<TMDBMovies>
+
+    // 영화 상세정보
+    @GET("{movie_id}")
+    suspend fun getMovieDetail(
+        @Path("movie_id") movieId:Int,
+        @Query("language") language:String = "ko-KR",
+    ): Response<TMDBMovieDetail>
+
+    // 영화 주요 출연진
+    @GET("{movie_id}/credits")
+    suspend fun getMovieCredit(
+        @Path("movie_id") movieId:Int,
+        @Query("language") language:String = "ko-KR",
+    ): Response<ResponseCreditDto>
 
     companion object {
         private var tdmbService: TMDBService? = null
