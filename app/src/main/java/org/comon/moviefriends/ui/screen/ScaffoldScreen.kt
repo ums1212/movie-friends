@@ -104,6 +104,9 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                         navigateToRequestList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.REQUEST_LIST.route) },
                         navigateToReceiveList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) },
                         navigateToChatRoomList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) },
+                        navigateToMovieDetail = { movieId ->
+                            scaffoldNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
+                        },
                     )
                 }
                 composable(WATCH_TOGETHER_MENU.REQUEST_LIST.route) {

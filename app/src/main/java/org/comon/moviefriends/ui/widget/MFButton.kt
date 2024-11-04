@@ -2,17 +2,22 @@ package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,6 +54,67 @@ fun MFButton(clickEvent: () -> Unit, text: String) {
 }
 
 @Composable
+fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: MutableState<Boolean>) {
+    Button(
+        shape = RoundedCornerShape(25),
+        onClick = clickEvent,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 36.dp),
+        border = BorderStroke(1.dp, FriendsTextGrey),
+        colors = ButtonColors(
+            containerColor = FriendsBoxGrey,
+            contentColor = White,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.LightGray
+        )
+    ) {
+        if(isChecked.value){
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text)
+                Icon(imageVector = Icons.Default.Check, "체크")
+            }
+        }else{
+            Text(text)
+        }
+
+    }
+}
+
+@Composable
+fun MFButtonWatchTogether(clickEvent: () -> Unit, text: String, isChecked: MutableState<Boolean>) {
+    Button(
+        shape = RoundedCornerShape(25),
+        onClick = clickEvent,
+        modifier = Modifier
+            .width(120.dp),
+        border = BorderStroke(1.dp, FriendsTextGrey),
+        colors = ButtonColors(
+            containerColor = FriendsBoxGrey,
+            contentColor = White,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.LightGray
+        ),
+        contentPadding = PaddingValues(
+            start = 2.dp,
+            top = 2.dp,
+            end = 2.dp,
+            bottom = 2.dp,
+        )
+    ) {
+        if(isChecked.value){
+            Text(stringResource(R.string.button_cancel))
+        }else{
+            Text(stringResource(R.string.button_watch_together))
+        }
+    }
+}
+
+@Composable
 fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
     Button(
         shape = RoundedCornerShape(25),
@@ -68,7 +134,6 @@ fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
             end = 2.dp,
             bottom = 2.dp,
         )
-
     ) {
         Text(text)
     }

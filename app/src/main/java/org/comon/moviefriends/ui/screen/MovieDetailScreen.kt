@@ -1,8 +1,6 @@
 package org.comon.moviefriends.ui.screen
 
 import android.content.Context
-import android.util.Log
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,16 +40,18 @@ import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.api.TMDBResult
-import org.comon.moviefriends.common.showToast
 import org.comon.moviefriends.model.ResponseCreditDto
 import org.comon.moviefriends.model.TMDBMovieDetail
-import org.comon.moviefriends.ui.theme.FriendsBlack
+import org.comon.moviefriends.model.UserInfo
+import org.comon.moviefriends.model.UserWantMovieInfo
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.ui.widget.MFBottomSheet
 import org.comon.moviefriends.ui.widget.MFBottomSheetContent
 import org.comon.moviefriends.ui.widget.MFButton
+import org.comon.moviefriends.ui.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
+import org.comon.moviefriends.ui.widget.MFPostTitle
 import org.comon.moviefriends.ui.widget.MFText
 import org.comon.moviefriends.ui.widget.MovieCreditShimmer
 import org.comon.moviefriends.ui.widget.MovieDetailShimmer
@@ -77,6 +77,8 @@ fun MovieDetailScreen(
     val movieItem by viewModel.movieDetail.collectAsStateWithLifecycle()
     val movieCredit by viewModel.movieCredit.collectAsStateWithLifecycle()
 
+    val wantThisMovieState = remember { mutableStateOf(false) }
+
     LaunchedEffect(key1 = Unit) {
         viewModel.getAllMovieInfo(movieId)
     }
@@ -92,24 +94,29 @@ fun MovieDetailScreen(
 
         /** 주요 출연진 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFText(stringResource(R.string.title_credits))
+        MFPostTitle(stringResource(R.string.title_credits))
         MovieCreditView(movieCredit, context)
 
         /** 이 영화를 보고 싶다 */
+        Spacer(Modifier.padding(vertical = 4.dp))
+        MFButtonWantThisMovie({
+            wantThisMovieState.value = !wantThisMovieState.value
+        }, stringResource(R.string.button_want_this_movie), wantThisMovieState)
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFButton({
-            showToast(context, "이 영화를 보고 싶다")
-        }, stringResource(R.string.button_want_this_movie))
-        Spacer(Modifier.padding(vertical = 12.dp))
-        MFText(stringResource(R.string.title_user_want_this_movie))
+        MFPostTitle(stringResource(R.string.title_user_want_this_movie))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             LazyRow {
-                items(listOf("유저1", "유저2")) { item ->
-                    UserWantListItem()
+                items(
+                    listOf(
+                        UserWantMovieInfo(userInfo = UserInfo(nickName = "유저1")),
+                        UserWantMovieInfo(userInfo = UserInfo(nickName = "유저2")),
+                    )
+                ) { item ->
+                    UserWantListItem(item.userInfo, item.userDistance)
                 }
             }
             MFButtonWidthResizable({
@@ -125,7 +132,7 @@ fun MovieDetailScreen(
 
         /** 유저 평점 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFText(stringResource(R.string.title_user_rate))
+        MFPostTitle(stringResource(R.string.title_user_rate))
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -149,7 +156,7 @@ fun MovieDetailScreen(
 
         /** 유저 리뷰 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFText(stringResource(R.string.title_user_review))
+        MFPostTitle(stringResource(R.string.title_user_review))
         Column(
             modifier = Modifier
                 .padding(12.dp)
@@ -159,6 +166,7 @@ fun MovieDetailScreen(
             MFText("유저1: 너무 재밌어요")
             MFText("유저1: 너무 재밌어요")
             MFText("유저1: 너무 재밌어요")
+            MFText("...")
         }
         MFButton({
             showReviewBottomSheet.value = true
@@ -197,7 +205,7 @@ private fun MovieDetailView(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                MFText(item?.title ?: "")
+                MFPostTitle(item?.title ?: "")
                 MFText("${item?.releaseDate} / ${item?.genres?.joinToString(",") { it.name }} / ${item?.runtime}분")
                 Spacer(Modifier.padding(vertical = 4.dp))
                 MFText(item?.overview ?: "")
@@ -230,12 +238,15 @@ private fun MovieCreditView(
     when (creditList) {
         is TMDBResult.Success -> {
             creditList.resultData.body()?.cast?.let {
-                stateLists.value = it
+                stateLists.value = it.filter { cast ->
+                    cast.order < 8
+                }
                 LazyRow {
                     items(stateLists.value){ item ->
                         Column(
                             modifier = Modifier
                                 .padding(end = 8.dp)
+                                .height(180.dp)
                                 .clickable { },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
@@ -254,14 +265,14 @@ private fun MovieCreditView(
                                 "${item.character} 역",
                                 Modifier.width(128.dp),
                                 TextStyle(
-                                    fontSize = 14.sp
+                                    fontSize = 12.sp
                                 )
                             )
                             MFText(
                                 item.name,
                                 Modifier.width(128.dp),
                                 TextStyle(
-                                    fontSize = 14.sp
+                                    fontSize = 12.sp
                                 )
                             )
                         }

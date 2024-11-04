@@ -46,7 +46,7 @@ fun UserReviewList(){
         modifier = Modifier.fillMaxSize()
             .padding(24.dp)
     ) {
-        MFText(stringResource(R.string.title_user_review))
+        MFPostTitle(stringResource(R.string.title_user_review))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -70,7 +70,7 @@ fun UserReviewList(){
                 .fillMaxSize()
         ) {
             items(reviewList){ review ->
-                MFText(review)
+                MFPostTitle(review)
             }
         }
     }

@@ -16,10 +16,11 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
+import org.comon.moviefriends.model.UserInfo
 
 @Preview
 @Composable
-fun UserWantListItem(){
+fun UserWantListItem(user: UserInfo, distance: Int){
     Row(
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 16.dp)
@@ -29,15 +30,15 @@ fun UserWantListItem(){
         AsyncImage(
             modifier = Modifier.size(48.dp).padding(end = 4.dp),
             model = ImageRequest.Builder(LocalContext.current)
-                .data("")
+                .data(user.profileImage)
                 .crossfade(true)
                 .error(R.drawable.logo)
                 .build(),
             contentDescription = "회원 프로필 사진",
         )
         Column {
-            MFText("유저1")
-            MFText("500m")
+            MFText(user.nickName)
+            MFText("${distance}m")
         }
     }
 }
