@@ -6,7 +6,6 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
 import org.comon.moviefriends.ui.theme.FriendsWhite
 

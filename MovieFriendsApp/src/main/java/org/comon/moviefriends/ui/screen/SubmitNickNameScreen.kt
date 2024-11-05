@@ -20,7 +20,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
 import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 import org.comon.moviefriends.ui.widget.MFButton

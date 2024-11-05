@@ -21,11 +21,11 @@ fun CommunityTab(
 ) {
     TabRow(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
-        selectedTabIndex = selectedItem.value
+        selectedTabIndex = selectedItem.intValue
     ) {
         COMMUNITY_MENU.entries.forEachIndexed { index, item ->
             Tab(
-                selected = selectedItem.value == index,
+                selected = selectedItem.intValue == index,
                 onClick = {
                     navigateToCommunityMenu(item.route, index)
                 },

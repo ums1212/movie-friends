@@ -18,7 +18,6 @@ import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.model.UserInfo
 
-@Preview
 @Composable
 fun UserWantListItem(user: UserInfo, distance: Int){
     Row(

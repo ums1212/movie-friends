@@ -126,7 +126,7 @@ fun MFTopAppBar(
         if(isTabMenuShown.value){
             CommunityTab(selectedTabItem) { route, index ->
                 navigateToCommunityMenu(route)
-                selectedTabItem.value = index
+                selectedTabItem.intValue = index
             }
         }
     }

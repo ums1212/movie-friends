@@ -2,7 +2,6 @@ package org.comon.moviefriends.repo
 
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOn
 import org.comon.moviefriends.api.TMDBResult
 import org.comon.moviefriends.api.TMDBService
 

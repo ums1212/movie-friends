@@ -25,7 +25,6 @@ import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.theme.FriendsRed
 
-@Preview
 @Composable
 fun RateModal(dismissModal: () -> Unit) {
 

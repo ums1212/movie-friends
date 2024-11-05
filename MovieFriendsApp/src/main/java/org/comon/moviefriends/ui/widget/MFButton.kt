@@ -86,7 +86,7 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: Mutab
 }
 
 @Composable
-fun MFButtonWatchTogether(clickEvent: () -> Unit, text: String, isChecked: MutableState<Boolean>) {
+fun MFButtonWatchTogether(clickEvent: () -> Unit, isChecked: MutableState<Boolean>) {
     Button(
         shape = RoundedCornerShape(25),
         onClick = clickEvent,

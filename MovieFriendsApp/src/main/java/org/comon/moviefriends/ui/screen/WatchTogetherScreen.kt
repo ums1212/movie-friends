@@ -23,7 +23,6 @@ import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.widget.MFText
 import org.comon.moviefriends.ui.widget.UserWantThisMovieList
 
-@Preview
 @Composable
 fun WatchTogetherScreen(
     navigateToRequestList: () -> Unit,

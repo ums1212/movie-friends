@@ -18,7 +18,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 
-@Preview
 @Composable
 fun CommunityListItem(onNavigateToPostDetail: () -> Unit) {
     // post: PostInfo

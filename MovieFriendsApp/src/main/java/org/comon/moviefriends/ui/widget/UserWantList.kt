@@ -36,7 +36,6 @@ import org.comon.moviefriends.model.UserInfo
 import org.comon.moviefriends.model.UserWantMovieInfo
 
 /** 이 영화를 보고 싶은 사람 목록 화면 */
-@Preview
 @Composable
 fun UserWantThisMovieList(
     screen: String,
@@ -101,7 +100,7 @@ fun UserWantThisMovieList(
 
                 MFButtonWatchTogether({
                     checked.value = !checked.value
-                }, stringResource(R.string.button_watch_together), checked)
+                }, checked)
             }
             Spacer(Modifier.padding(bottom = 8.dp))
         }
