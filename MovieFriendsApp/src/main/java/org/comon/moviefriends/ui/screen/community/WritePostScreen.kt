@@ -1,6 +1,5 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.ui.screen.community
 
-import android.widget.ProgressBar
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column

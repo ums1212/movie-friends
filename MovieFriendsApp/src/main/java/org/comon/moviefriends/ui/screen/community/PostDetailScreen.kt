@@ -1,4 +1,4 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.ui.screen.community
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

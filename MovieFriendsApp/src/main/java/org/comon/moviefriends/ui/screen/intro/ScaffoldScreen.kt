@@ -1,4 +1,4 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.ui.screen.intro
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -7,22 +7,31 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.common.PROFILE_MENU
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.ui.screen.community.CommunityScreen
+import org.comon.moviefriends.ui.screen.community.ReceiveListScreen
+import org.comon.moviefriends.ui.screen.community.RecommendScreen
+import org.comon.moviefriends.ui.screen.community.RequestListScreen
+import org.comon.moviefriends.ui.screen.community.WatchTogetherScreen
+import org.comon.moviefriends.ui.screen.community.WorldCupScreen
+import org.comon.moviefriends.ui.screen.home.HomeScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileCommunityPostScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileCommunityReplyScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileRateScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileReviewScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileSettingScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileWantMovieScreen
 import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.widget.CommunityFab
 import org.comon.moviefriends.ui.widget.MFNavigationBar
@@ -54,7 +63,7 @@ fun ScaffoldScreen(
                     scaffoldNavController.popBackStack()
                 },
                 navigateToProfileSetting = {
-                    mainNavController.navigate(NAV_ROUTE.MY_INFO_SETTING.route)
+                    mainNavController.navigate(NAV_ROUTE.PROFILE_SETTING.route)
                 }
             )
         },
@@ -118,14 +127,36 @@ fun ScaffoldScreen(
                 composable(COMMUNITY_MENU.WORLD_CUP.route) {
                     WorldCupScreen()
                 }
-                composable(NAV_ROUTE.MY_INFO.route) {
-                    MyInfoScreen(
-                        navigateToUserWant = {},
-                        navigateToUserRate = {},
-                        navigateToUserReview = {},
-                        navigateToUserCommunityPost = {},
-                        navigateToUserCommunityReply = {},
+                composable(NAV_ROUTE.PROFILE.route) {
+                    ProfileScreen(
+                        navigateToUserWant = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_WANT_MOVIE.route) },
+                        navigateToUserRate = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_RATE.route) },
+                        navigateToUserReview = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_REVIEW.route) },
+                        navigateToUserCommunityPost = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_COMMUNITY_POST.route) },
+                        navigateToUserCommunityReply = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route) },
                     )
+                }
+                composable(NAV_ROUTE.PROFILE_SETTING.route) {
+                    ProfileSettingScreen()
+                }
+                composable(PROFILE_MENU.PROFILE_WANT_MOVIE.route) {
+                    ProfileWantMovieScreen()
+                }
+                composable(PROFILE_MENU.PROFILE_RATE.route) {
+                    ProfileRateScreen()
+                }
+                composable(PROFILE_MENU.PROFILE_REVIEW.route) {
+                    ProfileReviewScreen()
+                }
+                composable(PROFILE_MENU.PROFILE_COMMUNITY_POST.route) {
+                    ProfileCommunityPostScreen{ postId ->
+                        mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}")
+                    }
+                }
+                composable(PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route) {
+                    ProfileCommunityReplyScreen{ postId ->
+                        mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}")
+                    }
                 }
             }
         }

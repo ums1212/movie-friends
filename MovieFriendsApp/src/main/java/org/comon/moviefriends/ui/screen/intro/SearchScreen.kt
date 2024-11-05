@@ -1,4 +1,4 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.ui.screen.intro
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
