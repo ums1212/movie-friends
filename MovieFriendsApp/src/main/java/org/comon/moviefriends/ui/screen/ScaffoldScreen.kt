@@ -43,13 +43,16 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                 },
                 confirmPost = {
                     scaffoldNavController.popBackStack()
+                },
+                navigateToProfileSetting = {
+                    mainNavController.navigate(NAV_ROUTE.MY_INFO_SETTING.route)
                 }
             )
         },
         floatingActionButton = {
             if(currentRoute== NAV_ROUTE.COMMUNITY.route){
                 CommunityFab {
-                    scaffoldNavController.navigate(NAV_ROUTE.WRITE_POST.route)
+                    mainNavController.navigate(NAV_ROUTE.WRITE_POST.route)
                 }
             }
         },
@@ -75,35 +78,19 @@ fun ScaffoldScreen(mainNavController: NavHostController){
             ) {
                 composable(NAV_ROUTE.HOME.route) {
                     HomeScreen { movieId ->
-                        scaffoldNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
+                        mainNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
                     }
-                }
-                composable(
-                    route = "${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}",
-                    arguments = listOf(
-                        navArgument("movieId"){
-                            type = NavType.IntType
-                        }
-                    )
-                ) { backStackEntry ->
-                    MovieDetailScreen(movieId = backStackEntry.arguments?.getInt("movieId") ?: 0)
                 }
                 composable(COMMUNITY_MENU.COMMUNITY.route) {
                     CommunityScreen { communityId ->
-                        scaffoldNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
+                        mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
                     }
-                }
-                composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
-                    PostDetailScreen(communityId = backStackEntry.arguments?.getInt("communityId") ?: 0)
-                }
-                composable(NAV_ROUTE.WRITE_POST.route) {
-                    WritePostScreen()
                 }
                 composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {
                     WatchTogetherScreen(
                         navigateToRequestList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.REQUEST_LIST.route) },
                         navigateToReceiveList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) },
-                        navigateToChatRoomList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) },
+                        navigateToChatRoomList = { mainNavController.navigate(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) },
                         navigateToMovieDetail = { movieId ->
                             scaffoldNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
                         },
@@ -115,9 +102,6 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                 composable(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) {
                     ReceiveListScreen()
                 }
-                composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
-                    ChatRoomListScreen()
-                }
                 composable(COMMUNITY_MENU.RECOMMEND.route) {
                     RecommendScreen()
                 }
@@ -125,7 +109,13 @@ fun ScaffoldScreen(mainNavController: NavHostController){
                     WorldCupScreen()
                 }
                 composable(NAV_ROUTE.MY_INFO.route) {
-                    MyInfoScreen()
+                    MyInfoScreen(
+                        navigateToUserWant = {},
+                        navigateToUserRate = {},
+                        navigateToUserReview = {},
+                        navigateToUserCommunityPost = {},
+                        navigateToUserCommunityReply = {},
+                    )
                 }
             }
         }

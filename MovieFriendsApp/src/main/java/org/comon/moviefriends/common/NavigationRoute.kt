@@ -10,6 +10,7 @@ enum class NAV_ROUTE(val route: String, val description: String){
     COMMUNITY_DETAIL("community_detail", "커뮤니티 상세 글 화면"),
     WRITE_POST("write_post", "커뮤니티 글 작성 화면"),
     MY_INFO("my_info", "내 정보 화면"),
+    MY_INFO_SETTING("my_info_setting", "내 정보 수정"),
     SEARCH("search", "검색 화면"),
 }
 
@@ -30,4 +31,12 @@ enum class WATCH_TOGETHER_MENU(val route: String, val description: String){
     REQUEST_LIST("request_list", "요청 내역"),
     RECEIVE_LIST("receive_list", "받은 내역"),
     CHAT_ROOM_LIST("chat_room_list", "채팅방"),
+}
+
+enum class PROFILE_MENU(val route: String, val description: String){
+    PROFILE_WANT_MOVIE("profile_want_movie", "보고 싶은 영화"),
+    PROFILE_RATE("profile_rate", "남긴 평점"),
+    PROFILE_REVIEW("profile_review", "남긴 리뷰"),
+    PROFILE_COMMUNITY_POST("profile_community_post", "남긴 커뮤니티 글"),
+    PROFILE_COMMUNITY_REPLY("profile_community_reply", "남긴 커뮤니티 댓글")
 }

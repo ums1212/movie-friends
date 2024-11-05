@@ -8,6 +8,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,6 +34,7 @@ fun MFTopAppBar(
     navigateToCommunityMenu: (String) -> Unit,
     navigateToSearch: () -> Unit,
     confirmPost: () -> Unit,
+    navigateToProfileSetting: () -> Unit,
 ) {
     val isTabMenuShown = remember { mutableStateOf(false) }
     val selectedTabItem = remember { mutableIntStateOf(0) }
@@ -56,8 +58,8 @@ fun MFTopAppBar(
             navigationIcon = {
                 if(route== NAV_ROUTE.COMMUNITY_DETAIL.route
                     || route== NAV_ROUTE.MOVIE_DETAIL.route
-                    || route== NAV_ROUTE.WRITE_POST.route
-                    ){
+                    || route== NAV_ROUTE.WRITE_POST.route)
+                {
                     IconButton(
                         onClick = navigatePop
                     ) {
@@ -114,6 +116,19 @@ fun MFTopAppBar(
                         Icon(
                             Icons.Filled.Check,
                             contentDescription = "글 작성 버튼",
+                            tint = colorResource(R.color.friends_white)
+                        )
+                    }
+                }
+
+                if(route== NAV_ROUTE.MY_INFO.route){
+                    /** 프로필 변경 버튼 */
+                    IconButton(
+                        onClick = navigateToProfileSetting,
+                    ) {
+                        Icon(
+                            Icons.Filled.Settings,
+                            contentDescription = "프로필 변경 버튼",
                             tint = colorResource(R.color.friends_white)
                         )
                     }

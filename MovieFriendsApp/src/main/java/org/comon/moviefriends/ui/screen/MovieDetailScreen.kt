@@ -16,6 +16,13 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,12 +33,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -46,6 +55,7 @@ import org.comon.moviefriends.model.UserInfo
 import org.comon.moviefriends.model.UserWantMovieInfo
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.viewmodel.MovieDetailViewModel
+import org.comon.moviefriends.ui.widget.DetailTopAppBar
 import org.comon.moviefriends.ui.widget.MFBottomSheet
 import org.comon.moviefriends.ui.widget.MFBottomSheetContent
 import org.comon.moviefriends.ui.widget.MFButton
@@ -62,7 +72,8 @@ import retrofit2.Response
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
-    viewModel: MovieDetailViewModel = viewModel()
+    viewModel: MovieDetailViewModel = viewModel(),
+    navigatePop: () -> Unit
 ) {
 
     val context = LocalContext.current
@@ -83,98 +94,105 @@ fun MovieDetailScreen(
         viewModel.getAllMovieInfo(movieId)
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(scrollState)
-    ) {
-
-        /** 영화 정보 */
-        MovieDetailView(movieItem, context)
-
-        /** 주요 출연진 */
-        Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_credits))
-        MovieCreditView(movieCredit, context)
-
-        /** 이 영화를 보고 싶다 */
-        Spacer(Modifier.padding(vertical = 4.dp))
-        MFButtonWantThisMovie({
-            wantThisMovieState.value = !wantThisMovieState.value
-        }, stringResource(R.string.button_want_this_movie), wantThisMovieState)
-        Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_want_this_movie))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            LazyRow {
-                items(
-                    listOf(
-                        UserWantMovieInfo(userInfo = UserInfo(nickName = "유저1")),
-                        UserWantMovieInfo(userInfo = UserInfo(nickName = "유저2")),
-                    )
-                ) { item ->
-                    UserWantListItem(item.userInfo, item.userDistance)
-                }
-            }
-            MFButtonWidthResizable({
-                showUserWantBottomSheet.value = true
-            }, stringResource(R.string.button_more), 90.dp)
-        }
-
-        if(showUserWantBottomSheet.value){
-            MFBottomSheet(MFBottomSheetContent.UserWantList) {
-                showUserWantBottomSheet.value = false
-            }
-        }
-
-        /** 유저 평점 */
-        Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_rate))
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            RatingBarView(
-                isRatingEditable = false,
-                rating = movieRating,
-                ratedStarsColor = FriendsRed,
-            )
-        }
-
-        MFButton({
-            showRateModal.intValue = 1
-        }, stringResource(R.string.button_user_rate))
-
-        if (showRateModal.intValue == 1) {
-            RateModal {
-                showRateModal.intValue = 0
-            }
-        }
-
-        /** 유저 리뷰 */
-        Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_review))
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = { DetailTopAppBar(navigatePop) },
+    ) { innerPadding ->
         Column(
             modifier = Modifier
+                .padding(innerPadding)
                 .padding(12.dp)
-                .fillMaxWidth()
-                .height(80.dp)
+                .fillMaxSize()
+                .verticalScroll(scrollState)
         ) {
-            MFText("유저1: 너무 재밌어요")
-            MFText("유저1: 너무 재밌어요")
-            MFText("유저1: 너무 재밌어요")
-            MFText("...")
-        }
-        MFButton({
-            showReviewBottomSheet.value = true
-        }, stringResource(R.string.button_more_user_review))
 
-        if(showReviewBottomSheet.value){
-            MFBottomSheet(MFBottomSheetContent.UserReview) {
-                showReviewBottomSheet.value = false
+            /** 영화 정보 */
+            MovieDetailView(movieItem, context)
+
+            /** 주요 출연진 */
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_credits))
+            MovieCreditView(movieCredit, context)
+
+            /** 이 영화를 보고 싶다 */
+            Spacer(Modifier.padding(vertical = 4.dp))
+            MFButtonWantThisMovie({
+                wantThisMovieState.value = !wantThisMovieState.value
+            }, stringResource(R.string.button_want_this_movie), wantThisMovieState)
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_user_want_this_movie))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                LazyRow {
+                    items(
+                        listOf(
+                            UserWantMovieInfo(userInfo = UserInfo(nickName = "유저1")),
+                            UserWantMovieInfo(userInfo = UserInfo(nickName = "유저2")),
+                        )
+                    ) { item ->
+                        UserWantListItem(item.userInfo, item.userDistance)
+                    }
+                }
+                MFButtonWidthResizable({
+                    showUserWantBottomSheet.value = true
+                }, stringResource(R.string.button_more), 90.dp)
+            }
+
+            if(showUserWantBottomSheet.value){
+                MFBottomSheet(MFBottomSheetContent.UserWantList) {
+                    showUserWantBottomSheet.value = false
+                }
+            }
+
+            /** 유저 평점 */
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_user_rate))
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                RatingBarView(
+                    isRatingEditable = false,
+                    rating = movieRating,
+                    ratedStarsColor = FriendsRed,
+                )
+            }
+
+            MFButton({
+                showRateModal.intValue = 1
+            }, stringResource(R.string.button_user_rate))
+
+            if (showRateModal.intValue == 1) {
+                RateModal {
+                    showRateModal.intValue = 0
+                }
+            }
+
+            /** 유저 리뷰 */
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_user_review))
+            Column(
+                modifier = Modifier
+                    .padding(12.dp)
+                    .fillMaxWidth()
+                    .height(80.dp)
+            ) {
+                MFText("유저1: 너무 재밌어요")
+                MFText("유저1: 너무 재밌어요")
+                MFText("유저1: 너무 재밌어요")
+                MFText("...")
+            }
+            MFButton({
+                showReviewBottomSheet.value = true
+            }, stringResource(R.string.button_more_user_review))
+
+            if(showReviewBottomSheet.value){
+                MFBottomSheet(MFBottomSheetContent.UserReview) {
+                    showReviewBottomSheet.value = false
+                }
             }
         }
     }

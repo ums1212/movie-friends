@@ -8,17 +8,29 @@ import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.comon.moviefriends.ui.screen.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.ui.screen.ChatRoomListScreen
+import org.comon.moviefriends.ui.screen.MovieDetailScreen
+import org.comon.moviefriends.ui.screen.MyInfoSettingScreen
+import org.comon.moviefriends.ui.screen.PostDetailScreen
 import org.comon.moviefriends.ui.screen.ScaffoldScreen
 import org.comon.moviefriends.ui.screen.SearchScreen
 import org.comon.moviefriends.ui.screen.SubmitNickNameScreen
+import org.comon.moviefriends.ui.screen.WritePostScreen
+import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.theme.MovieFriendsTheme
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
 
@@ -69,23 +81,62 @@ class MainActivity : ComponentActivity() {
 //            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
             val startDestination = NAV_ROUTE.SCAFFOLD.route
 
-            NavHost(navController = navController, startDestination = startDestination) {
-                composable(NAV_ROUTE.LOGIN.route) {
-                    LoginScreen(
-                        { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
-                        { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
-                    )
-                }
-                composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
-                    SubmitNickNameScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
-                }
-                composable(NAV_ROUTE.SCAFFOLD.route) {
-                    ScaffoldScreen(navController)
-                }
-                composable(NAV_ROUTE.SEARCH.route) {
-                    SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
+            Box(modifier = Modifier.background(FriendsBlack)){
+                NavHost(navController = navController, startDestination = startDestination) {
+                    composable(NAV_ROUTE.LOGIN.route) {
+                        LoginScreen(
+                            { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
+                            { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+                        )
+                    }
+                    composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
+                        SubmitNickNameScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
+                    }
+                    composable(NAV_ROUTE.SCAFFOLD.route) {
+                        ScaffoldScreen(navController)
+                    }
+                    composable(NAV_ROUTE.SEARCH.route) {
+                        SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
+                    }
+
+                    /** 상세 화면 */
+
+                    /** 상세 화면 */
+                    composable(
+                        route = "${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}",
+                        arguments = listOf(
+                            navArgument("movieId"){
+                                type = NavType.IntType
+                            }
+                        )
+                    ) { backStackEntry ->
+                        MovieDetailScreen(
+                            movieId = backStackEntry.arguments?.getInt("movieId") ?: 0,
+                            navigatePop = { navController.popBackStack() }
+                        )
+                    }
+                    composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
+                        PostDetailScreen(
+                            communityId = backStackEntry.arguments?.getInt("communityId") ?: 0,
+                            navigatePop = { navController.popBackStack() }
+                        )
+                    }
+                    composable(NAV_ROUTE.WRITE_POST.route) {
+                        WritePostScreen(
+                            navigateToPostDetail = { communityId ->
+                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}") },
+                            navigatePop = { navController.popBackStack() }
+                        )
+                    }
+                    composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
+                        ChatRoomListScreen()
+                    }
+                    composable(NAV_ROUTE.MY_INFO_SETTING.route) {
+                        MyInfoSettingScreen()
+                    }
                 }
             }
+
 
         }
     }
