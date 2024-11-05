@@ -61,6 +61,8 @@ fun WatchTogetherScreen(
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         MFText(text = stringResource(R.string.title_user_want_movies))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        UserWantThisMovieList(screen = "watch_together", navigateToMovieDetail = navigateToMovieDetail)
+        UserWantThisMovieList(screen = "watch_together"){ movieId ->
+            navigateToMovieDetail(movieId)
+        }
     }
 }

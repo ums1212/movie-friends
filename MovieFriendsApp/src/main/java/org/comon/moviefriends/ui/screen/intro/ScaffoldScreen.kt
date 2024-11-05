@@ -111,7 +111,7 @@ fun ScaffoldScreen(
                         navigateToReceiveList = { scaffoldNavController.navigate(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) },
                         navigateToChatRoomList = { mainNavController.navigate(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) },
                         navigateToMovieDetail = { movieId ->
-                            scaffoldNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
+                            mainNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")
                         },
                     )
                 }
