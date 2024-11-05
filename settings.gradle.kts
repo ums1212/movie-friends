@@ -24,6 +24,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MovieFriends"
+rootProject.name = "movie-friends"
 include(":MovieFriendsApp")
  
