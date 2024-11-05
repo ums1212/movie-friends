@@ -1,7 +1,6 @@
-package org.comon.moviefriends.ui.screen
+package org.comon.moviefriends.ui.screen.profile
 
 import android.content.Context
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -23,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,17 +35,15 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
-import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.model.UserInfo
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
 import org.comon.moviefriends.ui.theme.FriendsWhite
 import org.comon.moviefriends.ui.widget.MFPostTitle
-import org.comon.moviefriends.ui.widget.OnDevelopMark
 
 @Preview
 @Composable
-fun MyInfoScreen(
+fun ProfileScreen(
     navigateToUserWant: () -> Unit,
     navigateToUserRate: () -> Unit,
     navigateToUserReview: () -> Unit,

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.common.PROFILE_MENU
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -46,7 +47,16 @@ fun MFTopAppBar(
                 titleContentColor = colorResource(R.color.friends_black),
             ),
             title = {
-                if(route!= NAV_ROUTE.COMMUNITY_DETAIL.route && route!= NAV_ROUTE.MOVIE_DETAIL.route){
+                if(
+                    route!= NAV_ROUTE.COMMUNITY_DETAIL.route
+                    && route!= NAV_ROUTE.MOVIE_DETAIL.route
+                    && route!= PROFILE_MENU.PROFILE_WANT_MOVIE.route
+                    && route!= PROFILE_MENU.PROFILE_RATE.route
+                    && route!= PROFILE_MENU.PROFILE_REVIEW.route
+                    && route!= PROFILE_MENU.PROFILE_COMMUNITY_POST.route
+                    && route!= PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route
+                    )
+                {
                     Image(
                         modifier = Modifier
                             .size(width = 50.dp, height = 50.dp),
@@ -58,7 +68,13 @@ fun MFTopAppBar(
             navigationIcon = {
                 if(route== NAV_ROUTE.COMMUNITY_DETAIL.route
                     || route== NAV_ROUTE.MOVIE_DETAIL.route
-                    || route== NAV_ROUTE.WRITE_POST.route)
+                    || route== NAV_ROUTE.WRITE_POST.route
+                    || route== PROFILE_MENU.PROFILE_WANT_MOVIE.route
+                    || route== PROFILE_MENU.PROFILE_RATE.route
+                    || route== PROFILE_MENU.PROFILE_REVIEW.route
+                    || route== PROFILE_MENU.PROFILE_COMMUNITY_POST.route
+                    || route== PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route
+                    )
                 {
                     IconButton(
                         onClick = navigatePop
@@ -121,7 +137,7 @@ fun MFTopAppBar(
                     }
                 }
 
-                if(route== NAV_ROUTE.MY_INFO.route){
+                if(route== NAV_ROUTE.PROFILE.route){
                     /** 프로필 변경 버튼 */
                     IconButton(
                         onClick = navigateToProfileSetting,

@@ -21,17 +21,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import org.comon.moviefriends.ui.screen.LoginScreen
+import org.comon.moviefriends.ui.screen.intro.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
-import org.comon.moviefriends.ui.screen.ChatRoomListScreen
-import org.comon.moviefriends.ui.screen.MovieDetailScreen
-import org.comon.moviefriends.ui.screen.MyInfoSettingScreen
-import org.comon.moviefriends.ui.screen.PostDetailScreen
-import org.comon.moviefriends.ui.screen.ScaffoldScreen
-import org.comon.moviefriends.ui.screen.SearchScreen
-import org.comon.moviefriends.ui.screen.SubmitNickNameScreen
-import org.comon.moviefriends.ui.screen.WritePostScreen
+import org.comon.moviefriends.ui.screen.community.ChatRoomListScreen
+import org.comon.moviefriends.ui.screen.home.MovieDetailScreen
+import org.comon.moviefriends.ui.screen.profile.ProfileSettingScreen
+import org.comon.moviefriends.ui.screen.community.PostDetailScreen
+import org.comon.moviefriends.ui.screen.intro.ScaffoldScreen
+import org.comon.moviefriends.ui.screen.intro.SearchScreen
+import org.comon.moviefriends.ui.screen.intro.SubmitNickNameScreen
+import org.comon.moviefriends.ui.screen.community.WritePostScreen
 import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.theme.MovieFriendsTheme
 import org.comon.moviefriends.ui.viewmodel.LoginViewModel
@@ -136,8 +136,8 @@ class MainActivity : ComponentActivity() {
                     composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
                         ChatRoomListScreen()
                     }
-                    composable(NAV_ROUTE.MY_INFO_SETTING.route) {
-                        MyInfoSettingScreen()
+                    composable(NAV_ROUTE.PROFILE_SETTING.route) {
+                        ProfileSettingScreen()
                     }
                 }
             }
