@@ -9,6 +9,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.IntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -19,10 +20,9 @@ import org.comon.moviefriends.common.NAV_MENU
 
 @Composable
 fun MFNavigationBar(
-    navigateToMenu: (String) -> Unit,
+    selectedItem: IntState,
+    navigateToMenu: (String, Int) -> Unit,
 ) {
-
-    var selectedItem by remember { mutableIntStateOf(0) }
 
     val icons = listOf(
         Icons.Filled.Home,
@@ -43,10 +43,9 @@ fun MFNavigationBar(
                     )
                 },
                 label = { Text(item.description) },
-                selected = selectedItem == index,
+                selected = selectedItem.intValue == index,
                 onClick = {
-                    selectedItem = index
-                    navigateToMenu(NAV_MENU.entries[index].route)
+                    navigateToMenu(NAV_MENU.entries[index].route, index)
                 }
             )
         }

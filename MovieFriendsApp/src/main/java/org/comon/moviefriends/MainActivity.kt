@@ -11,6 +11,8 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -77,6 +79,7 @@ class MainActivity : ComponentActivity() {
             darkTheme = true
         ) {
             val navController = rememberNavController()
+            val selectedBottomMenuItem = remember { mutableIntStateOf(0) }
 
 //            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
             val startDestination = NAV_ROUTE.SCAFFOLD.route
@@ -93,7 +96,9 @@ class MainActivity : ComponentActivity() {
                         SubmitNickNameScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
                     }
                     composable(NAV_ROUTE.SCAFFOLD.route) {
-                        ScaffoldScreen(navController)
+                        ScaffoldScreen(navController, selectedBottomMenuItem){ bottomMenuindex ->
+                            selectedBottomMenuItem.intValue = bottomMenuindex
+                        }
                     }
                     composable(NAV_ROUTE.SEARCH.route) {
                         SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
