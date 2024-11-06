@@ -5,7 +5,9 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,10 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.google.firebase.firestore.DocumentReference
 import org.comon.moviefriends.R
 import org.comon.moviefriends.api.tmdb.APIResult
-import org.comon.moviefriends.model.UserWantMovieInfo
 import org.comon.moviefriends.ui.theme.Black
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
@@ -57,7 +57,7 @@ fun MFButton(clickEvent: () -> Unit, text: String) {
 }
 
 @Composable
-fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIResult<DocumentReference?>) {
+fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIResult<Boolean>) {
     Button(
         shape = RoundedCornerShape(25),
         onClick = clickEvent,
@@ -73,12 +73,13 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIRe
         )
     ) {
         when(isChecked){
+            is APIResult.Loading -> { ShimmerEffect(modifier = Modifier.fillMaxSize()) }
             is APIResult.Success -> {
-                if(isChecked.resultData != null){
+                if(isChecked.resultData){
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
+                        horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Text(text)
                         Icon(imageVector = Icons.Default.Check, "체크")
@@ -87,7 +88,9 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIRe
                     Text(text)
                 }
             }
-            else -> { Text(text) }
+            else -> {
+                Text(text)
+            }
         }
     }
 }

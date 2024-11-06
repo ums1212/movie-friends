@@ -1,6 +1,7 @@
 package org.comon.moviefriends.ui.screen.home
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -112,7 +113,11 @@ fun MovieDetailScreen(
         ) {
 
             /** 영화 정보 */
-            MovieDetailView(movieItem, context)
+            MovieDetailView(
+                movieItem = movieItem,
+                setMovieInfo = { movieInfo -> viewModel.setMovieInfo(movieInfo) },
+                context = context
+            )
 
             /** 주요 출연진 */
             Spacer(Modifier.padding(vertical = 12.dp))
@@ -214,11 +219,13 @@ fun MovieDetailScreen(
 @Composable
 private fun MovieDetailView(
     movieItem: APIResult<Response<TMDBMovieDetail>>,
+    setMovieInfo: (TMDBMovieDetail) -> Unit,
     context: Context
 ) {
     when (movieItem) {
         is APIResult.Success -> {
             val item = movieItem.resultData.body()
+            item?.let(setMovieInfo)
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()

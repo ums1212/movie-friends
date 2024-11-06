@@ -69,13 +69,13 @@ class MovieDetailViewModel: ViewModel() {
         }
     }
 
-    private val _wantThisMovieState = MutableStateFlow<APIResult<DocumentReference?>>(APIResult.NoConstructor)
+    private val _wantThisMovieState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
     val wantThisMovieState get() = _wantThisMovieState.asStateFlow()
 
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
-        getStateWantThisMovie(movieId.value)
+        getStateWantThisMovie()
 //        getUserWantList(movieId)
 //        getUserRate(movieId)
 //        getUserReview(movieId)
@@ -97,21 +97,27 @@ class MovieDetailViewModel: ViewModel() {
         }
     }
 
-    fun changeStateWantThisMovie() {
-        viewModelScope.launch {
-            repository.changeStateWantThisMovie(movieId.value, userInfo.value).collectLatest { result ->
-                when(result){
-                    is APIResult.Success -> TODO()
-                    else ->_wantThisMovieState.emit(result)
-                }
+    private val _movieInfo: MutableStateFlow<TMDBMovieDetail?> = MutableStateFlow(null)
+    val movieInfo get() = _movieInfo.asStateFlow()
+    fun setMovieInfo(movieInfo: TMDBMovieDetail) {
+        _movieInfo.value = movieInfo
+    }
 
+    fun changeStateWantThisMovie() {
+        if(_movieInfo.value==null) return
+
+        viewModelScope.launch {
+            _movieInfo.value?.let {
+                repository.changeStateWantThisMovie(it, userInfo.value).collectLatest { result ->
+                    _wantThisMovieState.emit(result)
+                }
             }
         }
     }
 
-    private fun getStateWantThisMovie(movieId: Int) {
+    private fun getStateWantThisMovie() {
         viewModelScope.launch {
-            repository.getStateWantThisMovie(movieId, userInfo.value).collectLatest { result ->
+            repository.getStateWantThisMovie(_movieId.value, userInfo.value).collectLatest { result ->
                 _wantThisMovieState.emit(result)
             }
         }

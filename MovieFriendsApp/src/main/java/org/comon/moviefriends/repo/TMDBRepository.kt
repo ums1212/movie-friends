@@ -1,11 +1,11 @@
 package org.comon.moviefriends.repo
 
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.api.firebase.FirestoreDataSource
 import org.comon.moviefriends.api.tmdb.APIResult
 import org.comon.moviefriends.api.tmdb.TMDBService
+import org.comon.moviefriends.model.TMDBMovieDetail
 import org.comon.moviefriends.model.UserInfo
 
 class TMDBRepository {
@@ -54,20 +54,10 @@ class TMDBRepository {
         error -> emit(APIResult.NetworkError(error))
     }
 
-    fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo) = flow {
-        fs.getStateWantThisMovie(movieId, userInfo).collectLatest {
-            emit(it)
-        }
-    }.catch{
-        error -> emit(APIResult.NetworkError(error))
-    }
+    suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo) =
+        fs.getStateWantThisMovie(movieId, userInfo)
 
-    fun changeStateWantThisMovie(movieId: Int, userInfo: UserInfo) = flow {
-        fs.changeStateWantThisMovie(movieId, userInfo).collectLatest {
-            emit(it)
-        }
-    }.catch{
-            error -> emit(APIResult.NetworkError(error))
-    }
+    suspend fun changeStateWantThisMovie(movieInfo: TMDBMovieDetail, userInfo: UserInfo) =
+        fs.changeStateWantThisMovie(movieInfo, userInfo)
 
 }
