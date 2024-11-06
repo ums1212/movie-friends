@@ -1,6 +1,7 @@
 package org.comon.moviefriends.presenter.screen.home
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,9 +38,10 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
+import kotlinx.coroutines.flow.collectLatest
 import org.comon.moviefriends.R
-import org.comon.moviefriends.data.api.tmdb.BASE_TMDB_IMAGE_URL
-import org.comon.moviefriends.data.api.tmdb.APIResult
+import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.ResponseCreditDto
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
@@ -87,19 +89,25 @@ fun MovieDetailScreen(
     val userWantBottomSheetState by viewModel.userWantBottomSheetState.collectAsStateWithLifecycle()
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
-    val userMovieRating by viewModel.userMovieRating.collectAsStateWithLifecycle()
-    val userMovieRatingState by lazy {
-        mutableIntStateOf(userMovieRating)
+
+    val userMovieRatingState = remember {
+        mutableIntStateOf(0)
     }
-    val mfAllUserMovieRating by viewModel.mfAllUserMovieRating
-    val mfAllUserMovieRatingState by lazy {
-        mutableIntStateOf(mfAllUserMovieRating)
+    val mfAllUserMovieRatingState = remember {
+        mutableIntStateOf(0)
     }
 
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
         viewModel.getUserInfo(userInfo)
         viewModel.getAllMovieInfo()
+
+        viewModel.mfAllUserMovieRating.collectLatest {
+            mfAllUserMovieRatingState.intValue = it
+        }
+        viewModel.userMovieRating.collectLatest {
+            userMovieRatingState.intValue = it
+        }
     }
 
     Scaffold(

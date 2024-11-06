@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.api.tmdb
+package org.comon.moviefriends.data.datasource.tmdb
 
 enum class MovieCategory(val str: String) {
     NOW_PLAYING("상영중인 영화"),

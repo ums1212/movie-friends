@@ -28,7 +28,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
-import org.comon.moviefriends.data.api.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserWantMovieInfo
 import org.comon.moviefriends.presenter.common.clickableOnce

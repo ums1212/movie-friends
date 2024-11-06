@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.comon.moviefriends.data.api.tmdb.MovieCategory
-import org.comon.moviefriends.data.api.tmdb.APIResult
+import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.TMDBMovies
-import org.comon.moviefriends.data.repo.TMDBRepository
+import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
 
 class HomeViewModel: ViewModel() {
@@ -39,10 +39,10 @@ class HomeViewModel: ViewModel() {
     }
 
     fun getAllMovies(){
-        getCategoryMovies(TMDBRepository().getNowPlaying(), MovieCategory.NOW_PLAYING)
-        getCategoryMovies(TMDBRepository().getPopular(), MovieCategory.POPULAR)
-        getCategoryMovies(TMDBRepository().getTopRated(), MovieCategory.TOP_RATED)
-        getCategoryMovies(TMDBRepository().getUpcoming(), MovieCategory.UP_COMING)
+        getCategoryMovies(TMDBRepositoryImpl().getNowPlaying(), MovieCategory.NOW_PLAYING)
+        getCategoryMovies(TMDBRepositoryImpl().getPopular(), MovieCategory.POPULAR)
+        getCategoryMovies(TMDBRepositoryImpl().getTopRated(), MovieCategory.TOP_RATED)
+        getCategoryMovies(TMDBRepositoryImpl().getUpcoming(), MovieCategory.UP_COMING)
     }
 
     private fun getCategoryMovies(flow: Flow<APIResult<Response<TMDBMovies>>>, category: MovieCategory){

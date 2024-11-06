@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.api.tmdb
+package org.comon.moviefriends.data.datasource.tmdb
 
 sealed class APIResult<out T> {
     data object NoConstructor : APIResult<Nothing>()

@@ -1,7 +1,7 @@
-package org.comon.moviefriends.data.api.firebase
+package org.comon.moviefriends.data.datasource.firebase
 
 import kotlinx.coroutines.flow.Flow
-import org.comon.moviefriends.data.api.tmdb.APIResult
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserRate

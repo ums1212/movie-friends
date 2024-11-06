@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.api.tmdb
+package org.comon.moviefriends.data.datasource.tmdb
 
 import android.util.Log
 import okhttp3.OkHttpClient

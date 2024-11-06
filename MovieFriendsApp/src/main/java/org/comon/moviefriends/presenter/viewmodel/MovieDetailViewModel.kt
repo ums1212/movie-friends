@@ -9,16 +9,17 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.comon.moviefriends.data.api.tmdb.APIResult
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.ResponseCreditDto
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
-import org.comon.moviefriends.data.repo.TMDBRepository
+import org.comon.moviefriends.data.model.UserRate
+import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
 
-class MovieDetailViewModel: ViewModel() {
-
-    private val repository = TMDBRepository()
+class MovieDetailViewModel(
+    private val repository: TMDBRepositoryImpl = TMDBRepositoryImpl()
+): ViewModel() {
 
     private val _movieId = MutableStateFlow(0)
     val movieId get() = _movieId.asStateFlow()
@@ -41,8 +42,8 @@ class MovieDetailViewModel: ViewModel() {
     private val _userMovieRating = MutableStateFlow(0)
     val userMovieRating get() = _userMovieRating.asStateFlow()
 
-    private val _mfAllUserMovieRating = mutableIntStateOf(0)
-    val mfAllUserMovieRating: IntState get() = _mfAllUserMovieRating
+    private val _mfAllUserMovieRating = MutableStateFlow(0)
+    val mfAllUserMovieRating get() = _mfAllUserMovieRating
 
     private val _rateModalState = MutableStateFlow(false)
     val rateModalState get() = _rateModalState.asStateFlow()
@@ -135,18 +136,25 @@ class MovieDetailViewModel: ViewModel() {
             repository.getAllUserMovieRating(_movieId.value).collectLatest {
                 when(it){
                     is APIResult.Success -> {
-                        var sum = 0
-                        it.resultData.forEach { rateInfo ->
-                            rateInfo?.rate?.let { userRate ->
-                                sum += userRate
-                            }
-                        }
-                        _mfAllUserMovieRating.intValue = sum / it.resultData.size
+                        _mfAllUserMovieRating.emit(getRateAverage(it.resultData))
                     }
                     else -> {}
                 }
             }
         }
+    }
+
+    private fun getRateAverage(list: List<UserRate?>): Int {
+        var result = 0
+        if(list.isNotEmpty()){
+            list.forEach { rateInfo ->
+                rateInfo?.rate.let { userRate ->
+                    result += userRate!!
+                }
+            }
+            result /= list.size
+        }
+        return result
     }
 
     fun voteUserRate(star: Int) {
@@ -155,6 +163,7 @@ class MovieDetailViewModel: ViewModel() {
                 when(it){
                     is APIResult.Success -> {
                         _userMovieRating.emit(it.resultData)
+                        getAllUserRate()
                     }
                     else -> {}
                 }

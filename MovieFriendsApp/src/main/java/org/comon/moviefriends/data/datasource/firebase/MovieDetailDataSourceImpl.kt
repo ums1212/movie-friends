@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.api.firebase
+package org.comon.moviefriends.data.datasource.firebase
 
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.QuerySnapshot
@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.data.api.tmdb.APIResult
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserRate
