@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.widget
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,17 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
-import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.api.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.model.UserInfo
 import org.comon.moviefriends.model.UserWantMovieInfo
+import org.comon.moviefriends.ui.common.clickableOnce
 
 /** 이 영화를 보고 싶은 사람 목록 화면 */
 @Composable
@@ -73,7 +71,7 @@ fun UserWantThisMovieList(
                                 .width(80.dp)
                                 .height(120.dp)
                                 .padding(4.dp)
-                                .clickable {
+                                .clickableOnce {
                                     navigateToMovieDetail(want.movieId)
                                 },
                             shape = RoundedCornerShape(8.dp),

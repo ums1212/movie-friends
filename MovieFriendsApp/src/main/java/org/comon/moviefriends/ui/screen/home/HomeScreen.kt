@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import org.comon.moviefriends.api.MovieCategory
+import org.comon.moviefriends.api.tmdb.MovieCategory
 import org.comon.moviefriends.ui.viewmodel.HomeViewModel
 import org.comon.moviefriends.ui.widget.MovieList
 

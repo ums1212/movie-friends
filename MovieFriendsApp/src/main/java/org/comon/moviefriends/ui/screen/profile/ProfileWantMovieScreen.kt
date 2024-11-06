@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.profile
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,6 +23,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -35,24 +36,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
+import org.comon.moviefriends.model.UserInfo
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
+import org.comon.moviefriends.ui.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.ui.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.ui.widget.MFPostTitle
 import org.comon.moviefriends.ui.widget.MFText
 
 @Preview
 @Composable
-fun ProfileWantMovieScreen() {
+fun ProfileWantMovieScreen(
+    viewModel: MovieDetailViewModel = viewModel(),
+) {
     val pagerState = rememberPagerState(0, pageCount = { 10 })
     val animationScope = rememberCoroutineScope()
 
-    val wantThisMovieState = remember { mutableStateOf(false) }
+    val wantThisMovieState by viewModel.wantThisMovieState.collectAsStateWithLifecycle()
 
 //    OnDevelopMark()
     Column(
@@ -93,7 +101,7 @@ fun ProfileWantMovieScreen() {
                         .width(200.dp)
                         .height(300.dp)
                         .padding(4.dp)
-                        .clickable {},
+                        .clickableOnce {},
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color.LightGray),
                     elevation = CardDefaults.cardElevation(
@@ -130,15 +138,19 @@ fun ProfileWantMovieScreen() {
         }
 
         Column(
-            Modifier.fillMaxWidth().padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             MFPostTitle("영화 제목")
             MFText("개봉연도 / 장르 / 상영시간")
         }
 
-        MFButtonWantThisMovie({
-            wantThisMovieState.value = !wantThisMovieState.value
-        }, stringResource(R.string.button_want_this_movie), wantThisMovieState)
+        MFButtonWantThisMovie(
+            { viewModel.changeStateWantThisMovie() },
+            stringResource(R.string.button_want_this_movie),
+            wantThisMovieState
+        )
     }
 }

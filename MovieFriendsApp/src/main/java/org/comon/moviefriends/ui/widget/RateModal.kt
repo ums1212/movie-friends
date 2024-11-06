@@ -11,6 +11,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -26,9 +27,11 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.ui.theme.FriendsRed
 
 @Composable
-fun RateModal(dismissModal: () -> Unit) {
-
-    val rating = remember{ mutableIntStateOf(0) }
+fun RateModal(
+    dismissModal: () -> Unit,
+    userRate: MutableIntState,
+    voteUserRate: (star: Int) -> Unit,
+) {
 
     Dialog(
         onDismissRequest = dismissModal,
@@ -53,7 +56,7 @@ fun RateModal(dismissModal: () -> Unit) {
             ) {
                 RatingBarView(
                     isRatingEditable = true,
-                    rating = rating,
+                    rating = userRate,
                     ratedStarsColor = FriendsRed,
                 )
                 Row(
@@ -64,7 +67,12 @@ fun RateModal(dismissModal: () -> Unit) {
                 ) {
                     MFButtonWidthResizable(dismissModal, stringResource(R.string.button_cancel), 80.dp)
                     Spacer(Modifier.padding(end = 8.dp))
-                    MFButtonConfirm(dismissModal, stringResource(R.string.button_confirm), 80.dp)
+                    MFButtonConfirm(
+                        { voteUserRate(userRate.intValue)
+                        dismissModal() },
+                        stringResource(R.string.button_confirm),
+                        80.dp
+                    )
                 }
             }
 

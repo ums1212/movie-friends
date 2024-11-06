@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.profile
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +42,7 @@ import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
@@ -96,7 +96,7 @@ fun ProfileRateScreen() {
                         .width(200.dp)
                         .height(300.dp)
                         .padding(4.dp)
-                        .clickable {},
+                        .clickableOnce {},
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color.LightGray),
                     elevation = CardDefaults.cardElevation(

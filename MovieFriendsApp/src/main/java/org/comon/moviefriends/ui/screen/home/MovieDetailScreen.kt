@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.home
 
 import android.content.Context
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,12 +39,14 @@ import coil3.request.crossfade
 import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
 import org.comon.moviefriends.R
-import org.comon.moviefriends.api.BASE_TMDB_IMAGE_URL
-import org.comon.moviefriends.api.TMDBResult
+import org.comon.moviefriends.api.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.api.tmdb.APIResult
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.model.ResponseCreditDto
 import org.comon.moviefriends.model.TMDBMovieDetail
 import org.comon.moviefriends.model.UserInfo
 import org.comon.moviefriends.model.UserWantMovieInfo
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.ui.widget.DetailTopAppBar
@@ -67,23 +69,34 @@ fun MovieDetailScreen(
     viewModel: MovieDetailViewModel = viewModel(),
     navigatePop: () -> Unit
 ) {
-
     val context = LocalContext.current
 
-    val movieRating = remember { mutableIntStateOf(4) }
-    val scrollState = rememberScrollState()
+    val userInfo by lazy {
+//        MFPreferences.getUserInfo(context)
+        UserInfo()
+    }
 
-    val showRateModal = remember { mutableIntStateOf(0) }
-    val showReviewBottomSheet = remember { mutableStateOf(false) }
-    val showUserWantBottomSheet = remember { mutableStateOf(false) }
+    val scrollState = rememberScrollState()
 
     val movieItem by viewModel.movieDetail.collectAsStateWithLifecycle()
     val movieCredit by viewModel.movieCredit.collectAsStateWithLifecycle()
+    val wantThisMovieState by viewModel.wantThisMovieState.collectAsStateWithLifecycle()
+    val userWantBottomSheetState by viewModel.userWantBottomSheetState.collectAsStateWithLifecycle()
+    val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
+    val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
+    val userMovieRating by viewModel.userMovieRating.collectAsStateWithLifecycle()
+    val userMovieRatingState by lazy {
+        mutableIntStateOf(userMovieRating)
+    }
+    val mfAllUserMovieRating by viewModel.mfAllUserMovieRating
+    val mfAllUserMovieRatingState by lazy {
+        mutableIntStateOf(mfAllUserMovieRating)
+    }
 
-    val wantThisMovieState = remember { mutableStateOf(false) }
-
-    LaunchedEffect(key1 = Unit) {
-        viewModel.getAllMovieInfo(movieId)
+    LaunchedEffect(Unit) {
+        viewModel.getMovieId(movieId)
+        viewModel.getUserInfo(userInfo)
+        viewModel.getAllMovieInfo()
     }
 
     Scaffold(
@@ -108,9 +121,11 @@ fun MovieDetailScreen(
 
             /** 이 영화를 보고 싶다 */
             Spacer(Modifier.padding(vertical = 4.dp))
-            MFButtonWantThisMovie({
-                wantThisMovieState.value = !wantThisMovieState.value
-            }, stringResource(R.string.button_want_this_movie), wantThisMovieState)
+            MFButtonWantThisMovie(
+                { viewModel.changeStateWantThisMovie() },
+                stringResource(R.string.button_want_this_movie),
+                wantThisMovieState
+            )
             Spacer(Modifier.padding(vertical = 12.dp))
             MFPostTitle(stringResource(R.string.title_user_want_this_movie))
             Row(
@@ -128,14 +143,16 @@ fun MovieDetailScreen(
                         UserWantListItem(item.userInfo, item.userDistance)
                     }
                 }
-                MFButtonWidthResizable({
-                    showUserWantBottomSheet.value = true
-                }, stringResource(R.string.button_more), 90.dp)
+                MFButtonWidthResizable(
+                    { viewModel.toggleUserWantBottomSheetState() },
+                    stringResource(R.string.button_more),
+                    90.dp
+                )
             }
 
-            if(showUserWantBottomSheet.value){
+            if(userWantBottomSheetState){
                 MFBottomSheet(MFBottomSheetContent.UserWantList) {
-                    showUserWantBottomSheet.value = false
+                    viewModel.toggleUserWantBottomSheetState()
                 }
             }
 
@@ -148,18 +165,22 @@ fun MovieDetailScreen(
             ) {
                 RatingBarView(
                     isRatingEditable = false,
-                    rating = movieRating,
+                    rating = mfAllUserMovieRatingState,
                     ratedStarsColor = FriendsRed,
                 )
             }
 
             MFButton({
-                showRateModal.intValue = 1
+                viewModel.toggleRateModalState()
             }, stringResource(R.string.button_user_rate))
 
-            if (showRateModal.intValue == 1) {
-                RateModal {
-                    showRateModal.intValue = 0
+            if (rateModalState) {
+                RateModal(
+                    { viewModel.toggleRateModalState() },
+                    userMovieRatingState
+                )
+                { star ->
+                    viewModel.voteUserRate(star)
                 }
             }
 
@@ -178,12 +199,12 @@ fun MovieDetailScreen(
                 MFText("...")
             }
             MFButton({
-                showReviewBottomSheet.value = true
+                viewModel.toggleReviewBottomSheetState()
             }, stringResource(R.string.button_more_user_review))
 
-            if(showReviewBottomSheet.value){
+            if(reviewBottomSheetState){
                 MFBottomSheet(MFBottomSheetContent.UserReview) {
-                    showReviewBottomSheet.value = false
+                    viewModel.toggleReviewBottomSheetState()
                 }
             }
         }
@@ -192,18 +213,18 @@ fun MovieDetailScreen(
 
 @Composable
 private fun MovieDetailView(
-    movieItem: TMDBResult<Response<TMDBMovieDetail>>,
+    movieItem: APIResult<Response<TMDBMovieDetail>>,
     context: Context
 ) {
     when (movieItem) {
-        is TMDBResult.Success -> {
+        is APIResult.Success -> {
             val item = movieItem.resultData.body()
             AsyncImage(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(250.dp),
                 model = ImageRequest.Builder(context)
-                    .data("${BASE_TMDB_IMAGE_URL}/${item?.posterPath}")
+                    .data("$BASE_TMDB_IMAGE_URL/${item?.posterPath}")
                     .crossfade(true)
                     .error(R.drawable.yoshicat)
                     .build(),
@@ -223,11 +244,11 @@ private fun MovieDetailView(
 
         }
 
-        is TMDBResult.Loading -> {
+        is APIResult.Loading -> {
             MovieDetailShimmer()
         }
 
-        is TMDBResult.NetworkError -> {
+        is APIResult.NetworkError -> {
             MovieDetailShimmer()
         }
 
@@ -239,14 +260,14 @@ private fun MovieDetailView(
 
 @Composable
 private fun MovieCreditView(
-    creditList: TMDBResult<Response<ResponseCreditDto>>,
+    creditList: APIResult<Response<ResponseCreditDto>>,
     context: Context
 ) {
     val mutableList = remember { listOf<ResponseCreditDto.Cast>() }
     val stateLists = remember { mutableStateOf(mutableList) }
 
     when (creditList) {
-        is TMDBResult.Success -> {
+        is APIResult.Success -> {
             creditList.resultData.body()?.cast?.let {
                 stateLists.value = it.filter { cast ->
                     cast.order < 8
@@ -257,7 +278,7 @@ private fun MovieCreditView(
                             modifier = Modifier
                                 .padding(end = 8.dp)
                                 .height(180.dp)
-                                .clickable { },
+                                .clickableOnce { },
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             AsyncImage(
@@ -265,7 +286,7 @@ private fun MovieCreditView(
                                     .size(128.dp)
                                     .padding(end = 4.dp),
                                 model = ImageRequest.Builder(context)
-                                    .data("${BASE_TMDB_IMAGE_URL}${item.profilePath}")
+                                    .data("$BASE_TMDB_IMAGE_URL${item.profilePath}")
                                     .crossfade(true)
                                     .error(R.drawable.yoshicat)
                                     .build(),
@@ -291,11 +312,11 @@ private fun MovieCreditView(
             }
         }
 
-        is TMDBResult.Loading -> {
+        is APIResult.Loading -> {
             MovieCreditShimmer()
         }
 
-        is TMDBResult.NetworkError -> {
+        is APIResult.NetworkError -> {
             MovieCreditShimmer()
         }
 

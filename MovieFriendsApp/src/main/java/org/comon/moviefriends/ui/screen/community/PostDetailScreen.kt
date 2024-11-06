@@ -1,6 +1,5 @@
 package org.comon.moviefriends.ui.screen.community
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -45,6 +44,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
 import org.comon.moviefriends.ui.theme.FriendsWhite
@@ -89,7 +89,7 @@ fun PostDetailScreen(
             Row(
                 modifier = Modifier
                     .padding(end = 8.dp)
-                    .clickable { },
+                    .clickableOnce { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
@@ -139,7 +139,7 @@ fun PostDetailScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.clickableOnce {
                         likeState.value = !likeState.value
                         if(likeState.value) likeCount.intValue++ else likeCount.intValue--
                     },
@@ -273,7 +273,7 @@ fun PostDetailScreen(
             Row(
                 modifier = Modifier
                     .padding(end = 8.dp)
-                    .clickable { },
+                    .clickableOnce { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
@@ -323,7 +323,7 @@ fun PostDetailScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Row(
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.clickableOnce {
                         likeState.value = !likeState.value
                         if(likeState.value) likeCount.intValue++ else likeCount.intValue--
                     },

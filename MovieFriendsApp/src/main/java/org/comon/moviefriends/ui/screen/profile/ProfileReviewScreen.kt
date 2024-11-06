@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.profile
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,6 +44,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
 import org.comon.moviefriends.ui.widget.MFButtonWidthResizable
 import org.comon.moviefriends.ui.widget.MFPostTitle
@@ -97,7 +97,7 @@ fun ProfileReviewScreen() {
                         .width(200.dp)
                         .height(300.dp)
                         .padding(4.dp)
-                        .clickable {},
+                        .clickableOnce {},
                     shape = RoundedCornerShape(8.dp),
                     border = BorderStroke(1.dp, Color.LightGray),
                     elevation = CardDefaults.cardElevation(

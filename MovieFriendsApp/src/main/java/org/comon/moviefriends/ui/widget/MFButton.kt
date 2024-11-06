@@ -25,7 +25,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.google.firebase.firestore.DocumentReference
 import org.comon.moviefriends.R
+import org.comon.moviefriends.api.tmdb.APIResult
+import org.comon.moviefriends.model.UserWantMovieInfo
 import org.comon.moviefriends.ui.theme.Black
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
@@ -54,7 +57,7 @@ fun MFButton(clickEvent: () -> Unit, text: String) {
 }
 
 @Composable
-fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: MutableState<Boolean>) {
+fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIResult<DocumentReference?>) {
     Button(
         shape = RoundedCornerShape(25),
         onClick = clickEvent,
@@ -69,19 +72,23 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: Mutab
             disabledContentColor = Color.LightGray
         )
     ) {
-        if(isChecked.value){
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(text)
-                Icon(imageVector = Icons.Default.Check, "체크")
+        when(isChecked){
+            is APIResult.Success -> {
+                if(isChecked.resultData != null){
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(text)
+                        Icon(imageVector = Icons.Default.Check, "체크")
+                    }
+                }else{
+                    Text(text)
+                }
             }
-        }else{
-            Text(text)
+            else -> { Text(text) }
         }
-
     }
 }
 

@@ -1,6 +1,5 @@
 package org.comon.moviefriends.ui.widget
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -17,13 +16,14 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.model.UserInfo
+import org.comon.moviefriends.ui.common.clickableOnce
 
 @Composable
 fun UserWantListItem(user: UserInfo, distance: Int){
     Row(
         modifier = Modifier
             .padding(horizontal = 8.dp, vertical = 16.dp)
-            .clickable {  },
+            .clickableOnce {  },
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(

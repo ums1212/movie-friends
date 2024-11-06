@@ -130,5 +130,4 @@ dependencies {
     // 컴포즈 별점 라이브러리
     implementation(libs.compose.ratingbar.library)
 
-
 }

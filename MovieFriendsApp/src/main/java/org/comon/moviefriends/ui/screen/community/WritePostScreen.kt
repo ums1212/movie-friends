@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.community
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,6 +47,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.comon.moviefriends.R
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsRed
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
@@ -92,7 +92,7 @@ fun WritePostScreen(
             OutlinedTextField(
                 modifier = Modifier
                     .width(150.dp)
-                    .clickable {
+                    .clickableOnce {
                         isCategoryMenuShown.value = !isCategoryMenuShown.value
                     }
                 ,
@@ -177,7 +177,7 @@ fun WritePostScreen(
                                 .padding(end = 8.dp)
                         ) {
                             Icon(
-                                modifier = Modifier.clickable {
+                                modifier = Modifier.clickableOnce {
                                     stateImageList.remove(item)
                                 },
                                 imageVector = Icons.Filled.Clear,

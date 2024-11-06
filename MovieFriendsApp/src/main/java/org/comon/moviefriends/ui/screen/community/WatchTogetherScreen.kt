@@ -1,7 +1,6 @@
 package org.comon.moviefriends.ui.screen.community
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsBlack
 import org.comon.moviefriends.ui.widget.MFText
 import org.comon.moviefriends.ui.widget.UserWantThisMovieList
@@ -44,7 +44,7 @@ fun WatchTogetherScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(8.dp)
-                    .clickable {
+                    .clickableOnce {
                         when(menu){
                             WATCH_TOGETHER_MENU.REQUEST_LIST -> navigateToRequestList()
                             WATCH_TOGETHER_MENU.RECEIVE_LIST -> navigateToReceiveList()

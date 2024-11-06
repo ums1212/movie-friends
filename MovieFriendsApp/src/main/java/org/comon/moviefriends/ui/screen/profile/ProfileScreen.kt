@@ -2,7 +2,6 @@ package org.comon.moviefriends.ui.screen.profile
 
 import android.content.Context
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,6 +35,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.model.UserInfo
+import org.comon.moviefriends.ui.common.clickableOnce
 import org.comon.moviefriends.ui.theme.FriendsBoxGrey
 import org.comon.moviefriends.ui.theme.FriendsTextGrey
 import org.comon.moviefriends.ui.theme.FriendsWhite
@@ -108,7 +108,7 @@ private fun ProfileMenu(
         modifier = Modifier
             .fillMaxWidth()
             .padding(bottom = 8.dp)
-            .clickable {
+            .clickableOnce {
                 navigateToProfileMenu()
             }
     ) {

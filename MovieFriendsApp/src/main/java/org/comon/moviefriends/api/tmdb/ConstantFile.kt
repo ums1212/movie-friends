@@ -1,4 +1,4 @@
-package org.comon.moviefriends.api
+package org.comon.moviefriends.api.tmdb
 
 const val BASE_TMDB_URL = "https://api.themoviedb.org/3/movie/"
 

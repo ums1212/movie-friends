@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.comon.moviefriends.api.MovieCategory
-import org.comon.moviefriends.api.TMDBResult
+import org.comon.moviefriends.api.tmdb.MovieCategory
+import org.comon.moviefriends.api.tmdb.APIResult
 import org.comon.moviefriends.model.TMDBMovies
 import org.comon.moviefriends.repo.TMDBRepository
 import retrofit2.Response
@@ -45,17 +45,17 @@ class HomeViewModel: ViewModel() {
         getCategoryMovies(TMDBRepository().getUpcoming(), MovieCategory.UP_COMING)
     }
 
-    private fun getCategoryMovies(flow: Flow<TMDBResult<Response<TMDBMovies>>>, category: MovieCategory){
+    private fun getCategoryMovies(flow: Flow<APIResult<Response<TMDBMovies>>>, category: MovieCategory){
         viewModelScope.launch {
             flow.collect { result ->
                 when(result){
-                    is TMDBResult.Success -> {
+                    is APIResult.Success -> {
                         result.resultData.body()?.results?.let { addListByCategory(it, category) }
                     }
-                    is TMDBResult.Loading -> {
+                    is APIResult.Loading -> {
                         Log.d("getCategoryMovies", "로딩 중")
                     }
-                    is TMDBResult.NetworkError -> {
+                    is APIResult.NetworkError -> {
                         Log.e("getCategoryMovies", "${result.exception}")
                     }
                     else -> {

@@ -1,4 +1,4 @@
-package org.comon.moviefriends.api
+package org.comon.moviefriends.api.tmdb
 
 import okhttp3.Interceptor
 import okhttp3.Response

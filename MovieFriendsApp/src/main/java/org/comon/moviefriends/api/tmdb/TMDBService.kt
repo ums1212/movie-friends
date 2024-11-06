@@ -1,4 +1,4 @@
-package org.comon.moviefriends.api
+package org.comon.moviefriends.api.tmdb
 
 import com.google.gson.GsonBuilder
 import org.comon.moviefriends.model.ResponseCreditDto
