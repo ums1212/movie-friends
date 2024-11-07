@@ -10,6 +10,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -81,10 +82,10 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val selectedBottomMenuItem = remember { mutableIntStateOf(0) }
 
-//            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
-            val startDestination = NAV_ROUTE.SCAFFOLD.route
+            val startDestination = if (loginViewModel.checkLogin()) NAV_ROUTE.SCAFFOLD.route else NAV_ROUTE.LOGIN.route
+//            val startDestination = NAV_ROUTE.SCAFFOLD.route
 
-            Box(modifier = Modifier.background(FriendsBlack)){
+            Box(modifier = Modifier.background(FriendsBlack).fillMaxSize()){
                 NavHost(navController = navController, startDestination = startDestination) {
                     composable(NAV_ROUTE.LOGIN.route) {
                         LoginScreen(
@@ -104,13 +105,6 @@ class MainActivity : ComponentActivity() {
                         SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
                     }
 
-                    /** 상세 화면 */
-
-                    /** 상세 화면 */
-
-                    /** 상세 화면 */
-
-                    /** 상세 화면 */
                     composable(
                         route = "${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}",
                         arguments = listOf(

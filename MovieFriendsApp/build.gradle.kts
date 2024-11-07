@@ -33,6 +33,7 @@ android {
 
         buildConfigField("String", "TMDB_ACCESS_TOKEN", localProperties.getProperty("TMDB_ACCESS_TOKEN"))
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
+        buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
     }
 
     buildTypes {
@@ -84,6 +85,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // 구글 로그인
+    implementation(libs.googleid)
+    implementation(libs.androidx.credentials)
+    // optional - needed for credentials support from play services, for devices running
+    // Android 13 and below.
+    implementation(libs.androidx.credentials.play.services.auth)
+
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
@@ -91,6 +99,9 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
+    implementation(libs.play.services.auth)
+
+
     // 앱푸시
     implementation(libs.firebase.messaging)
     implementation(libs.google.auth.library.oauth2.http)
