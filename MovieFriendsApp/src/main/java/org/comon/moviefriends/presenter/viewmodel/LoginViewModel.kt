@@ -8,17 +8,12 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.repo.LoginRepository
-import java.util.UUID
 
 class LoginViewModel: ViewModel() {
 
@@ -31,6 +26,13 @@ class LoginViewModel: ViewModel() {
     private val _loginState = MutableStateFlow(false)
     val loginState = _loginState.asStateFlow()
 
+    private val _user = MutableStateFlow<FirebaseUser?>(null)
+    val user = _user.asStateFlow()
+    fun setUser(user:FirebaseUser?){
+        viewModelScope.launch {
+            _user.emit(user)
+        }
+    }
 
     fun kakaoLogin(
         context: Context,
@@ -39,11 +41,13 @@ class LoginViewModel: ViewModel() {
     ) {
         viewModelScope.launch {
             repository.kakaoLogin(
-                context,
-                moveToScaffoldScreen
-            ){ user ->
-                moveToNextScreen(user)
-            }
+                context = context,
+                moveToScaffoldScreen = moveToScaffoldScreen,
+                moveToNextScreen = { user ->
+                    moveToNextScreen(user)
+                    setUser(user)
+                }
+            )
         }
     }
 
@@ -73,6 +77,10 @@ class LoginViewModel: ViewModel() {
                 }
             }
         }
+    }
+
+    fun completeJoinUser(){
+
     }
 }
 

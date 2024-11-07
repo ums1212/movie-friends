@@ -7,7 +7,6 @@ import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -38,10 +37,10 @@ import org.comon.moviefriends.presenter.screen.community.WritePostScreen
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.MovieFriendsTheme
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
-
-    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
@@ -79,6 +78,8 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MovieFriendsApp(){
+        val loginViewModel = LoginViewModel()
+
         MovieFriendsTheme(
             darkTheme = true
         ) {
@@ -94,12 +95,31 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
                             { user ->
-                                navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route)
+                                val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
+                                navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}/${user?.displayName}/${encodedUrl}")
                             }
                         )
                     }
-                    composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
-                        SubmitNickNameScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
+                    composable(
+                        route = "${NAV_ROUTE.SUBMIT_NICKNAME.route}/{uid}/{nickname}/{photoUrl}",
+                        arguments = listOf(
+                            navArgument("uid") {
+                                type = NavType.StringType
+                            },
+                            navArgument("nickname") {
+                                type = NavType.StringType
+                            },
+                            navArgument("photoUrl") {
+                                type = NavType.StringType
+                            }
+                        )
+                    ) { backStackEntry ->
+                        SubmitNickNameScreen(
+                            uid = backStackEntry.arguments?.getString("uid")?:"",
+                            nickname = backStackEntry.arguments?.getString("nickname")?:"",
+                            photoUrl = backStackEntry.arguments?.getString("photoUrl")?:"",
+                            moveToScaffoldScreen = { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
+                        )
                     }
                     composable(NAV_ROUTE.SCAFFOLD.route) {
                         ScaffoldScreen(navController, selectedBottomMenuItem){ bottomMenuindex ->

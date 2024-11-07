@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.screen.intro
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -12,23 +13,37 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.widget.MFButton
 
 @Composable
 fun SubmitNickNameScreen(
+    uid: String,
+    nickname: String,
+    photoUrl: String,
     moveToScaffoldScreen: () -> Unit,
 ) {
-    val viewModel: LoginViewModel = viewModel()
+    val viewModel = LoginViewModel()
+    val user = viewModel.user.collectAsStateWithLifecycle()
+    var textValue by remember { mutableStateOf(nickname) }
+    LaunchedEffect(key1 = Unit) {
+        user.value?.reload()?.addOnSuccessListener {
+            Log.d("test1234", "user: ${user.value?.displayName}")
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -57,8 +72,8 @@ fun SubmitNickNameScreen(
             )
             OutlinedTextField(
                 shape = RoundedCornerShape(12.dp) ,
-                value = TextFieldValue(),
-                onValueChange = { },
+                value = textValue,
+                onValueChange = { textValue = it },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 enabled = true,

@@ -5,7 +5,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
     id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -108,10 +107,6 @@ dependencies {
 
     // viewmodel
     implementation (libs.androidx.lifecycle.viewmodel.compose)
-
-    // Hilt
-    implementation(libs.hilt.android)
-    kapt(libs.hilt.android.compiler)
 
     // 카카오 로그인 api
     implementation(libs.kakao.v2.user)
