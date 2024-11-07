@@ -22,6 +22,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kakao.sdk.common.KakaoSdk
+import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.presenter.screen.intro.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
@@ -46,6 +48,7 @@ class MainActivity : ComponentActivity() {
         settingSplashScreenAnimation()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
+        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_KEY)
         setContent {
             MovieFriendsApp()
         }
@@ -90,7 +93,9 @@ class MainActivity : ComponentActivity() {
                     composable(NAV_ROUTE.LOGIN.route) {
                         LoginScreen(
                             { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
-                            { navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route) }
+                            { user ->
+                                navController.navigate(NAV_ROUTE.SUBMIT_NICKNAME.route)
+                            }
                         )
                     }
                     composable(NAV_ROUTE.SUBMIT_NICKNAME.route) {
@@ -143,6 +148,4 @@ class MainActivity : ComponentActivity() {
 
         }
     }
-
-
 }

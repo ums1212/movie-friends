@@ -34,6 +34,7 @@ android {
         buildConfigField("String", "TMDB_ACCESS_TOKEN", localProperties.getProperty("TMDB_ACCESS_TOKEN"))
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
         buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
+        buildConfigField("String", "KAKAO_NATIVE_KEY", localProperties.getProperty("KAKAO_NATIVE_KEY"))
     }
 
     buildTypes {
@@ -95,8 +96,7 @@ dependencies {
     // firebase
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
-    implementation(libs.firebase.ui.auth)
-    implementation(libs.firebase.auth)
+    implementation(libs.firebase.auth.ktx)
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
     implementation(libs.play.services.auth)

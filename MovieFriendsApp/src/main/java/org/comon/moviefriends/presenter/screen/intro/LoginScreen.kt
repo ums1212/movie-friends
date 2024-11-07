@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.R
@@ -38,7 +39,7 @@ import org.comon.moviefriends.presenter.widget.MFButton
 @Composable
 fun LoginScreen(
     moveToScaffoldScreen: () -> Unit,
-    moveToSubmitNickNameScreen: () -> Unit,
+    moveToSubmitNickNameScreen: (user: FirebaseUser?) -> Unit,
 ) {
     val viewModel: LoginViewModel = viewModel()
     val localContext = LocalContext.current
@@ -66,21 +67,24 @@ fun LoginScreen(
                     .fillMaxWidth()
                     .padding(bottom = 72.dp)
             )
-            MFButton( {
-                viewModel.snsLogin(LoginCategory.WITHOUT_LOGIN, moveToScaffoldScreen)
-            }, stringResource(R.string.button_without_login))
+            MFButton( moveToScaffoldScreen, stringResource(R.string.button_without_login))
             HorizontalDivider(Modifier
                 .padding(horizontal = 36.dp, vertical = 24.dp)
             )
             KakaoLoginButton {
-                viewModel.snsLogin(LoginCategory.KAKAO_LOGIN, moveToSubmitNickNameScreen)
+                viewModel.kakaoLogin(
+                    localContext,
+                    moveToScaffoldScreen
+                ){ user ->
+                    moveToSubmitNickNameScreen(user)
+                }
             }
             Spacer(Modifier.padding(vertical = 12.dp))
             GoogleLoginButton {
                 viewModel.googleLogin(
                     localContext,
                     BuildConfig.GOOGLE_OAUTH,
-                    moveToSubmitNickNameScreen,
+                    { user -> moveToSubmitNickNameScreen(user)},
                     loadingUiState
                 ) {
                     coroutineScope.launch {
