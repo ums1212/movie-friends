@@ -58,6 +58,17 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         error -> emit(APIResult.NetworkError(error))
     }
 
+    override suspend fun getUserWantList(movieId: Int) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("want_movie").whereEqualTo("movieId", movieId).get().await()
+        val userWantList = querySnapshot.documents.map { userWant ->
+            userWant.toObject(UserWantMovieInfo::class.java)
+        }
+        emit(APIResult.Success(userWantList))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
     override suspend fun voteUserMovieRating(
         movieId: Int,
         userInfo: UserInfo,

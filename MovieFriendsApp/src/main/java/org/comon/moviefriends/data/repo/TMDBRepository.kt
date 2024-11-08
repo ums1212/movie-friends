@@ -10,6 +10,7 @@ import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.TMDBMovies
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserRate
+import org.comon.moviefriends.data.model.UserWantMovieInfo
 import retrofit2.Response
 
 interface TMDBRepository {
@@ -29,6 +30,8 @@ interface TMDBRepository {
     suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo): Flow<APIResult<Boolean>>
 
     suspend fun changeStateWantThisMovie(movieInfo: TMDBMovieDetail, userInfo: UserInfo): Flow<APIResult<Boolean>>
+
+    suspend fun getUserWantList(movieId: Int): Flow<APIResult<List<UserWantMovieInfo?>>>
 
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
 

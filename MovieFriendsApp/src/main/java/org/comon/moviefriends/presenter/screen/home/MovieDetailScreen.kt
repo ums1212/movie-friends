@@ -11,11 +11,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,6 +60,7 @@ import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.MovieCreditShimmer
 import org.comon.moviefriends.presenter.widget.MovieDetailShimmer
 import org.comon.moviefriends.presenter.widget.RateModal
+import org.comon.moviefriends.presenter.widget.ShimmerEffect
 import org.comon.moviefriends.presenter.widget.UserWantListItem
 import retrofit2.Response
 
@@ -77,6 +80,7 @@ fun MovieDetailScreen(
     val userWantBottomSheetState by viewModel.userWantBottomSheetState.collectAsStateWithLifecycle()
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
+    val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
@@ -122,27 +126,38 @@ fun MovieDetailScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                LazyRow {
-                    items(
-                        listOf(
-                            UserWantMovieInfo(userInfo = UserInfo(nickName = "유저1", profileImage = "", joinType = "")),
-                            UserWantMovieInfo(userInfo = UserInfo(nickName = "유저2", profileImage = "", joinType = "")),
+                if(viewModel.userWantListState.value){
+                    if(userWantList.isEmpty()){
+                        Text(stringResource(id = R.string.no_data))
+                    }else{
+                        val previewList = userWantList.take(2)
+                        Row(
+                            modifier = Modifier.weight(0.7f)
+                                .wrapContentSize(unbounded = false),
+                        ) {
+                            previewList.forEach { item ->
+                                if(item != null){
+                                    UserWantListItem(item.userInfo, item.userDistance)
+                                }
+                            }
+                        }
+                        MFButtonWidthResizable(
+                            { viewModel.toggleUserWantBottomSheetState() },
+                            stringResource(R.string.button_more),
+                            90.dp
                         )
-                    ) { item ->
-                        UserWantListItem(item.userInfo, item.userDistance)
                     }
+                }else{
+                    ShimmerEffect(modifier = Modifier.fillMaxWidth())
                 }
-                MFButtonWidthResizable(
-                    { viewModel.toggleUserWantBottomSheetState() },
-                    stringResource(R.string.button_more),
-                    90.dp
-                )
             }
 
             if(userWantBottomSheetState){
-                MFBottomSheet(MFBottomSheetContent.UserWantList) {
-                    viewModel.toggleUserWantBottomSheetState()
-                }
+                MFBottomSheet(
+                    content = MFBottomSheetContent.UserWantList,
+                    dismissSheet = { viewModel.toggleUserWantBottomSheetState() },
+                    userWantList = userWantList
+                )
             }
 
             /** 유저 평점 */
@@ -192,9 +207,11 @@ fun MovieDetailScreen(
             }, stringResource(R.string.button_more_user_review))
 
             if(reviewBottomSheetState){
-                MFBottomSheet(MFBottomSheetContent.UserReview) {
-                    viewModel.toggleReviewBottomSheetState()
-                }
+                MFBottomSheet(
+                    content = MFBottomSheetContent.UserReview,
+                    dismissSheet = { viewModel.toggleReviewBottomSheetState() },
+                    null
+                )
             }
         }
     }

@@ -1,6 +1,8 @@
 package org.comon.moviefriends.presenter.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -12,6 +14,7 @@ import org.comon.moviefriends.data.model.ResponseCreditDto
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserRate
+import org.comon.moviefriends.data.model.UserWantMovieInfo
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
 
@@ -67,12 +70,16 @@ class MovieDetailViewModel(
     private val _wantThisMovieState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
     val wantThisMovieState get() = _wantThisMovieState.asStateFlow()
 
+    private val _userWantList = MutableStateFlow<List<UserWantMovieInfo?>>(emptyList())
+    val userWantList get() = _userWantList.asStateFlow()
+    val userWantListState = mutableStateOf(false)
+
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
         getStateWantThisMovie()
         getAllUserRate()
-//        getUserWantList(movieId)
+        getUserWantList()
 //        getUserReview(movieId)
     }
 
@@ -118,7 +125,22 @@ class MovieDetailViewModel(
     }
 
     private fun getUserWantList() {
-
+        viewModelScope.launch {
+            repository.getUserWantList(_movieId.value).collectLatest { result ->
+                when(result){
+                    is APIResult.Success -> {
+                        userWantListState.value = true
+                        _userWantList.emit(result.resultData)
+                    }
+                    is APIResult.NetworkError -> {
+                        Log.d("test1234", "${result.exception}")
+                    }
+                    else -> {
+                        userWantListState.value = false
+                    }
+                }
+            }
+        }
     }
 
     private fun getUserRate() {
