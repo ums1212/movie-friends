@@ -45,7 +45,13 @@ class MovieDetailViewModel(
 
     private val _rateModalState = MutableStateFlow(false)
     val rateModalState get() = _rateModalState.asStateFlow()
-    fun toggleRateModalState() {
+    fun toggleRateModalState(
+        navigateToLogin: () -> Unit
+    ) {
+        if(userInfo.value==null){
+            navigateToLogin()
+            return
+        }
         viewModelScope.launch {
             _rateModalState.emit(!_rateModalState.value)
         }
@@ -61,7 +67,13 @@ class MovieDetailViewModel(
 
     private val _userWantBottomSheetState = MutableStateFlow(false)
     val userWantBottomSheetState get() = _userWantBottomSheetState.asStateFlow()
-    fun toggleUserWantBottomSheetState() {
+    fun toggleUserWantBottomSheetState(
+        navigateToLogin: () -> Unit
+    ) {
+        if(userInfo.value==null){
+            navigateToLogin()
+            return
+        }
         viewModelScope.launch {
             _userWantBottomSheetState.emit(!_userWantBottomSheetState.value)
         }
@@ -105,8 +117,13 @@ class MovieDetailViewModel(
         _movieInfo.value = movieInfo
     }
 
-    fun changeStateWantThisMovie() {
-        if(_movieInfo.value==null || _userInfo.value==null) return
+    fun changeStateWantThisMovie(
+        navigateToLogin: () -> Unit
+    ) {
+        if(_userInfo.value==null) {
+            navigateToLogin()
+            return
+        }
         viewModelScope.launch {
             _movieInfo.value?.let {
                 repository.changeStateWantThisMovie(it, _userInfo.value!!).collectLatest { result ->
@@ -117,6 +134,7 @@ class MovieDetailViewModel(
     }
 
     private fun getStateWantThisMovie() {
+        if(userInfo.value == null) return
         viewModelScope.launch {
             repository.getStateWantThisMovie(_movieId.value, _userInfo.value!!).collectLatest { result ->
                 _wantThisMovieState.emit(result)
@@ -141,10 +159,6 @@ class MovieDetailViewModel(
                 }
             }
         }
-    }
-
-    private fun getUserRate() {
-
     }
 
     private fun getAllUserRate(){
@@ -173,7 +187,14 @@ class MovieDetailViewModel(
         return result
     }
 
-    fun voteUserRate(star: Int) {
+    fun voteUserRate(
+        star: Int,
+        navigateToLogin: () -> Unit
+    ) {
+        if(userInfo.value == null) {
+            navigateToLogin()
+            return
+        }
         viewModelScope.launch {
             repository.voteUserMovieRating(_movieId.value, _userInfo.value!!, star).collectLatest {
                 when(it){

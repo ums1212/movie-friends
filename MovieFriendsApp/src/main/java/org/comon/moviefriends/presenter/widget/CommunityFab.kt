@@ -6,13 +6,23 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
+import org.comon.moviefriends.common.COMMUNITY_MENU
+import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 
 @Composable
-fun CommunityFab(navigateToWritePost: () -> Unit) {
+fun CommunityFab(
+    navigateToWritePost: () -> Unit,
+    navigateToLogin: () -> Unit
+) {
+    val localContext = LocalContext.current
+    val user = MFPreferences.getUserInfo(localContext)
+
     FloatingActionButton(
-        onClick = navigateToWritePost,
+        onClick = { clickCommunityFab(user, navigateToWritePost, navigateToLogin) },
         containerColor = FriendsTextGrey,
         shape = CircleShape,
     ) {
@@ -22,4 +32,16 @@ fun CommunityFab(navigateToWritePost: () -> Unit) {
             tint = FriendsWhite,
         )
     }
+}
+
+fun clickCommunityFab(
+    user: UserInfo?,
+    navigateToWritePost: () -> Unit,
+    navigateToLogin: () -> Unit,
+) {
+    if(user==null){
+        navigateToLogin()
+        return
+    }
+    navigateToWritePost()
 }

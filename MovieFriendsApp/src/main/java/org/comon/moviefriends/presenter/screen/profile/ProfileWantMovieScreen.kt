@@ -56,6 +56,7 @@ import org.comon.moviefriends.presenter.widget.MFText
 @Composable
 fun ProfileWantMovieScreen(
     viewModel: MovieDetailViewModel = viewModel(),
+    navigateToLogin: () -> Unit,
 ) {
     val pagerState = rememberPagerState(0, pageCount = { 10 })
     val animationScope = rememberCoroutineScope()
@@ -148,7 +149,7 @@ fun ProfileWantMovieScreen(
         }
 
         MFButtonWantThisMovie(
-            { viewModel.changeStateWantThisMovie() },
+            { viewModel.changeStateWantThisMovie(navigateToLogin) },
             stringResource(R.string.button_want_this_movie),
             wantThisMovieState
         )

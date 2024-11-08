@@ -8,6 +8,7 @@ import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -164,9 +165,14 @@ class MainActivity : ComponentActivity() {
                     }
                     /** 메인 화면 */
                     composable(NAV_ROUTE.SCAFFOLD.route) {
-                        ScaffoldScreen(navController, selectedBottomMenuItem){ bottomMenuindex ->
-                            selectedBottomMenuItem.intValue = bottomMenuindex
-                        }
+                        ScaffoldScreen(
+                            mainNavController = navController,
+                            selectedBottomMenuItem = selectedBottomMenuItem,
+                            changeBottomMenu = { bottomMenuindex ->
+                                selectedBottomMenuItem.intValue = bottomMenuindex
+                            },
+                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
+                        )
                     }
                     /** 검색 화면 */
                     composable(NAV_ROUTE.SEARCH.route) {
@@ -183,14 +189,16 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         MovieDetailScreen(
                             movieId = backStackEntry.arguments?.getInt("movieId") ?: 0,
-                            navigatePop = { navController.popBackStack() }
+                            navigatePop = { navController.popBackStack() },
+                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
                     }
                     /** 커뮤니티 상세글 화면 */
                     composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
                         PostDetailScreen(
                             communityId = backStackEntry.arguments?.getInt("communityId") ?: 0,
-                            navigatePop = { navController.popBackStack() }
+                            navigatePop = { navController.popBackStack() },
+                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
                     }
                     /** 커뮤니티 글작성 화면 */

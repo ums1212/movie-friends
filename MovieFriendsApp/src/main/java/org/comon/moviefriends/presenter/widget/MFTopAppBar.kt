@@ -36,6 +36,7 @@ fun MFTopAppBar(
     navigateToSearch: () -> Unit,
     confirmPost: () -> Unit,
     navigateToProfileSetting: () -> Unit,
+    navigateToLogin: () -> Unit,
 ) {
     val isTabMenuShown = remember { mutableStateOf(false) }
     val selectedTabItem = remember { mutableIntStateOf(0) }
@@ -145,11 +146,15 @@ fun MFTopAppBar(
 
         // 탭메뉴
         if(isTabMenuShown.value){
-            CommunityTab(selectedTabItem) { route, index ->
-                navigateToCommunityMenu(route)
-                selectedTabItem.intValue = index
-                isTabMenuShown.value = false
-            }
+            CommunityTab(
+                selectedItem = selectedTabItem,
+                navigateToCommunityMenu = { route, index ->
+                    navigateToCommunityMenu(route)
+                    selectedTabItem.intValue = index
+                    isTabMenuShown.value = false
+                },
+                navigateToLogin = navigateToLogin
+            )
         }
     }
 }

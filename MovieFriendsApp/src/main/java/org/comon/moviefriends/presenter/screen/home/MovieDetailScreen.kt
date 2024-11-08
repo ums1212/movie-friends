@@ -1,6 +1,7 @@
 package org.comon.moviefriends.presenter.screen.home
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -68,7 +69,8 @@ import retrofit2.Response
 fun MovieDetailScreen(
     movieId: Int,
     viewModel: MovieDetailViewModel = viewModel(),
-    navigatePop: () -> Unit
+    navigatePop: () -> Unit,
+    navigateToLogin: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -115,7 +117,7 @@ fun MovieDetailScreen(
             /** 이 영화를 보고 싶다 */
             Spacer(Modifier.padding(vertical = 4.dp))
             MFButtonWantThisMovie(
-                { viewModel.changeStateWantThisMovie() },
+                { viewModel.changeStateWantThisMovie(navigateToLogin) },
                 stringResource(R.string.button_want_this_movie),
                 wantThisMovieState
             )
@@ -126,6 +128,7 @@ fun MovieDetailScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                emptyList<Int>().take(2)
                 if(viewModel.userWantListState.value){
                     if(userWantList.isEmpty()){
                         Text(stringResource(id = R.string.no_data))
@@ -142,7 +145,7 @@ fun MovieDetailScreen(
                             }
                         }
                         MFButtonWidthResizable(
-                            { viewModel.toggleUserWantBottomSheetState() },
+                            { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
                             stringResource(R.string.button_more),
                             90.dp
                         )
@@ -155,7 +158,7 @@ fun MovieDetailScreen(
             if(userWantBottomSheetState){
                 MFBottomSheet(
                     content = MFBottomSheetContent.UserWantList,
-                    dismissSheet = { viewModel.toggleUserWantBottomSheetState() },
+                    dismissSheet = { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
                     userWantList = userWantList
                 )
             }
@@ -175,15 +178,15 @@ fun MovieDetailScreen(
             }
 
             MFButton({
-                viewModel.toggleRateModalState()
+                viewModel.toggleRateModalState(navigateToLogin)
             }, stringResource(R.string.button_user_rate))
 
             if (rateModalState) {
                 RateModal(
-                    dismissModal = { viewModel.toggleRateModalState() },
+                    dismissModal = { viewModel.toggleRateModalState(navigateToLogin) },
                     userRate = viewModel.userMovieRatingState,
                     voteUserRate = { star ->
-                        viewModel.voteUserRate(star)
+                        viewModel.voteUserRate(star, navigateToLogin)
                     }
                 )
             }

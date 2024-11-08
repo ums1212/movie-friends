@@ -8,6 +8,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -17,6 +18,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.comon.moviefriends.common.COMMUNITY_MENU
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.PROFILE_MENU
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
@@ -44,6 +46,7 @@ fun ScaffoldScreen(
     mainNavController: NavHostController,
     selectedBottomMenuItem: IntState,
     changeBottomMenu: (Int) -> Unit,
+    navigateToLogin: () -> Unit
 ){
     val scaffoldNavController = rememberNavController()
     val currentRoute = scaffoldNavController.currentBackStackEntryAsState().value?.destination?.route
@@ -66,29 +69,35 @@ fun ScaffoldScreen(
                 },
                 navigateToProfileSetting = {
                     mainNavController.navigate(NAV_ROUTE.PROFILE_SETTING.route)
-                }
+                },
+                navigateToLogin = navigateToLogin
             )
         },
         floatingActionButton = {
             if(currentRoute== NAV_ROUTE.COMMUNITY.route){
-                CommunityFab {
-                    mainNavController.navigate(NAV_ROUTE.WRITE_POST.route)
-                }
+                CommunityFab(
+                    navigateToWritePost = { mainNavController.navigate(NAV_ROUTE.WRITE_POST.route) },
+                    navigateToLogin = navigateToLogin
+                )
             }
         },
         bottomBar = {
-            MFNavigationBar(selectedBottomMenuItem) { route, index ->
-                changeBottomMenu(index)
-                scaffoldNavController.navigate(route) {
-                    scaffoldNavController.graph.startDestinationRoute?.let {
-                        popUpTo(it) {
-                            saveState = true
+            MFNavigationBar(
+                selectedItem = selectedBottomMenuItem,
+                navigateToLogin = navigateToLogin,
+                navigateToMenu = { route, index ->
+                    changeBottomMenu(index)
+                    scaffoldNavController.navigate(route) {
+                        scaffoldNavController.graph.startDestinationRoute?.let {
+                            popUpTo(it) {
+                                saveState = true
+                            }
                         }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 }
-            }
+            )
         },
     ) { innerPadding ->
         Box(modifier = Modifier.background(FriendsBlack)){
@@ -103,9 +112,11 @@ fun ScaffoldScreen(
                     }
                 }
                 composable(COMMUNITY_MENU.COMMUNITY.route) {
-                    CommunityScreen { communityId ->
-                        mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
-                    }
+                    CommunityScreen(
+                        moveToCommunityDetailScreen = { communityId ->
+                            mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
+                        }
+                    )
                 }
                 composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {
                     WatchTogetherScreen(
@@ -150,7 +161,9 @@ fun ScaffoldScreen(
                     ProfileSettingScreen()
                 }
                 composable(PROFILE_MENU.PROFILE_WANT_MOVIE.route) {
-                    ProfileWantMovieScreen()
+                    ProfileWantMovieScreen(
+                        navigateToLogin = { mainNavController.navigate(NAV_ROUTE.LOGIN.route) }
+                    )
                 }
                 composable(PROFILE_MENU.PROFILE_RATE.route) {
                     ProfileRateScreen()
