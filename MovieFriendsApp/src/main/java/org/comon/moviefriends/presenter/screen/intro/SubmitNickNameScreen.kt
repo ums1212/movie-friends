@@ -1,6 +1,5 @@
 package org.comon.moviefriends.presenter.screen.intro
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +15,6 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +27,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.model.UserInfo
-import org.comon.moviefriends.presenter.common.ShowNetworkErrorSnackBar
-import org.comon.moviefriends.presenter.viewmodel.JoinType
-import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.widget.MFButton
 
@@ -52,7 +43,6 @@ fun SubmitNickNameScreen(
     moveToScaffoldScreen: () -> Unit,
 ) {
     val viewModel = LoginViewModel()
-    val user = viewModel.user.collectAsStateWithLifecycle()
     var textValue by remember { mutableStateOf(nickname) }
     val loadingUiState = remember { mutableStateOf(false) }
     val localContext = LocalContext.current

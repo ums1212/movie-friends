@@ -1,7 +1,5 @@
 package org.comon.moviefriends.presenter.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.IntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -27,9 +25,9 @@ class MovieDetailViewModel(
         _movieId.value = movieId
     }
 
-    private val _userInfo = MutableStateFlow(UserInfo(joinType = "", nickName = "", profileImage = ""))
+    private val _userInfo: MutableStateFlow<UserInfo?> = MutableStateFlow(null)
     val userInfo get() = _userInfo.asStateFlow()
-    fun getUserInfo(userInfo: UserInfo) {
+    fun getUserInfo(userInfo: UserInfo?) {
         _userInfo.value = userInfo
     }
 
@@ -39,11 +37,8 @@ class MovieDetailViewModel(
     private val _movieCredit = MutableStateFlow<APIResult<Response<ResponseCreditDto>>>(APIResult.NoConstructor)
     val movieCredit get() = _movieCredit.asStateFlow()
 
-    private val _userMovieRating = MutableStateFlow(0)
-    val userMovieRating get() = _userMovieRating.asStateFlow()
-
-    private val _mfAllUserMovieRating = MutableStateFlow(0)
-    val mfAllUserMovieRating get() = _mfAllUserMovieRating
+    val userMovieRatingState = mutableIntStateOf(0)
+    val mfAllUserMovieRatingState = mutableIntStateOf(0)
 
     private val _rateModalState = MutableStateFlow(false)
     val rateModalState get() = _rateModalState.asStateFlow()
@@ -104,11 +99,10 @@ class MovieDetailViewModel(
     }
 
     fun changeStateWantThisMovie() {
-        if(_movieInfo.value==null) return
-
+        if(_movieInfo.value==null || _userInfo.value==null) return
         viewModelScope.launch {
             _movieInfo.value?.let {
-                repository.changeStateWantThisMovie(it, _userInfo.value).collectLatest { result ->
+                repository.changeStateWantThisMovie(it, _userInfo.value!!).collectLatest { result ->
                     _wantThisMovieState.emit(result)
                 }
             }
@@ -117,7 +111,7 @@ class MovieDetailViewModel(
 
     private fun getStateWantThisMovie() {
         viewModelScope.launch {
-            repository.getStateWantThisMovie(_movieId.value, _userInfo.value).collectLatest { result ->
+            repository.getStateWantThisMovie(_movieId.value, _userInfo.value!!).collectLatest { result ->
                 _wantThisMovieState.emit(result)
             }
         }
@@ -131,12 +125,12 @@ class MovieDetailViewModel(
 
     }
 
-    fun getAllUserRate(){
+    private fun getAllUserRate(){
         viewModelScope.launch {
             repository.getAllUserMovieRating(_movieId.value).collectLatest {
                 when(it){
                     is APIResult.Success -> {
-                        _mfAllUserMovieRating.emit(getRateAverage(it.resultData))
+                        mfAllUserMovieRatingState.intValue = getRateAverage(it.resultData)
                     }
                     else -> {}
                 }
@@ -159,10 +153,10 @@ class MovieDetailViewModel(
 
     fun voteUserRate(star: Int) {
         viewModelScope.launch {
-            repository.voteUserMovieRating(_movieId.value, _userInfo.value, star).collectLatest {
+            repository.voteUserMovieRating(_movieId.value, _userInfo.value!!, star).collectLatest {
                 when(it){
                     is APIResult.Success -> {
-                        _userMovieRating.emit(it.resultData)
+                        userMovieRatingState.intValue = it.resultData
                         getAllUserRate()
                     }
                     else -> {}

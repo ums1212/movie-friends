@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -27,29 +28,33 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
+import org.comon.moviefriends.presenter.viewmodel.ProfileViewModel
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 
 @Composable
 fun ProfileScreen(
+    viewModel: ProfileViewModel = viewModel(),
     navigateToUserWant: () -> Unit,
     navigateToUserRate: () -> Unit,
     navigateToUserReview: () -> Unit,
     navigateToUserCommunityPost: () -> Unit,
     navigateToUserCommunityReply: () -> Unit,
+    profileType: String,
 ) {
-    val user = UserInfo(nickName = "벼랑위의당뇨", profileImage = "", joinType = "")
+    val user = viewModel.user.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     val scrollState = rememberScrollState()
@@ -57,6 +62,12 @@ fun ProfileScreen(
     val wantMovieList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
     val rateList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
     val reviewList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
+
+    LaunchedEffect(key1 =Unit) {
+        if(profileType==ProfileType.MY_INFO.str){
+            viewModel.getUserInfo(MFPreferences.getUserInfo(context))
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -75,15 +86,15 @@ fun ProfileScreen(
                     .clip(CircleShape)
                     .border(1.dp, color = FriendsBoxGrey, shape = CircleShape),
                 model = ImageRequest.Builder(context)
-                    .data(user.profileImage)
+                    .data(user.value?.profileImage)
                     .crossfade(true)
-                    .error(R.drawable.yoshicat)
+                    .error(R.drawable.logo)
                     .build(),
                 contentDescription = "회원 프로필 사진",
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
-            MFPostTitle(user.nickName)
+            MFPostTitle(user.value?.nickName ?: "")
         }
         Spacer(modifier = Modifier.padding(vertical = 24.dp))
 
@@ -138,7 +149,7 @@ private fun ProfileMenu(
                         model = ImageRequest.Builder(context)
                             .data(item)
                             .crossfade(true)
-                            .error(R.drawable.yoshicat)
+                            .error(R.drawable.logo)
                             .build(),
                         contentDescription = "영화",
                         contentScale = ContentScale.Crop,
@@ -158,4 +169,9 @@ private fun ProfileMenu(
             }
         }
     }
+}
+
+enum class ProfileType(val str: String) {
+    MY_INFO("myInfo"),
+    OTHER_USER("otherUser"),
 }

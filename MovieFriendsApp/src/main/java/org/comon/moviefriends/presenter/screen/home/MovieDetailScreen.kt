@@ -1,7 +1,6 @@
 package org.comon.moviefriends.presenter.screen.home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,8 +36,8 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
-import kotlinx.coroutines.flow.collectLatest
 import org.comon.moviefriends.R
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.ResponseCreditDto
@@ -71,16 +69,6 @@ fun MovieDetailScreen(
 ) {
     val context = LocalContext.current
 
-    val userInfo by lazy {
-//        MFPreferences.getUserInfo(context)
-        UserInfo(
-            id = "0",
-            joinType = "google",
-            nickName = "벼랑위의당뇨",
-            profileImage = ""
-        )
-    }
-
     val scrollState = rememberScrollState()
 
     val movieItem by viewModel.movieDetail.collectAsStateWithLifecycle()
@@ -90,24 +78,10 @@ fun MovieDetailScreen(
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
 
-    val userMovieRatingState = remember {
-        mutableIntStateOf(0)
-    }
-    val mfAllUserMovieRatingState = remember {
-        mutableIntStateOf(0)
-    }
-
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
-        viewModel.getUserInfo(userInfo)
+        viewModel.getUserInfo(MFPreferences.getUserInfo(context))
         viewModel.getAllMovieInfo()
-
-        viewModel.mfAllUserMovieRating.collectLatest {
-            mfAllUserMovieRatingState.intValue = it
-        }
-        viewModel.userMovieRating.collectLatest {
-            userMovieRatingState.intValue = it
-        }
     }
 
     Scaffold(
@@ -180,7 +154,7 @@ fun MovieDetailScreen(
             ) {
                 RatingBarView(
                     isRatingEditable = false,
-                    rating = mfAllUserMovieRatingState,
+                    rating = viewModel.mfAllUserMovieRatingState,
                     ratedStarsColor = FriendsRed,
                 )
             }
@@ -192,7 +166,7 @@ fun MovieDetailScreen(
             if (rateModalState) {
                 RateModal(
                     dismissModal = { viewModel.toggleRateModalState() },
-                    userRate = userMovieRatingState,
+                    userRate = viewModel.userMovieRatingState,
                     voteUserRate = { star ->
                         viewModel.voteUserRate(star)
                     }

@@ -18,13 +18,12 @@ import java.time.format.DateTimeFormatter
 class MovieDetailDataSourceImpl: MovieDetailDataSource {
     private val db = Firebase.firestore
 
-    private suspend fun getWantThisMovieInfo(movieId: Int, userInfo: UserInfo): QuerySnapshot {
-        return db.collection("want_movie")
+    private suspend fun getWantThisMovieInfo(movieId: Int, userInfo: UserInfo)
+        = db.collection("want_movie")
             .whereEqualTo("movieId", movieId)
             .whereEqualTo("userInfo.id", userInfo.id)
             .get()
             .await()
-    }
 
     override suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo) = flow {
         emit(APIResult.Loading)
