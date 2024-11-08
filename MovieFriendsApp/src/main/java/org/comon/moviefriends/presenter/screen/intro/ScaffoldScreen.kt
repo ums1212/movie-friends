@@ -10,10 +10,12 @@ import androidx.compose.runtime.IntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.PROFILE_MENU
@@ -44,7 +46,7 @@ fun ScaffoldScreen(
     changeBottomMenu: (Int) -> Unit,
 ){
     val scaffoldNavController = rememberNavController()
-    val currentRoute = scaffoldNavController.currentBackStackEntryAsState().value?.destination?.route?.split("/")?.first()
+    val currentRoute = scaffoldNavController.currentBackStackEntryAsState().value?.destination?.route
 
     Scaffold(
         modifier = Modifier
@@ -127,13 +129,21 @@ fun ScaffoldScreen(
                 composable(COMMUNITY_MENU.WORLD_CUP.route) {
                     WorldCupScreen()
                 }
-                composable(NAV_ROUTE.PROFILE.route) {
+                composable(
+                    route = "${NAV_ROUTE.PROFILE.route}/{profileType}",
+                    arguments = listOf(
+                        navArgument("profileType"){
+                            type = NavType.StringType
+                        }
+                    )
+                ) { backStackEntry ->
                     ProfileScreen(
                         navigateToUserWant = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_WANT_MOVIE.route) },
                         navigateToUserRate = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_RATE.route) },
                         navigateToUserReview = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_REVIEW.route) },
                         navigateToUserCommunityPost = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_COMMUNITY_POST.route) },
                         navigateToUserCommunityReply = { scaffoldNavController.navigate(PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route) },
+                        profileType = backStackEntry.arguments?.getString("profileType") ?: "",
                     )
                 }
                 composable(NAV_ROUTE.PROFILE_SETTING.route) {

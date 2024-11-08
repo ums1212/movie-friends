@@ -108,12 +108,6 @@ class LoginViewModel: ViewModel() {
     }
 }
 
-enum class LoginCategory {
-    WITHOUT_LOGIN,
-    KAKAO_LOGIN,
-    GOOGLE_LOGIN,
-}
-
 enum class JoinType(val str: String) {
     KAKAO("kakao"),
     GOOGLE("google"),

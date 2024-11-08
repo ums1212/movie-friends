@@ -48,15 +48,10 @@ fun MFTopAppBar(
             ),
             title = {
                 if(
-                    route!= NAV_ROUTE.COMMUNITY_DETAIL.route
-                    && route!= NAV_ROUTE.MOVIE_DETAIL.route
-                    && route!= PROFILE_MENU.PROFILE_WANT_MOVIE.route
-                    && route!= PROFILE_MENU.PROFILE_RATE.route
-                    && route!= PROFILE_MENU.PROFILE_REVIEW.route
-                    && route!= PROFILE_MENU.PROFILE_COMMUNITY_POST.route
-                    && route!= PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route
-                    )
-                {
+                    !route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
+                    && !route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
+                    && !PROFILE_MENU.entries.any { route.contains(it.route) }
+                    ) {
                     Image(
                         modifier = Modifier
                             .size(width = 50.dp, height = 50.dp),
@@ -66,16 +61,11 @@ fun MFTopAppBar(
                 }
             },
             navigationIcon = {
-                if(route== NAV_ROUTE.COMMUNITY_DETAIL.route
-                    || route== NAV_ROUTE.MOVIE_DETAIL.route
-                    || route== NAV_ROUTE.WRITE_POST.route
-                    || route== PROFILE_MENU.PROFILE_WANT_MOVIE.route
-                    || route== PROFILE_MENU.PROFILE_RATE.route
-                    || route== PROFILE_MENU.PROFILE_REVIEW.route
-                    || route== PROFILE_MENU.PROFILE_COMMUNITY_POST.route
-                    || route== PROFILE_MENU.PROFILE_COMMUNITY_REPLY.route
-                    )
-                {
+                if(route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
+                    || route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
+                    || route.contains(NAV_ROUTE.WRITE_POST.route)
+                    || PROFILE_MENU.entries.any { route.contains(it.route)  }
+                ) {
                     IconButton(
                         onClick = navigatePop
                     ) {
@@ -88,7 +78,7 @@ fun MFTopAppBar(
                 }
             },
             actions = {
-                if(route== NAV_ROUTE.COMMUNITY_DETAIL.route || COMMUNITY_MENU.entries.any { it.route == route }){
+                if(route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route) || COMMUNITY_MENU.entries.any { route.contains(it.route)  }){
                     /** 커뮤니티 메뉴 버튼 */
                     IconButton(
                         onClick = {
@@ -137,7 +127,7 @@ fun MFTopAppBar(
                     }
                 }
 
-                if(route== NAV_ROUTE.PROFILE.route){
+                if(route.contains(NAV_ROUTE.PROFILE.route)){
                     /** 프로필 변경 버튼 */
                     IconButton(
                         onClick = navigateToProfileSetting,

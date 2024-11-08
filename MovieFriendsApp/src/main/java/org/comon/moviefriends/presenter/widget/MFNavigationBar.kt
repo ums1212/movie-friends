@@ -10,13 +10,10 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.colorResource
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.NAV_MENU
+import org.comon.moviefriends.presenter.screen.profile.ProfileType
 
 @Composable
 fun MFNavigationBar(
@@ -45,7 +42,12 @@ fun MFNavigationBar(
                 label = { Text(item.description) },
                 selected = selectedItem.intValue == index,
                 onClick = {
-                    navigateToMenu(NAV_MENU.entries[index].route, index)
+                    navigateToMenu(
+                        if(NAV_MENU.entries[index].route==NAV_MENU.PROFILE.route){
+                            "${NAV_MENU.PROFILE.route}/${ProfileType.MY_INFO.str}"
+                        }else{
+                            NAV_MENU.entries[index].route
+                        }, index)
                 }
             )
         }
