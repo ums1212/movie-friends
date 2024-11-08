@@ -6,13 +6,16 @@ import org.comon.moviefriends.data.model.UserInfo
 
 object MFPreferences {
 
-    fun getUserInfo(context: Context): UserInfo =
-        Gson().fromJson(
-            context
-                .getSharedPreferences("userInfo", Context.MODE_PRIVATE)
-                .getString("userInfo", ""),
-            UserInfo::class.java
-        )
+    fun getUserInfo(context: Context): UserInfo? {
+        val getString = context
+            .getSharedPreferences("userInfo", Context.MODE_PRIVATE)
+            .getString("userInfo", "")
+        return if(getString.isNullOrEmpty()){
+            null
+        }else{
+            Gson().fromJson(getString, UserInfo::class.java)
+        }
+    }
 
     fun setUserInfo(context: Context, userInfo: UserInfo) {
         val json = Gson().toJson(userInfo)

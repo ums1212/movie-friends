@@ -3,6 +3,7 @@ package org.comon.moviefriends.data.repo
 import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSource
+import org.comon.moviefriends.data.model.UserInfo
 
 class LoginRepository {
 
@@ -21,4 +22,7 @@ class LoginRepository {
 
     suspend fun googleLogin(context: Context, googleOAuth: String) =
         authDataSource.googleLogin(context, googleOAuth)
+
+    suspend fun insertUserInfoToFireStore(userInfo: UserInfo) = authDataSource.insertUserInfoToFireStore(userInfo)
+
 }

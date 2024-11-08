@@ -9,6 +9,7 @@ import androidx.credentials.GetCredentialRequest
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.OAuthCredential
 import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.ktx.firestore
@@ -20,8 +21,10 @@ import com.kakao.sdk.user.UserApiClient
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.presenter.viewmodel.LoginResult
 
 class AuthenticationDataSource {
     private val auth = Firebase.auth
@@ -39,9 +42,9 @@ class AuthenticationDataSource {
         if(pendingResultTask != null){
             pendingResultTask
                 .addOnSuccessListener {
-                    Log.d(TAG, "이미 파이어베이스에 등록된 계정이 있음")
-                    it.user?.let{
-                        moveToScaffoldScreen()
+                    Log.d(TAG, "이미 pending된 authResult가 있음")
+                    it.user?.let{ user ->
+                        moveToNextScreen(user)
                     }
                 }
                 .addOnFailureListener {
@@ -83,12 +86,10 @@ class AuthenticationDataSource {
             .setFilterByAuthorizedAccounts(true)
             .setServerClientId(googleOAuth)
             .build()
-        Log.d("test1234", "googleIdOption")
 
         val request = GetCredentialRequest.Builder()
             .addCredentialOption(googleIdOption)
             .build()
-        Log.d("test1234", "request")
 
         request.runCatching {
             credentialManager.getCredential(
@@ -142,6 +143,14 @@ class AuthenticationDataSource {
         }
     }.catch {
         emit(APIResult.NetworkError(it))
+    }
+
+    suspend fun insertUserInfoToFireStore(userInfo: UserInfo) = flow {
+        emit(LoginResult.Loading)
+        db.collection("user").add(userInfo).await()
+        emit(LoginResult.Success(true))
+    }.catch {
+        emit(LoginResult.NetworkError(it))
     }
 
 

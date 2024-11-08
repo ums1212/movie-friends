@@ -10,22 +10,36 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
+import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.presenter.common.ShowNetworkErrorSnackBar
+import org.comon.moviefriends.presenter.viewmodel.JoinType
+import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.widget.MFButton
 
@@ -34,16 +48,16 @@ fun SubmitNickNameScreen(
     uid: String,
     nickname: String,
     photoUrl: String,
+    joinType: String,
     moveToScaffoldScreen: () -> Unit,
 ) {
     val viewModel = LoginViewModel()
     val user = viewModel.user.collectAsStateWithLifecycle()
     var textValue by remember { mutableStateOf(nickname) }
-    LaunchedEffect(key1 = Unit) {
-        user.value?.reload()?.addOnSuccessListener {
-            Log.d("test1234", "user: ${user.value?.displayName}")
-        }
-    }
+    val loadingUiState = remember { mutableStateOf(false) }
+    val localContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+    val snackBarHost = remember { SnackbarHostState() }
 
     Column(
         modifier = Modifier
@@ -52,6 +66,9 @@ fun SubmitNickNameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        if(loadingUiState.value){
+            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        }
         Image(
             painterResource(R.drawable.logo),
             contentDescription = stringResource(R.string.app_name),
@@ -80,6 +97,32 @@ fun SubmitNickNameScreen(
                 keyboardActions = KeyboardActions(onDone = { }),
             )
         }
-        MFButton(moveToScaffoldScreen, stringResource(R.string.button_confirm))
+        MFButton({
+            coroutineScope.launch {
+                val userInfo = UserInfo(
+                    id = uid,
+                    nickName = textValue,
+                    profileImage = photoUrl,
+                    joinType = joinType,
+                )
+                MFPreferences.setUserInfo(localContext, userInfo)
+                viewModel.completeJoinUser(
+                    userInfo = userInfo,
+                    loadingState = loadingUiState,
+                    moveToScaffoldScreen = moveToScaffoldScreen,
+                    showErrorMessage = {
+                        coroutineScope.launch {
+                            snackBarHost.showSnackbar(
+                                localContext.getString(R.string.network_error),
+                                null,
+                                true,
+                                SnackbarDuration.Short
+                            )
+                        }
+                    }
+                )
+            }
+        }, stringResource(R.string.button_confirm))
     }
+
 }

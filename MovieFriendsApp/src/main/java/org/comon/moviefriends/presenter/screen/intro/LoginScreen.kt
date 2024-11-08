@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.R
-import org.comon.moviefriends.presenter.viewmodel.LoginCategory
+import org.comon.moviefriends.presenter.viewmodel.JoinType
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.widget.GoogleLoginButton
 import org.comon.moviefriends.presenter.widget.KakaoLoginButton
@@ -39,7 +39,7 @@ import org.comon.moviefriends.presenter.widget.MFButton
 @Composable
 fun LoginScreen(
     moveToScaffoldScreen: () -> Unit,
-    moveToSubmitNickNameScreen: (user: FirebaseUser?) -> Unit,
+    moveToSubmitNickNameScreen: (user: FirebaseUser?, joinType: String) -> Unit,
 ) {
     val viewModel: LoginViewModel = viewModel()
     val localContext = LocalContext.current
@@ -73,29 +73,31 @@ fun LoginScreen(
             )
             KakaoLoginButton {
                 viewModel.kakaoLogin(
-                    localContext,
-                    moveToScaffoldScreen
-                ){ user ->
-                    moveToSubmitNickNameScreen(user)
-                }
+                    context = localContext,
+                    moveToScaffoldScreen = moveToScaffoldScreen,
+                    moveToNextScreen = { user ->
+                        moveToSubmitNickNameScreen(user, JoinType.KAKAO.str)
+                    }
+                )
             }
             Spacer(Modifier.padding(vertical = 12.dp))
             GoogleLoginButton {
                 viewModel.googleLogin(
-                    localContext,
-                    BuildConfig.GOOGLE_OAUTH,
-                    { user -> moveToSubmitNickNameScreen(user)},
-                    loadingUiState
-                ) {
-                    coroutineScope.launch {
-                        snackBarHost.showSnackbar(
-                            localContext.getString(R.string.network_error),
-                            null,
-                            true,
-                            SnackbarDuration.Short
-                        )
+                    context = localContext,
+                    googleOAuth = BuildConfig.GOOGLE_OAUTH,
+                    moveToSubmitNickNameScreen = { user -> moveToSubmitNickNameScreen(user, JoinType.GOOGLE.str)},
+                    loadingState = loadingUiState,
+                    showErrorMessage = {
+                        coroutineScope.launch {
+                            snackBarHost.showSnackbar(
+                                localContext.getString(R.string.network_error),
+                                null,
+                                true,
+                                SnackbarDuration.Short
+                            )
+                        }
                     }
-                }
+                )
             }
         }
         SnackbarHost(snackBarHost)
