@@ -15,11 +15,12 @@ import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserRate
 import org.comon.moviefriends.data.model.UserWantMovieInfo
+import org.comon.moviefriends.data.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
 
 class MovieDetailViewModel(
-    private val repository: TMDBRepositoryImpl = TMDBRepositoryImpl()
+    private val repository: TMDBRepository = TMDBRepositoryImpl()
 ): ViewModel() {
 
     private val _movieId = MutableStateFlow(0)
@@ -81,6 +82,9 @@ class MovieDetailViewModel(
 
     private val _wantThisMovieState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
     val wantThisMovieState get() = _wantThisMovieState.asStateFlow()
+    fun changeWantThisMovieStateLoading(){
+        _wantThisMovieState.value = APIResult.Loading
+    }
 
     private val _userWantList = MutableStateFlow<List<UserWantMovieInfo?>>(emptyList())
     val userWantList get() = _userWantList.asStateFlow()
@@ -92,7 +96,7 @@ class MovieDetailViewModel(
         getStateWantThisMovie()
         getAllUserRate()
         getUserWantList()
-//        getUserReview(movieId)
+//        getUserReview()
     }
 
     private fun getMovieDetail() {
@@ -118,6 +122,7 @@ class MovieDetailViewModel(
     }
 
     fun changeStateWantThisMovie(
+        nowLocation: List<Double>,
         navigateToLogin: () -> Unit
     ) {
         if(_userInfo.value==null) {
@@ -126,7 +131,7 @@ class MovieDetailViewModel(
         }
         viewModelScope.launch {
             _movieInfo.value?.let {
-                repository.changeStateWantThisMovie(it, _userInfo.value!!).collectLatest { result ->
+                repository.changeStateWantThisMovie(it, _userInfo.value!!, nowLocation).collectLatest { result ->
                     _wantThisMovieState.emit(result)
                 }
             }

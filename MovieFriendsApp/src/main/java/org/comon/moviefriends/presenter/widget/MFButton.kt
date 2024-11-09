@@ -1,5 +1,11 @@
 package org.comon.moviefriends.presenter.widget
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
+import android.content.pm.PackageManager
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -9,25 +15,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
+import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.theme.Black
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
@@ -57,10 +73,43 @@ fun MFButton(clickEvent: () -> Unit, text: String) {
 }
 
 @Composable
-fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIResult<Boolean>) {
+fun MFButtonWantThisMovie(
+    clickEvent: () -> Unit,
+    text: String,
+    isChecked: APIResult<Boolean>,
+    showErrorMessage: () -> Unit,
+) {
+
+    val localContext = LocalContext.current
+
+    val launcherMultiplePermissions = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissionsMap ->
+        val areGranted = permissionsMap.values.reduce { acc, next -> acc && next }
+        /** 권한 요청시 동의 했을 경우 **/
+        if (areGranted) {
+            clickEvent()
+        }
+        /** 권한 요청시 거부 했을 경우 **/
+        else {
+            showErrorMessage()
+        }
+    }
+
     Button(
         shape = RoundedCornerShape(25),
-        onClick = clickEvent,
+        onClick = {
+            // 위치 권한 확인
+            if(ContextCompat.checkSelfPermission(localContext,ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                && ContextCompat.checkSelfPermission(localContext,ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                ){
+                clickEvent()
+            }else{
+                // 위치 권한이 없다면 요청
+                launcherMultiplePermissions.launch(MFLocationManager.permissions)
+                Log.d("test1234", "권한이 없음")
+            }
+                  },
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 36.dp),
@@ -73,7 +122,7 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIRe
         )
     ) {
         when(isChecked){
-            is APIResult.Loading -> { ShimmerEffect(modifier = Modifier.fillMaxSize()) }
+            is APIResult.Loading -> { CircularProgressIndicator(modifier = Modifier.size(24.dp)) }
             is APIResult.Success -> {
                 if(isChecked.resultData){
                     Row(
@@ -95,11 +144,39 @@ fun MFButtonWantThisMovie(clickEvent: () -> Unit, text: String, isChecked: APIRe
     }
 }
 
+enum class WatchTogetherButtonState {
+    NOTHING,
+    LOADING,
+    SUCCESS,
+}
+
 @Composable
-fun MFButtonWatchTogether(clickEvent: () -> Unit, isChecked: MutableState<Boolean>) {
+fun MFButtonWatchTogether(
+    coroutineScope: CoroutineScope,
+    clickEvent: Flow<APIResult<Boolean>>,
+    showErrorMessage: () -> Unit,
+) {
+    val buttonState = remember { mutableStateOf(WatchTogetherButtonState.NOTHING) }
+
     Button(
         shape = RoundedCornerShape(25),
-        onClick = clickEvent,
+        onClick = {
+            coroutineScope.launch {
+                clickEvent.collectLatest { result ->
+                    when(result){
+                        APIResult.Loading -> buttonState.value = WatchTogetherButtonState.LOADING
+                        is APIResult.Success -> buttonState.value = WatchTogetherButtonState.SUCCESS
+                        is APIResult.NetworkError -> {
+                            buttonState.value = WatchTogetherButtonState.NOTHING
+                            showErrorMessage()
+                        }
+                        else -> {
+                            buttonState.value = WatchTogetherButtonState.NOTHING
+                        }
+                    }
+                }
+            }
+        },
         modifier = Modifier
             .width(120.dp),
         border = BorderStroke(1.dp, FriendsTextGrey),
@@ -116,10 +193,10 @@ fun MFButtonWatchTogether(clickEvent: () -> Unit, isChecked: MutableState<Boolea
             bottom = 2.dp,
         )
     ) {
-        if(isChecked.value){
-            Text(stringResource(R.string.button_cancel))
-        }else{
-            Text(stringResource(R.string.button_watch_together))
+        when(buttonState.value){
+            WatchTogetherButtonState.NOTHING -> Text(stringResource(R.string.button_watch_together))
+            WatchTogetherButtonState.LOADING -> CircularProgressIndicator()
+            WatchTogetherButtonState.SUCCESS -> Text(stringResource(R.string.button_cancel))
         }
     }
 }

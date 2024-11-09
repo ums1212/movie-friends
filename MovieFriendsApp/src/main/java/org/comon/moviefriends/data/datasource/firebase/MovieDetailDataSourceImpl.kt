@@ -1,12 +1,13 @@
 package org.comon.moviefriends.data.datasource.firebase
 
+import android.util.Log
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.TMDBMovieDetail
 import org.comon.moviefriends.data.model.UserInfo
@@ -37,20 +38,29 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         error -> emit(APIResult.NetworkError(error))
     }
 
-    override suspend fun changeStateWantThisMovie(movieDetail: TMDBMovieDetail, userInfo: UserInfo) = flow {
+    override suspend fun changeStateWantThisMovie(movieDetail: TMDBMovieDetail, userInfo: UserInfo, nowLocation: List<Double>) = flow {
         emit(APIResult.Loading)
+        // 위치 정보 가져오기
+        val region = MFLocationService.getInstance()
+            .getCurrentRegion(nowLocation[1], nowLocation[0])
+            .body()?.documents?.find {
+                it.regionType == "B"
+            }?.region3depthName
+
+        // 기존 데이터가 있는지 확인하기
         val querySnapshot = getWantThisMovieInfo(movieDetail.id, userInfo)
         if(querySnapshot.documents.isEmpty()){
             val wantMovieInfo = UserWantMovieInfo(
                 movieId = movieDetail.id,
                 moviePosterPath = movieDetail.posterPath,
                 userInfo = userInfo,
-                userDistance = 0,
+                userLocation = region ?: "위치 없음",
                 createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             )
             db.collection("want_movie").add(wantMovieInfo).await()
             emit(APIResult.Success(true))
         }else{
+            // 기존 데이터가 있다면 삭제
             querySnapshot.first().reference.delete().await()
             emit(APIResult.Success(false))
         }

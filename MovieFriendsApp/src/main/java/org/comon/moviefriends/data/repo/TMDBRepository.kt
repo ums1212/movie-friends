@@ -29,7 +29,7 @@ interface TMDBRepository {
 
     suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo): Flow<APIResult<Boolean>>
 
-    suspend fun changeStateWantThisMovie(movieInfo: TMDBMovieDetail, userInfo: UserInfo): Flow<APIResult<Boolean>>
+    suspend fun changeStateWantThisMovie(movieInfo: TMDBMovieDetail, userInfo: UserInfo, nowLocation: List<Double>): Flow<APIResult<Boolean>>
 
     suspend fun getUserWantList(movieId: Int): Flow<APIResult<List<UserWantMovieInfo?>>>
 

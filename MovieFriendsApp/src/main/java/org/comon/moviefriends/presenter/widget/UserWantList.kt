@@ -14,9 +14,12 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,8 +30,11 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.model.UserWantMovieInfo
@@ -39,19 +45,25 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 fun UserWantThisMovieList(
     screen: String,
     wantList: List<UserWantMovieInfo?> = listOf(
-        UserWantMovieInfo(movieId = 1034541, userInfo = UserInfo(nickName = "유저1", profileImage = "", joinType = ""), userDistance = 100),
-        UserWantMovieInfo(movieId = 912649, userInfo = UserInfo(nickName = "유저2", profileImage = "", joinType = ""), userDistance = 200),
-        UserWantMovieInfo(movieId = 1184918, userInfo = UserInfo(nickName = "유저3", profileImage = "", joinType = ""), userDistance = 220),
-        UserWantMovieInfo(movieId = 933260, userInfo = UserInfo(nickName = "유저4", profileImage = "", joinType = ""), userDistance = 300),
-        UserWantMovieInfo(movieId = 698687, userInfo = UserInfo(nickName = "유저5", profileImage = "", joinType = ""), userDistance = 400),
-        UserWantMovieInfo(movieId = 889737, userInfo = UserInfo(nickName = "유저6", profileImage = "", joinType = ""), userDistance = 500),
-        UserWantMovieInfo(movieId = 1084736, userInfo = UserInfo(nickName = "유저7", profileImage = "", joinType = ""), userDistance = 600),
-        UserWantMovieInfo(movieId = 976734, userInfo = UserInfo(nickName = "유저8", profileImage = "", joinType = ""), userDistance = 700),
-        UserWantMovieInfo(movieId = 1079091, userInfo = UserInfo(nickName = "유저9", profileImage = "", joinType = ""), userDistance = 800),
-        UserWantMovieInfo(movieId = 1196470, userInfo = UserInfo(nickName = "유저10", profileImage = "", joinType = ""), userDistance = 900),
+        UserWantMovieInfo(movieId = 1034541, userInfo = UserInfo(nickName = "유저1", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 912649, userInfo = UserInfo(nickName = "유저2", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 1184918, userInfo = UserInfo(nickName = "유저3", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 933260, userInfo = UserInfo(nickName = "유저4", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 698687, userInfo = UserInfo(nickName = "유저5", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 889737, userInfo = UserInfo(nickName = "유저6", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 1084736, userInfo = UserInfo(nickName = "유저7", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 976734, userInfo = UserInfo(nickName = "유저8", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 1079091, userInfo = UserInfo(nickName = "유저9", profileImage = "", joinType = "")),
+        UserWantMovieInfo(movieId = 1196470, userInfo = UserInfo(nickName = "유저10", profileImage = "", joinType = "")),
     ),
-    navigateToMovieDetail: (id:Int) -> Unit = {},
+    navigateToMovieDetail: ((id:Int) -> Unit)?,
+    requestWatchTogether: (receiveUser: UserInfo) -> Flow<APIResult<Boolean>>,
     ){
+
+    val localContext = LocalContext.current
+    val snackBarHost = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    SnackbarHost(snackBarHost)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -63,7 +75,6 @@ fun UserWantThisMovieList(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    val checked = remember { mutableStateOf(false) }
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
@@ -74,7 +85,7 @@ fun UserWantThisMovieList(
                                     .height(120.dp)
                                     .padding(4.dp)
                                     .clickableOnce {
-                                        navigateToMovieDetail(want.movieId)
+                                        navigateToMovieDetail!!(want.movieId)
                                     },
                                 shape = RoundedCornerShape(8.dp),
                                 border = BorderStroke(1.dp, Color.LightGray),
@@ -95,12 +106,23 @@ fun UserWantThisMovieList(
                                 )
                             }
                         }
-                        UserWantListItem(want.userInfo, want.userDistance)
+                        UserWantListItem(want.userInfo, want.userLocation)
                     }
 
-                    MFButtonWatchTogether({
-                        checked.value = !checked.value
-                    }, checked)
+                    MFButtonWatchTogether(
+                        coroutineScope = coroutineScope,
+                        clickEvent = requestWatchTogether(want.userInfo),
+                        showErrorMessage = {
+                            coroutineScope.launch {
+                                snackBarHost.showSnackbar(
+                                    localContext.getString(R.string.network_error),
+                                    null,
+                                    true,
+                                    SnackbarDuration.Short
+                                )
+                            }
+                        }
+                    )
                 }
                 Spacer(Modifier.padding(bottom = 8.dp))
             }

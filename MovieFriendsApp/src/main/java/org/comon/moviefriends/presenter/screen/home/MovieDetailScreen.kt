@@ -1,7 +1,6 @@
 package org.comon.moviefriends.presenter.screen.home
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,12 +17,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -39,14 +42,15 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.ResponseCreditDto
 import org.comon.moviefriends.data.model.TMDBMovieDetail
-import org.comon.moviefriends.data.model.UserInfo
-import org.comon.moviefriends.data.model.UserWantMovieInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
@@ -72,9 +76,12 @@ fun MovieDetailScreen(
     navigatePop: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    val context = LocalContext.current
+    val localContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     val scrollState = rememberScrollState()
+
+    val snackBarHost = remember { SnackbarHostState() }
 
     val movieItem by viewModel.movieDetail.collectAsStateWithLifecycle()
     val movieCredit by viewModel.movieCredit.collectAsStateWithLifecycle()
@@ -86,7 +93,7 @@ fun MovieDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
-        viewModel.getUserInfo(MFPreferences.getUserInfo(context))
+        viewModel.getUserInfo(MFPreferences.getUserInfo(localContext))
         viewModel.getAllMovieInfo()
     }
 
@@ -106,20 +113,52 @@ fun MovieDetailScreen(
             MovieDetailView(
                 movieItem = movieItem,
                 setMovieInfo = { movieInfo -> viewModel.setMovieInfo(movieInfo) },
-                context = context
+                context = localContext
             )
 
             /** 주요 출연진 */
             Spacer(Modifier.padding(vertical = 12.dp))
             MFPostTitle(stringResource(R.string.title_credits))
-            MovieCreditView(movieCredit, context)
+            MovieCreditView(movieCredit, localContext)
 
             /** 이 영화를 보고 싶다 */
             Spacer(Modifier.padding(vertical = 4.dp))
             MFButtonWantThisMovie(
-                { viewModel.changeStateWantThisMovie(navigateToLogin) },
-                stringResource(R.string.button_want_this_movie),
-                wantThisMovieState
+                clickEvent = {
+                    viewModel.changeWantThisMovieStateLoading()
+                    coroutineScope.launch {
+                        MFLocationManager().getCurrentLocation(localContext).collectLatest { result ->
+                            when(result){
+                                is APIResult.Success -> {
+                                    viewModel.changeStateWantThisMovie(result.resultData, navigateToLogin)
+                                }
+                                is APIResult.NetworkError -> {
+                                    coroutineScope.launch {
+                                        snackBarHost.showSnackbar(
+                                            localContext.getString(R.string.network_error),
+                                            null,
+                                            true,
+                                            SnackbarDuration.Short
+                                        )
+                                    }
+                                }
+                                else -> {}
+                            }
+                        }
+                    }
+                },
+                text = stringResource(R.string.button_want_this_movie),
+                isChecked = wantThisMovieState,
+                showErrorMessage = {
+                    coroutineScope.launch {
+                        snackBarHost.showSnackbar(
+                            localContext.getString(R.string.network_error),
+                            null,
+                            true,
+                            SnackbarDuration.Short
+                        )
+                    }
+                }
             )
             Spacer(Modifier.padding(vertical = 12.dp))
             MFPostTitle(stringResource(R.string.title_user_want_this_movie))
@@ -135,12 +174,13 @@ fun MovieDetailScreen(
                     }else{
                         val previewList = userWantList.take(2)
                         Row(
-                            modifier = Modifier.weight(0.7f)
+                            modifier = Modifier
+                                .weight(0.7f)
                                 .wrapContentSize(unbounded = false),
                         ) {
                             previewList.forEach { item ->
                                 if(item != null){
-                                    UserWantListItem(item.userInfo, item.userDistance)
+                                    UserWantListItem(item.userInfo, item.userLocation)
                                 }
                             }
                         }
@@ -217,6 +257,9 @@ fun MovieDetailScreen(
                 )
             }
         }
+    }
+    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom){
+        SnackbarHost(snackBarHost)
     }
 }
 

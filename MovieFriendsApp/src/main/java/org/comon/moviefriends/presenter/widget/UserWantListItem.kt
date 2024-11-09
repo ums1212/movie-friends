@@ -10,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -21,7 +20,7 @@ import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 
 @Composable
-fun UserWantListItem(user: UserInfo, distance: Int){
+fun UserWantListItem(user: UserInfo, region: String){
     Row(
         modifier = Modifier
             .wrapContentSize(unbounded = true)
@@ -41,7 +40,7 @@ fun UserWantListItem(user: UserInfo, distance: Int){
         )
         Column {
             MFText(user.nickName)
-            MFText("${distance}m")
+            MFText(region)
         }
     }
 }

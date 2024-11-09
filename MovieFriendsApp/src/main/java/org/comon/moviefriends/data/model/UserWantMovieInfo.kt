@@ -5,6 +5,6 @@ data class UserWantMovieInfo (
     val movieId: Int = 0,
     val moviePosterPath: String = "",
     val userInfo: UserInfo = UserInfo(),
-    val userDistance: Int = 0,
+    val userLocation: String = "위치 없음",
     val createdDate: String = "",
 )

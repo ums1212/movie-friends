@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -58,7 +59,7 @@ class MainActivity : ComponentActivity() {
         settingSplashScreenAnimation()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
-        KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_KEY)
+        KakaoSdk.init(this, BuildConfig.KAKAO_REST_KEY)
         checkLogin(startDestination)
         splashScreen.setKeepOnScreenCondition{ false }
         setContent {

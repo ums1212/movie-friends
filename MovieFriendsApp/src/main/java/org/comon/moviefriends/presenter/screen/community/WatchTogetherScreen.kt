@@ -15,10 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.R
+import org.comon.moviefriends.common.COMMUNITY_MENU
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.UserWantThisMovieList
 
@@ -28,8 +34,11 @@ fun WatchTogetherScreen(
     navigateToReceiveList: () -> Unit,
     navigateToChatRoomList: () -> Unit,
     navigateToMovieDetail: (id:Int) -> Unit,
+    viewModel: WatchTogetherViewModel = viewModel()
 ) {
+
     val context = LocalContext.current
+    val user = MFPreferences.getUserInfo(context)
 
     val watchTogetherList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
 
@@ -61,8 +70,14 @@ fun WatchTogetherScreen(
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         MFText(text = stringResource(R.string.title_user_want_movies))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        UserWantThisMovieList(screen = "watch_together"){ movieId ->
-            navigateToMovieDetail(movieId)
-        }
+        UserWantThisMovieList(
+            screen = COMMUNITY_MENU.WATCH_TOGETHER.route,
+            navigateToMovieDetail = { movieId ->
+                navigateToMovieDetail(movieId)
+            },
+            requestWatchTogether = { receiveUser ->
+                viewModel.requestWatchTogether(user, receiveUser)
+            }
+        )
     }
 }

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
@@ -14,17 +15,20 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.UserInfo
 import org.comon.moviefriends.data.repo.LoginRepository
+import org.comon.moviefriends.data.repo.LoginRepositoryImpl
 
-class LoginViewModel: ViewModel() {
-
-    private val repository = LoginRepository()
-    private val auth = Firebase.auth
+class LoginViewModel(
+    private val repository: LoginRepository = LoginRepositoryImpl(),
+    private val auth: FirebaseAuth = Firebase.auth
+): ViewModel() {
 
     fun checkLogin() = flow {
         emit(LoginResult.Loading)
+        auth.currentUser?.reload()?.await()
         emit(LoginResult.Success(
             auth.currentUser != null
         ))

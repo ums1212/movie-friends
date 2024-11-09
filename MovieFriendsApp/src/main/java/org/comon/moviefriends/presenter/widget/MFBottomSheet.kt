@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.data.model.UserWantMovieInfo
@@ -35,7 +36,9 @@ fun MFBottomSheet(
                     if (userWantList != null) {
                         UserWantThisMovieList(
                             screen = NAV_ROUTE.MOVIE_DETAIL.route,
-                            wantList = userWantList
+                            wantList = userWantList,
+                            navigateToMovieDetail = null,
+                            requestWatchTogether = { receiveUser -> flow {  } }
                         )
                     }else{
                         Text(text = stringResource(id = R.string.network_error))

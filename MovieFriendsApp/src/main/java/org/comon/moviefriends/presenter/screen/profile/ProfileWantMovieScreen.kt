@@ -22,6 +22,9 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -52,14 +55,15 @@ import org.comon.moviefriends.presenter.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFText
 
-@Preview
 @Composable
 fun ProfileWantMovieScreen(
     viewModel: MovieDetailViewModel = viewModel(),
     navigateToLogin: () -> Unit,
 ) {
     val pagerState = rememberPagerState(0, pageCount = { 10 })
+    val localContext = LocalContext.current
     val animationScope = rememberCoroutineScope()
+    val snackBarHost = remember { SnackbarHostState() }
 
     val wantThisMovieState by viewModel.wantThisMovieState.collectAsStateWithLifecycle()
 
@@ -149,9 +153,20 @@ fun ProfileWantMovieScreen(
         }
 
         MFButtonWantThisMovie(
-            { viewModel.changeStateWantThisMovie(navigateToLogin) },
+            { viewModel.changeStateWantThisMovie(emptyList(), navigateToLogin) },
             stringResource(R.string.button_want_this_movie),
-            wantThisMovieState
+            wantThisMovieState,
+            showErrorMessage = {
+                animationScope.launch {
+                    snackBarHost.showSnackbar(
+                        localContext.getString(R.string.network_error),
+                        null,
+                        true,
+                        SnackbarDuration.Short
+                    )
+                }
+            }
         )
     }
+    SnackbarHost(snackBarHost)
 }
