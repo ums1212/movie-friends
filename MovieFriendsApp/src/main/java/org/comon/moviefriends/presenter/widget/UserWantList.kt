@@ -18,6 +18,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -30,6 +31,9 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
@@ -57,7 +61,7 @@ fun UserWantThisMovieList(
         UserWantMovieInfo(movieId = 1196470, userInfo = UserInfo(nickName = "유저10", profileImage = "", joinType = "")),
     ),
     navigateToMovieDetail: ((id:Int) -> Unit)?,
-    requestWatchTogether: (receiveUser: UserInfo) -> Flow<APIResult<Boolean>>,
+    requestWatchTogether: ((UserInfo) -> Result<Task<QuerySnapshot>>)?,
     ){
 
     val localContext = LocalContext.current
@@ -109,20 +113,13 @@ fun UserWantThisMovieList(
                         UserWantListItem(want.userInfo, want.userLocation)
                     }
 
-                    MFButtonWatchTogether(
-                        coroutineScope = coroutineScope,
-                        clickEvent = requestWatchTogether(want.userInfo),
-                        showErrorMessage = {
-                            coroutineScope.launch {
-                                snackBarHost.showSnackbar(
-                                    localContext.getString(R.string.network_error),
-                                    null,
-                                    true,
-                                    SnackbarDuration.Short
-                                )
-                            }
-                        }
-                    )
+                    if (requestWatchTogether != null) {
+                        val requestState = remember { mutableStateOf(false) }
+                        MFButtonWatchTogether(
+                            clickEvent = { requestWatchTogether(want.userInfo) },
+                            requestState,
+                        )
+                    }
                 }
                 Spacer(Modifier.padding(bottom = 8.dp))
             }

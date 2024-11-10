@@ -27,8 +27,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -38,8 +40,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
@@ -152,27 +158,17 @@ enum class WatchTogetherButtonState {
 
 @Composable
 fun MFButtonWatchTogether(
-    coroutineScope: CoroutineScope,
-    clickEvent: Flow<APIResult<Boolean>>,
-    showErrorMessage: () -> Unit,
+    clickEvent: () -> Result<Task<QuerySnapshot>>,
+    requestState: MutableState<Boolean>,
 ) {
-    val buttonState = remember { mutableStateOf(WatchTogetherButtonState.NOTHING) }
-
+    val coroutineScope = rememberCoroutineScope()
     Button(
         shape = RoundedCornerShape(25),
         onClick = {
             coroutineScope.launch {
-                clickEvent.collectLatest { result ->
-                    when(result){
-                        APIResult.Loading -> buttonState.value = WatchTogetherButtonState.LOADING
-                        is APIResult.Success -> buttonState.value = WatchTogetherButtonState.SUCCESS
-                        is APIResult.NetworkError -> {
-                            buttonState.value = WatchTogetherButtonState.NOTHING
-                            showErrorMessage()
-                        }
-                        else -> {
-                            buttonState.value = WatchTogetherButtonState.NOTHING
-                        }
+                clickEvent().onSuccess { task ->
+                    task.addOnSuccessListener { snapshot ->
+                        requestState.value = snapshot.isEmpty
                     }
                 }
             }
@@ -193,10 +189,10 @@ fun MFButtonWatchTogether(
             bottom = 2.dp,
         )
     ) {
-        when(buttonState.value){
-            WatchTogetherButtonState.NOTHING -> Text(stringResource(R.string.button_watch_together))
-            WatchTogetherButtonState.LOADING -> CircularProgressIndicator()
-            WatchTogetherButtonState.SUCCESS -> Text(stringResource(R.string.button_cancel))
+        if(requestState.value){
+            Text(stringResource(R.string.button_cancel))
+        }else{
+            Text(stringResource(R.string.button_watch_together))
         }
     }
 }

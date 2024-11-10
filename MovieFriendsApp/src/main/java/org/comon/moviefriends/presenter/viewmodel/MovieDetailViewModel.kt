@@ -60,10 +60,8 @@ class MovieDetailViewModel(
 
     private val _reviewBottomSheetState = MutableStateFlow(false)
     val reviewBottomSheetState get() = _reviewBottomSheetState.asStateFlow()
-    fun toggleReviewBottomSheetState() {
-        viewModelScope.launch {
-            _reviewBottomSheetState.emit(!_reviewBottomSheetState.value)
-        }
+    fun toggleReviewBottomSheetState() = viewModelScope.launch {
+        _reviewBottomSheetState.emit(!_reviewBottomSheetState.value)
     }
 
     private val _userWantBottomSheetState = MutableStateFlow(false)
@@ -99,19 +97,15 @@ class MovieDetailViewModel(
 //        getUserReview()
     }
 
-    private fun getMovieDetail() {
-        viewModelScope.launch {
-            repository.getMovieDetail(movieId.value).collectLatest {
-                _movieDetail.emit(it)
-            }
+    private fun getMovieDetail() = viewModelScope.launch {
+        repository.getMovieDetail(movieId.value).collectLatest {
+            _movieDetail.emit(it)
         }
     }
 
-    private fun getMovieCredit() {
-        viewModelScope.launch {
-            repository.getMovieCredit(movieId.value).collectLatest {
-                _movieCredit.emit(it)
-            }
+    private fun getMovieCredit() = viewModelScope.launch {
+        repository.getMovieCredit(movieId.value).collectLatest {
+            _movieCredit.emit(it)
         }
     }
 
@@ -147,34 +141,33 @@ class MovieDetailViewModel(
         }
     }
 
-    private fun getUserWantList() {
-        viewModelScope.launch {
-            repository.getUserWantList(_movieId.value).collectLatest { result ->
-                when(result){
-                    is APIResult.Success -> {
-                        userWantListState.value = true
-                        _userWantList.emit(result.resultData)
-                    }
-                    is APIResult.NetworkError -> {
-                        Log.d("test1234", "${result.exception}")
-                    }
-                    else -> {
-                        userWantListState.value = false
-                    }
+    private fun getUserWantList() = viewModelScope.launch {
+        repository.getUserWantList(_movieId.value).collectLatest { result ->
+            when(result){
+                is APIResult.Success -> {
+                    userWantListState.value = true
+                    _userWantList.emit(result.resultData)
+                }
+                is APIResult.NetworkError -> {
+                    Log.d("test1234", "${result.exception}")
+                }
+                else -> {
+                    userWantListState.value = false
                 }
             }
         }
     }
 
-    private fun getAllUserRate(){
-        viewModelScope.launch {
-            repository.getAllUserMovieRating(_movieId.value).collectLatest {
-                when(it){
-                    is APIResult.Success -> {
-                        mfAllUserMovieRatingState.intValue = getRateAverage(it.resultData)
-                    }
-                    else -> {}
+    fun requestWatchTogether(receiveUser: UserInfo) =
+        repository.requestWatchTogether(_movieId.value, _userInfo.value!!, receiveUser)
+
+    private fun getAllUserRate() = viewModelScope.launch {
+        repository.getAllUserMovieRating(_movieId.value).collectLatest {
+            when(it){
+                is APIResult.Success -> {
+                    mfAllUserMovieRatingState.intValue = getRateAverage(it.resultData)
                 }
+                else -> {}
             }
         }
     }

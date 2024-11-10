@@ -1,5 +1,6 @@
 package org.comon.moviefriends.data.datasource.firebase
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
@@ -8,6 +9,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
@@ -76,6 +78,31 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         emit(APIResult.Success(userWantList))
     }.catch {
         emit(APIResult.NetworkError(it))
+    }
+
+    override fun requestWatchTogether(
+        movieId: Int,
+        sendUser: UserInfo,
+        receiveUser: UserInfo
+    ) = runCatching {
+        val requestChatInfo = RequestChatInfo(
+            movieId = movieId,
+            sendUser = sendUser,
+            receiveUser = receiveUser,
+            proposalFlag = false,
+            createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        )
+        db.collection("request_chat")
+            .whereEqualTo("movieId", movieId)
+            .whereEqualTo("sendUser", sendUser)
+            .whereEqualTo("receiveUser", receiveUser).get()
+            .addOnSuccessListener { result ->
+                if(result.isEmpty){
+                    db.collection("request_chat").add(requestChatInfo)
+                }else{
+                    result.documents.first().reference.delete()
+                }
+            }
     }
 
     override suspend fun voteUserMovieRating(

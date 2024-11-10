@@ -199,7 +199,8 @@ fun MovieDetailScreen(
                 MFBottomSheet(
                     content = MFBottomSheetContent.UserWantList,
                     dismissSheet = { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
-                    userWantList = userWantList
+                    userWantList = userWantList,
+                    requestWatchTogether = { receiveUser -> viewModel.requestWatchTogether(receiveUser) }
                 )
             }
 

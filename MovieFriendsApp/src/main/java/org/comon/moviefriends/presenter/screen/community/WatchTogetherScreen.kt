@@ -24,6 +24,7 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
+import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.UserWantThisMovieList
@@ -34,7 +35,7 @@ fun WatchTogetherScreen(
     navigateToReceiveList: () -> Unit,
     navigateToChatRoomList: () -> Unit,
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: WatchTogetherViewModel = viewModel()
+    viewModel: MovieDetailViewModel = viewModel()
 ) {
 
     val context = LocalContext.current
@@ -75,9 +76,10 @@ fun WatchTogetherScreen(
             navigateToMovieDetail = { movieId ->
                 navigateToMovieDetail(movieId)
             },
-            requestWatchTogether = { receiveUser ->
-                viewModel.requestWatchTogether(user, receiveUser)
-            }
+            requestWatchTogether = null
+//            requestWatchTogether = { receiveUser ->
+//                viewModel.requestWatchTogether(receiveUser)
+//            }
         )
     }
 }

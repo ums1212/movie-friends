@@ -10,9 +10,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.DocumentReference
+import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +27,7 @@ fun MFBottomSheet(
     content: MFBottomSheetContent,
     dismissSheet: () -> Unit,
     userWantList: List<UserWantMovieInfo?>? = null,
-
+    requestWatchTogether: ((UserInfo) -> Result<Task<QuerySnapshot>>)? = null,
     ) {
     ModalBottomSheet(onDismissRequest = dismissSheet) {
         when(content){
@@ -33,12 +39,12 @@ fun MFBottomSheet(
                         .padding(horizontal = 12.dp)
                 ) {
                     MFPostTitle(stringResource(R.string.title_user_want_this_movie))
-                    if (userWantList != null) {
+                    if (userWantList != null && requestWatchTogether != null) {
                         UserWantThisMovieList(
                             screen = NAV_ROUTE.MOVIE_DETAIL.route,
                             wantList = userWantList,
                             navigateToMovieDetail = null,
-                            requestWatchTogether = { receiveUser -> flow {  } }
+                            requestWatchTogether = { receiveUser -> requestWatchTogether(receiveUser) }
                         )
                     }else{
                         Text(text = stringResource(id = R.string.network_error))
