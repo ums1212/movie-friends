@@ -8,7 +8,6 @@ import android.view.View
 import android.view.animation.AnticipateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -20,8 +19,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
+import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -35,6 +34,7 @@ import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.presenter.screen.intro.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.common.collectFlowInActivity
 import org.comon.moviefriends.presenter.screen.community.ChatRoomListScreen
 import org.comon.moviefriends.presenter.screen.home.MovieDetailScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileSettingScreen
@@ -55,15 +55,24 @@ class MainActivity : ComponentActivity() {
     private val loginViewModel:LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        // super.onCreate() 이전에 installSplashScreen() 메서드를 추가
         val splashScreen = installSplashScreen()
         settingSplashScreenAnimation()
+        checkLoginAndStart(splashScreen)
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         KakaoSdk.init(this, BuildConfig.KAKAO_REST_KEY)
-        checkLogin(startDestination)
-        splashScreen.setKeepOnScreenCondition{ false }
         setContent {
             MovieFriendsApp(startDestination)
+        }
+    }
+
+    private fun checkLoginAndStart(splashScreen: SplashScreen){
+        checkLogin(startDestination)
+        collectFlowInActivity(loginViewModel.splashScreenState) {
+            splashScreen.setKeepOnScreenCondition {
+                it
+            }
         }
     }
 

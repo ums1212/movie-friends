@@ -23,21 +23,27 @@ import org.comon.moviefriends.data.repo.LoginRepositoryImpl
 
 class LoginViewModel(
     private val repository: LoginRepository = LoginRepositoryImpl(),
-    private val auth: FirebaseAuth = Firebase.auth
+    private val auth: FirebaseAuth = Firebase.auth,
 ): ViewModel() {
 
-    fun checkLogin() = flow {
-        emit(LoginResult.Loading)
-        auth.currentUser?.reload()?.await()
-        emit(LoginResult.Success(
-            auth.currentUser != null
-        ))
-    }.catch {
-        emit(LoginResult.NetworkError(it))
-    }
+    private val _splashScreenState = MutableStateFlow(true)
+    val splashScreenState = _splashScreenState.asStateFlow()
 
     private val _user = MutableStateFlow<FirebaseUser?>(null)
     val user = _user.asStateFlow()
+
+    fun checkLogin() = flow {
+        emit(LoginResult.Loading)
+        auth.currentUser.let {
+            it?.reload()?.await()
+            _user.value = it
+            _splashScreenState.emit(false)
+            emit(LoginResult.Success(it != null))
+        }
+    }.catch {
+        _splashScreenState.emit(false)
+        emit(LoginResult.NetworkError(it))
+    }
 
     fun kakaoLogin(
         context: Context,
@@ -62,24 +68,21 @@ class LoginViewModel(
         moveToSubmitNickNameScreen: (user: FirebaseUser?) -> Unit,
         loadingState: MutableState<Boolean>,
         showErrorMessage: () -> Unit,
-    ){
-        viewModelScope.launch {
-            repository.googleLogin(context, googleOAuth)
-                .collectLatest { result ->
-                when(result){
-                    APIResult.Loading -> loadingState.value = true
-                    is APIResult.Success -> {
-                        loadingState.value = false
-                        moveToSubmitNickNameScreen(result.resultData)
-                    }
-                    is APIResult.NetworkError -> {
-                        loadingState.value = false
-                        Log.d("test1234", "${result.exception}")
-                        showErrorMessage()
-                        moveToSubmitNickNameScreen(null)
-                    }
-                    else -> loadingState.value = false
+    ) = viewModelScope.launch {
+        repository.googleLogin(context, googleOAuth)
+            .collectLatest { result ->
+            when(result){
+                APIResult.Loading -> loadingState.value = true
+                is APIResult.Success -> {
+                    moveToSubmitNickNameScreen(result.resultData)
                 }
+                is APIResult.NetworkError -> {
+                    loadingState.value = false
+                    Log.d("test1234", "${result.exception}")
+                    showErrorMessage()
+                    moveToSubmitNickNameScreen(null)
+                }
+                else -> loadingState.value = false
             }
         }
     }
@@ -89,25 +92,23 @@ class LoginViewModel(
         loadingState: MutableState<Boolean>,
         moveToScaffoldScreen: () -> Unit,
         showErrorMessage: () -> Unit,
-    ) {
-        viewModelScope.launch {
-            repository.insertUserInfoToFireStore(userInfo).collectLatest { result ->
-                when(result){
-                    LoginResult.Loading -> loadingState.value = true
-                    is LoginResult.Success -> {
-                        loadingState.value = false
-                        if(result.resultData){
-                            moveToScaffoldScreen()
-                        }else{
-                            showErrorMessage()
-                        }
-                    }
-                    is LoginResult.NetworkError -> {
-                        loadingState.value = false
+    ) = viewModelScope.launch {
+        repository.insertUserInfoToFireStore(userInfo).collectLatest { result ->
+            when(result){
+                LoginResult.Loading -> loadingState.value = true
+                is LoginResult.Success -> {
+                    loadingState.value = false
+                    if(result.resultData){
+                        moveToScaffoldScreen()
+                    }else{
                         showErrorMessage()
                     }
-                    else -> loadingState.value = false
                 }
+                is LoginResult.NetworkError -> {
+                    loadingState.value = false
+                    showErrorMessage()
+                }
+                else -> loadingState.value = false
             }
         }
     }
@@ -118,7 +119,6 @@ enum class JoinType(val str: String) {
     GOOGLE("google"),
 }
 sealed class LoginResult<out T> {
-    data object NoConstructor : LoginResult<Nothing>()
     data object Loading : LoginResult<Nothing>()
     data class Success<T>(val resultData: T) : LoginResult<T>()
     data class NetworkError(val exception: Throwable) : LoginResult<Nothing>()
