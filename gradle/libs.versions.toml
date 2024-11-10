@@ -28,6 +28,7 @@ shimmer = "0.5.0"
 retrofit = "2.9.0"
 googleid = "1.1.1"
 playServicesLocation = "21.3.0"
+youtubeplayerCompose = "2024.02.25"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -69,6 +70,7 @@ gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 play-services-location = { group = "com.google.android.gms", name = "play-services-location", version.ref = "playServicesLocation" }
+youtubeplayer-compose = { group = "io.github.ilyapavlovskii", name = "youtubeplayer-compose", version.ref = "youtubeplayerCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

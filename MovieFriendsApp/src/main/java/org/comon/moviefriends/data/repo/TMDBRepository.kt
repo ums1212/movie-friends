@@ -11,6 +11,7 @@ import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import retrofit2.Response
 
 interface TMDBRepository {
@@ -26,6 +27,8 @@ interface TMDBRepository {
     fun getMovieDetail(movieId: Int): Flow<APIResult<Response<ResponseMovieDetailDto>>>
 
     fun getMovieCredit(movieId: Int): Flow<APIResult<Response<ResponseCreditDto>>>
+
+    fun getMovieVideo(movieId: Int): Flow<APIResult<Response<ResponseMovieVideoDto>>>
 
     suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo): Flow<APIResult<Boolean>>
 

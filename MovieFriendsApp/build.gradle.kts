@@ -137,4 +137,8 @@ dependencies {
     // 컴포즈 별점 라이브러리
     implementation(libs.compose.ratingbar.library)
 
+    // 유튜브 플레이어 라이브러리
+    implementation(libs.youtubeplayer.compose)
+
+
 }

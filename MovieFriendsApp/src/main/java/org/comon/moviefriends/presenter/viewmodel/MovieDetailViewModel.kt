@@ -15,6 +15,7 @@ import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import org.comon.moviefriends.data.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
@@ -40,6 +41,9 @@ class MovieDetailViewModel(
 
     private val _movieCredit = MutableStateFlow<APIResult<Response<ResponseCreditDto>>>(APIResult.NoConstructor)
     val movieCredit get() = _movieCredit.asStateFlow()
+
+    private val _movieVideo = MutableStateFlow<APIResult<Response<ResponseMovieVideoDto>>>(APIResult.NoConstructor)
+    val movieVideo get() = _movieVideo.asStateFlow()
 
     val userMovieRatingState = mutableIntStateOf(0)
     val mfAllUserMovieRatingState = mutableIntStateOf(0)
@@ -88,9 +92,13 @@ class MovieDetailViewModel(
     val userWantList get() = _userWantList.asStateFlow()
     val userWantListState = mutableStateOf(false)
 
+    private val _moviePosterLink = MutableStateFlow("")
+    val moviePosterLink get() = _moviePosterLink.asStateFlow()
+
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
+        getMovieVideo()
         getStateWantThisMovie()
         getAllUserRate()
         getUserWantList()
@@ -106,6 +114,12 @@ class MovieDetailViewModel(
     private fun getMovieCredit() = viewModelScope.launch {
         repository.getMovieCredit(movieId.value).collectLatest {
             _movieCredit.emit(it)
+        }
+    }
+
+    private fun getMovieVideo() = viewModelScope.launch {
+        repository.getMovieVideo(movieId.value).collectLatest {
+            _movieVideo.emit(it)
         }
     }
 

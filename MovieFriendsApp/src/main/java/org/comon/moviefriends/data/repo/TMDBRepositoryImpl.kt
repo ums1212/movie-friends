@@ -55,6 +55,13 @@ class TMDBRepositoryImpl(
         error -> emit(APIResult.NetworkError(error))
     }
 
+    override fun getMovieVideo(movieId: Int) = flow {
+        emit(APIResult.Loading)
+        emit(APIResult.Success(TMDBService.getInstance().getMovieVideo(movieId)))
+    }.catch{
+        error -> emit(APIResult.NetworkError(error))
+    }
+
     override suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo) =
         fs.getStateWantThisMovie(movieId, userInfo)
 

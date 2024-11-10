@@ -1,7 +1,10 @@
 package org.comon.moviefriends.presenter.screen.home
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +19,9 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -23,6 +29,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,6 +49,12 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import com.mahmoudalim.compose_rating_bar.RatingBarView
+import io.github.ilyapavlovskii.multiplatform.youtubeplayer.SimpleYouTubePlayerOptionsBuilder
+import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayer
+import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerHostState
+import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerState
+import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubeVideoId
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
@@ -51,7 +64,9 @@ import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
@@ -85,11 +100,25 @@ fun MovieDetailScreen(
 
     val movieItem by viewModel.movieDetail.collectAsStateWithLifecycle()
     val movieCredit by viewModel.movieCredit.collectAsStateWithLifecycle()
+    val movieVideo by viewModel.movieVideo.collectAsStateWithLifecycle()
     val wantThisMovieState by viewModel.wantThisMovieState.collectAsStateWithLifecycle()
     val userWantBottomSheetState by viewModel.userWantBottomSheetState.collectAsStateWithLifecycle()
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
     val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
+    val movieInfo by viewModel.movieInfo.collectAsStateWithLifecycle()
+
+    val isPlayerShown = remember { mutableStateOf(false) }
+    val videoKey = remember { mutableStateOf("") }
+
+    BackHandler {
+        // 유튜브 플레이어가 떠있을 경우에는 플레이어를 종료
+        if(isPlayerShown.value){
+            isPlayerShown.value = false
+            return@BackHandler
+        }
+        navigatePop()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
@@ -115,11 +144,6 @@ fun MovieDetailScreen(
                 setMovieInfo = { movieInfo -> viewModel.setMovieInfo(movieInfo) },
                 context = localContext
             )
-
-            /** 주요 출연진 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_credits))
-            MovieCreditView(movieCredit, localContext)
 
             /** 이 영화를 보고 싶다 */
             Spacer(Modifier.padding(vertical = 4.dp))
@@ -160,6 +184,32 @@ fun MovieDetailScreen(
                     }
                 }
             )
+
+            /** 주요 출연진 */
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_credits))
+            MovieDetailListView(
+                MovieDetailListViewType.CREDIT,
+                movieCredit,
+                localContext,
+                null,
+                null,
+                null
+            )
+
+            /** 관련 영상 */
+            Spacer(Modifier.padding(vertical = 12.dp))
+            MFPostTitle(stringResource(R.string.title_videos))
+            MovieDetailListView(
+                MovieDetailListViewType.VIDEO,
+                movieVideo,
+                localContext,
+                isPlayerShown,
+                videoKey,
+                movieInfo?.posterPath,
+            )
+
+            /** 이 영화를 보고 싶은 사람 */
             Spacer(Modifier.padding(vertical = 12.dp))
             MFPostTitle(stringResource(R.string.title_user_want_this_movie))
             Row(
@@ -170,7 +220,7 @@ fun MovieDetailScreen(
                 emptyList<Int>().take(2)
                 if(viewModel.userWantListState.value){
                     if(userWantList.isEmpty()){
-                        Text(stringResource(id = R.string.no_data))
+                        MFText(stringResource(id = R.string.no_data))
                     }else{
                         val previewList = userWantList.take(2)
                         Row(
@@ -259,6 +309,9 @@ fun MovieDetailScreen(
             }
         }
     }
+    if(isPlayerShown.value){
+        MFYouTubePlayer(videoKey.value, coroutineScope, snackBarHost, localContext, isPlayerShown)
+    }
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom){
         SnackbarHost(snackBarHost)
     }
@@ -312,55 +365,61 @@ private fun MovieDetailView(
         }
     }
 }
-
+enum class MovieDetailListViewType {
+    CREDIT,
+    VIDEO,
+}
 @Composable
-private fun MovieCreditView(
-    creditList: APIResult<Response<ResponseCreditDto>>,
-    context: Context
+private fun <T> MovieDetailListView(
+    listViewType: MovieDetailListViewType,
+    creditList: APIResult<Response<T>>,
+    context: Context,
+    isPlayerShown: MutableState<Boolean>?,
+    videoKey: MutableState<String>?,
+    posterLink: String?,
 ) {
-    val mutableList = remember { listOf<ResponseCreditDto.Cast>() }
-    val stateLists = remember { mutableStateOf(mutableList) }
+    val stateLists = remember { mutableStateOf(emptyList<Any>()) }
 
     when (creditList) {
         is APIResult.Success -> {
-            creditList.resultData.body()?.cast?.let {
-                stateLists.value = it.filter { cast ->
-                    cast.order < 8
+            val resultBody = creditList.resultData.body()
+            when (listViewType) {
+                MovieDetailListViewType.CREDIT -> {
+                    stateLists.value = (resultBody as ResponseCreditDto).cast.filter { cast ->
+                        cast.order < 8
+                    }
                 }
-                LazyRow {
-                    items(stateLists.value){ item ->
-                        Column(
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .height(180.dp)
-                                .clickableOnce { },
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .size(128.dp)
-                                    .padding(end = 4.dp),
-                                model = ImageRequest.Builder(context)
-                                    .data("$BASE_TMDB_IMAGE_URL${item.profilePath}")
-                                    .crossfade(true)
-                                    .error(R.drawable.yoshicat)
-                                    .build(),
-                                contentDescription = "회원 프로필 사진",
-                            )
-                            MFText(
-                                "${item.character} 역",
-                                Modifier.width(128.dp),
-                                TextStyle(
-                                    fontSize = 12.sp
-                                )
-                            )
-                            MFText(
-                                item.name,
-                                Modifier.width(128.dp),
-                                TextStyle(
-                                    fontSize = 12.sp
-                                )
-                            )
+                MovieDetailListViewType.VIDEO -> {
+                    stateLists.value = (resultBody as ResponseMovieVideoDto).results
+                }
+            }
+            if(stateLists.value.isEmpty()){
+                MFText(stringResource(R.string.no_data))
+            }
+            LazyRow {
+                items(stateLists.value){ item ->
+                    Column(
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .height(180.dp)
+                            .clickableOnce {
+                                when (listViewType) {
+                                    MovieDetailListViewType.CREDIT -> {}
+                                    MovieDetailListViewType.VIDEO -> {
+                                        isPlayerShown?.value = true
+                                        videoKey?.value = (item as ResponseMovieVideoDto.Result).key
+                                    }
+                                }
+                            },
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        when (listViewType) {
+                            MovieDetailListViewType.CREDIT -> {
+                                CreditItemView(item as ResponseCreditDto.Cast, context)
+                            }
+                            MovieDetailListViewType.VIDEO -> {
+                                VideoItemView(item as ResponseMovieVideoDto.Result, posterLink, context)
+                            }
                         }
                     }
                 }
@@ -379,4 +438,137 @@ private fun MovieCreditView(
             MovieCreditShimmer()
         }
     }
+}
+
+@Composable
+fun CreditItemView(item: ResponseCreditDto.Cast, context: Context) {
+    AsyncImage(
+        modifier = Modifier
+            .size(128.dp)
+            .padding(end = 4.dp),
+        model = ImageRequest.Builder(context)
+            .data("$BASE_TMDB_IMAGE_URL${item.profilePath}")
+            .crossfade(true)
+            .error(R.drawable.yoshicat)
+            .build(),
+        contentDescription = "사진",
+    )
+    MFText(
+        "${item.character} 역",
+        Modifier.width(128.dp),
+        TextStyle(
+            fontSize = 12.sp
+        )
+    )
+    MFText(
+        item.name,
+        Modifier.width(128.dp),
+        TextStyle(
+            fontSize = 12.sp
+        )
+    )
+}
+
+@Composable
+fun MFYouTubePlayer(
+    videoKey: String,
+    scope: CoroutineScope,
+    snackBarHost: SnackbarHostState,
+    localContext: Context,
+    isPlayerShown: MutableState<Boolean>
+){
+    val hostState = remember { YouTubePlayerHostState() }
+
+    when(hostState.currentState) {
+        is YouTubePlayerState.Error -> {
+            scope.launch {
+                isPlayerShown.value = false
+                snackBarHost.showSnackbar(
+                    localContext.getString(R.string.network_error),
+                    null,
+                    true,
+                    SnackbarDuration.Short
+                )
+            }
+        }
+        YouTubePlayerState.Idle -> {
+            // Do nothing, waiting for initialization
+        }
+        is YouTubePlayerState.Playing -> {
+            // Update UI button states
+        }
+        YouTubePlayerState.Ready -> scope.launch {
+            hostState.loadVideo(YouTubeVideoId(videoKey))
+        }
+    }
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(FriendsBlack.copy(alpha = 0.7f))
+            .clickableOnce {
+                isPlayerShown.value = false
+            }
+    ){
+        YouTubePlayer(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .height(300.dp),
+            hostState = hostState,
+            options = SimpleYouTubePlayerOptionsBuilder.builder {
+                autoplay(false)
+                controls(false)
+                rel(false)
+                ivLoadPolicy(false)
+                ccLoadPolicy(false)
+                fullscreen = true
+            },
+        )
+    }
+}
+
+@Composable
+fun VideoItemView(item: ResponseMovieVideoDto.Result, posterLink: String?, context: Context) {
+
+    Box(
+        modifier = Modifier.size(128.dp)
+    ){
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 4.dp),
+            model = ImageRequest.Builder(context)
+                .data("$BASE_TMDB_IMAGE_URL${posterLink}")
+                .crossfade(true)
+                .error(R.drawable.yoshicat)
+                .build(),
+            contentDescription = "사진",
+        )
+        Box(
+            modifier = Modifier.fillMaxSize()
+                .background(FriendsBlack.copy(alpha = 0.7f)),
+        ){
+            Icon(
+                modifier = Modifier.fillMaxSize(),
+                imageVector = Icons.Rounded.PlayArrow,
+                contentDescription = "재생"
+            )
+        }
+    }
+
+    MFText(
+        item.name,
+        Modifier.width(128.dp),
+        TextStyle(
+            fontSize = 12.sp
+        )
+    )
+//    MFText(
+//        item.name,
+//        Modifier.width(128.dp),
+//        TextStyle(
+//            fontSize = 12.sp
+//        )
+//    )
 }

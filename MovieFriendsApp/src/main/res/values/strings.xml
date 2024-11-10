@@ -25,6 +25,7 @@
     <string name="button_watch_together">같이 보기</string>
 
     <string name="title_credits">주요 출연진</string>
+    <string name="title_videos">관련 영상</string>
     <string name="title_user_rate">MovieFriends 유저 평균 평점</string>
     <string name="button_user_rate">평점 주기</string>
     <string name="label_user_rate">평점 남기기</string>
