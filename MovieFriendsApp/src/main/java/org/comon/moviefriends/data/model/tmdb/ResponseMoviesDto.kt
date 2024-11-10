@@ -1,9 +1,9 @@
-package org.comon.moviefriends.data.model
+package org.comon.moviefriends.data.model.tmdb
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.Field
 
-data class TMDBMovies(
+data class ResponseMoviesDto(
     val results: List<MovieInfo>
 ){
     data class MovieInfo(

@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model
+package org.comon.moviefriends.data.model.tmdb
 
 
 import com.google.gson.annotations.SerializedName

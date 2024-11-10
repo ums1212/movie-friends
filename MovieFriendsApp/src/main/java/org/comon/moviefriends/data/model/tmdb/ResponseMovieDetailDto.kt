@@ -1,8 +1,8 @@
-package org.comon.moviefriends.data.model
+package org.comon.moviefriends.data.model.tmdb
 
 import com.google.gson.annotations.SerializedName
 
-data class TMDBMovieDetail(
+data class ResponseMovieDetailDto(
     val id: Int,
     @SerializedName("poster_path")
     val posterPath: String,

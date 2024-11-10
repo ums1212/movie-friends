@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model
+package org.comon.moviefriends.data.model.firebase
 
 data class UserWantMovieInfo (
     val id: Int = 0,

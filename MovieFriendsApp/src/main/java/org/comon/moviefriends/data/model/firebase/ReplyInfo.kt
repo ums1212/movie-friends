@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model
+package org.comon.moviefriends.data.model.firebase
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
