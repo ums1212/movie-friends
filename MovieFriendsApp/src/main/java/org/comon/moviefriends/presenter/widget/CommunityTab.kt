@@ -23,8 +23,7 @@ fun CommunityTab(
     navigateToCommunityMenu: (String, Int) -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    val localContext = LocalContext.current
-    val user = MFPreferences.getUserInfo(localContext)
+    val user = MFPreferences.getUserInfo()
     TabRow(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         selectedTabIndex = selectedItem.intValue

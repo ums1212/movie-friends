@@ -17,8 +17,7 @@ fun CommunityFab(
     navigateToWritePost: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
-    val localContext = LocalContext.current
-    val user = MFPreferences.getUserInfo(localContext)
+    val user = MFPreferences.getUserInfo()
 
     FloatingActionButton(
         onClick = { clickCommunityFab(user, navigateToWritePost, navigateToLogin) },

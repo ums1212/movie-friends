@@ -95,7 +95,6 @@ fun SubmitNickNameScreen(
                     profileImage = photoUrl,
                     joinType = joinType,
                 )
-                MFPreferences.setUserInfo(localContext, userInfo)
                 viewModel.completeJoinUser(
                     userInfo = userInfo,
                     loadingState = loadingUiState,

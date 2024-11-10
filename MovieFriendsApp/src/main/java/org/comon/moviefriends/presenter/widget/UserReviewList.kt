@@ -29,8 +29,7 @@ import org.comon.moviefriends.data.model.firebase.ReplyInfo
 @Preview
 @Composable
 fun UserReviewList(){
-    val localContext = LocalContext.current
-    val user = MFPreferences.getUserInfo(localContext)
+    val user = MFPreferences.getUserInfo()
 
     // 더미 데이터
     val reviewList = listOf(

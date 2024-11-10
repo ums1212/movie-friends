@@ -62,8 +62,7 @@ fun PostDetailScreen(
     navigatePop: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
-    val context = LocalContext.current
-    val user = MFPreferences.getUserInfo(context)
+    val user = MFPreferences.getUserInfo()
 
     val scrollState = rememberScrollState()
 

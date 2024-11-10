@@ -122,7 +122,7 @@ fun MovieDetailScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getMovieId(movieId)
-        viewModel.getUserInfo(MFPreferences.getUserInfo(localContext))
+        viewModel.getUserInfo(MFPreferences.getUserInfo())
         viewModel.getAllMovieInfo()
     }
 

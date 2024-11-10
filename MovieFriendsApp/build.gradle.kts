@@ -34,6 +34,18 @@ android {
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
         buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
         buildConfigField("String", "KAKAO_REST_KEY", localProperties.getProperty("KAKAO_REST_KEY"))
+        buildConfigField("String", "FIREBASE_API_KEY", localProperties.getProperty("FIREBASE_API_KEY"))
+
+        buildConfigField("String", "SERVICE_ACCOUNT_TYPE", localProperties.getProperty("SERVICE_ACCOUNT_TYPE"))
+        buildConfigField("String", "PROJECT_ID", localProperties.getProperty("PROJECT_ID"))
+        buildConfigField("String", "PRIVATE_KEY_ID", localProperties.getProperty("PRIVATE_KEY_ID"))
+        buildConfigField("String", "PRIVATE_KEY", localProperties.getProperty("PRIVATE_KEY"))
+        buildConfigField("String", "CLIENT_EMAIL", localProperties.getProperty("CLIENT_EMAIL"))
+        buildConfigField("String", "CLIENT_ID", localProperties.getProperty("CLIENT_ID"))
+        buildConfigField("String", "AUTH_URI", localProperties.getProperty("AUTH_URI"))
+        buildConfigField("String", "TOKEN_URI", localProperties.getProperty("TOKEN_URI"))
+        buildConfigField("String", "AUTH_PROVIDER_X509_CERT_URL", localProperties.getProperty("AUTH_PROVIDER_X509_CERT_URL"))
+        buildConfigField("String", "CLIENT_X509_CERT_URL", localProperties.getProperty("CLIENT_X509_CERT_URL"))
     }
 
     buildTypes {

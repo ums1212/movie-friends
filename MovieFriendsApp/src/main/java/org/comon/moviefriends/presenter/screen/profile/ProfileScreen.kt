@@ -65,7 +65,7 @@ fun ProfileScreen(
 
     LaunchedEffect(key1 =Unit) {
         if(profileType==ProfileType.MY_INFO.str){
-            viewModel.getUserInfo(MFPreferences.getUserInfo(context))
+            viewModel.getUserInfo(MFPreferences.getUserInfo())
         }
     }
 

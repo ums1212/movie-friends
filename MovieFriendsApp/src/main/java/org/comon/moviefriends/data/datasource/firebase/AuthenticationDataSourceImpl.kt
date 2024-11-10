@@ -6,8 +6,10 @@ import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
+import com.google.android.gms.tasks.Task
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
+import com.google.android.play.integrity.internal.u
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
@@ -15,9 +17,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
@@ -119,10 +127,20 @@ class AuthenticationDataSourceImpl(
 
     override suspend fun insertUserInfoToFireStore(userInfo: UserInfo) = flow {
         emit(LoginResult.Loading)
-        db.collection("user").add(userInfo).await()
+        val token = FirebaseMessaging.getInstance().token.await()
+        val tokenUser = userInfo.copy(fcmToken = token)
+        MFPreferences.setFcmToken(token)
+        MFPreferences.setUserInfo(tokenUser)
+        insertUserFcmToken(userInfo.id, token)
+        db.collection("user").add(tokenUser).await()
         emit(LoginResult.Success(true))
     }.catch {
         emit(LoginResult.NetworkError(it))
     }
 
+    override suspend fun insertUserFcmToken(userId: String, token: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.collection("user_token").add(mapOf("token" to token, "userId" to userId))
+        }
+    }
 }

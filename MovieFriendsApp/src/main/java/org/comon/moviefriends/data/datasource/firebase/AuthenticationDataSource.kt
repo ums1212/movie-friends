@@ -12,7 +12,7 @@ interface AuthenticationDataSource {
         context: Context,
         moveToScaffoldScreen: () -> Unit,
         moveToNextScreen: (user: FirebaseUser) -> Unit
-    ): Unit
+    )
 
     suspend fun googleLogin(
         context: Context,
@@ -22,4 +22,9 @@ interface AuthenticationDataSource {
     suspend fun insertUserInfoToFireStore(
         userInfo: UserInfo
     ): Flow<LoginResult<Boolean>>
+
+    suspend fun insertUserFcmToken(
+        userId: String,
+        token: String
+    )
 }

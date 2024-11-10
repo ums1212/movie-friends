@@ -38,10 +38,7 @@ fun WatchTogetherScreen(
     viewModel: MovieDetailViewModel = viewModel()
 ) {
 
-    val context = LocalContext.current
-    val user = MFPreferences.getUserInfo(context)
-
-    val watchTogetherList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
+    val user = MFPreferences.getUserInfo()
 
     Column(
         modifier = Modifier.fillMaxWidth().background(FriendsBlack),

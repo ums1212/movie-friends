@@ -3,9 +3,12 @@ package org.comon.moviefriends.data.datasource.firebase
 import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
@@ -14,6 +17,7 @@ import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.presenter.service.FCMSendService
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -102,6 +106,15 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
             .addOnSuccessListener { result ->
                 if(result.isEmpty){
                     db.collection("request_chat").add(requestChatInfo)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        // 테스트용으로 자신한테 보내기
+                        FCMSendService.sendNotificationToToken(
+                            sendUser.fcmToken,
+                            "영화 같이 보기 요청",
+                            "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다."
+                        )
+//                        FCMSendService.sendNotificationToToken(receiveUser.fcmToken, "영화 같이 보기 요청", "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
+                    }
                 }else{
                     result.documents.first().reference.delete()
                 }

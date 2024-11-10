@@ -9,5 +9,6 @@ data class UserInfo(
     val nickName: String = "",
     val createdDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
     val profileImage: String = "",
+    val fcmToken: String = "",
     val status: Boolean = true,
 )

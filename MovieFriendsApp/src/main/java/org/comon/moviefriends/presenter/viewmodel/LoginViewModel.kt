@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.repo.LoginRepository
@@ -95,7 +97,7 @@ class LoginViewModel(
     ) = viewModelScope.launch {
         repository.insertUserInfoToFireStore(userInfo).collectLatest { result ->
             when(result){
-                LoginResult.Loading -> loadingState.value = true
+                is LoginResult.Loading -> loadingState.value = true
                 is LoginResult.Success -> {
                     loadingState.value = false
                     if(result.resultData){
@@ -108,7 +110,6 @@ class LoginViewModel(
                     loadingState.value = false
                     showErrorMessage()
                 }
-                else -> loadingState.value = false
             }
         }
     }

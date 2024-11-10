@@ -1,17 +1,23 @@
 package org.comon.moviefriends.presenter
 
+import android.Manifest
 import android.animation.ObjectAnimator
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
@@ -19,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
@@ -31,6 +38,7 @@ import com.kakao.sdk.common.KakaoSdk
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.BuildConfig
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.presenter.screen.intro.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
@@ -59,6 +67,8 @@ class MainActivity : ComponentActivity() {
         val splashScreen = installSplashScreen()
         settingSplashScreenAnimation()
         checkLoginAndStart(splashScreen)
+        MFPreferences.init(this)
+        alertNotificationPermission()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         KakaoSdk.init(this, BuildConfig.KAKAO_REST_KEY)
@@ -231,6 +241,33 @@ class MainActivity : ComponentActivity() {
             }
 
 
+        }
+    }
+
+    // 사용자 허락시 동작할 코드
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // 알림 권한 승인
+            MFPreferences.setNotiPermission(true)
+        } else {
+            // 알림 권한 미승인
+            MFPreferences.setNotiPermission(false)
+        }
+    }
+
+    private fun alertNotificationPermission() {
+        // API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
+
+            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+                // "사용자에게 이 권한이 왜 필요한지 설명하는 화면이 필요할 시!"
+            } else {
+                // 직접 퍼미션 요청
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
         }
     }
 }

@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <!-- 네트워크를 통한 대략적인 위치 -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Target SDK API 33 이상부터 Notification 에 다음의 Runtime Permission 이 추가됨 -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
     <application
         android:allowBackup="true"
@@ -43,6 +45,17 @@
                     android:scheme="kakao5f18cc3249ebd1c4c3fc3ad5558c2078" />
             </intent-filter>
         </activity>
+        <service
+            android:name=".presenter.service.FCMService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/logo" />
     </application>
 
 </manifest>
