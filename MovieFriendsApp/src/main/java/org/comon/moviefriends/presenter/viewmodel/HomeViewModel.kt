@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.TMDBMovies
+import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.data.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
@@ -18,16 +18,16 @@ class HomeViewModel(
     private val repository: TMDBRepository = TMDBRepositoryImpl()
 ): ViewModel() {
 
-    private val _nowList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
+    private val _nowList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val nowList get() = _nowList.asStateFlow()
 
-    private val _popList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
+    private val _popList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val popList get() = _popList.asStateFlow()
 
-    private val _topList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
+    private val _topList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val topList get() = _topList.asStateFlow()
 
-    private val _upcomingList = MutableStateFlow<List<TMDBMovies.MovieInfo>>(emptyList())
+    private val _upcomingList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val upcomingList get() = _upcomingList.asStateFlow()
 
     fun sendList(category: MovieCategory) = when(category){
@@ -44,7 +44,7 @@ class HomeViewModel(
         getCategoryMovies(repository.getUpcoming(), MovieCategory.UP_COMING)
     }
 
-    private fun getCategoryMovies(flow: Flow<APIResult<Response<TMDBMovies>>>, category: MovieCategory){
+    private fun getCategoryMovies(flow: Flow<APIResult<Response<ResponseMoviesDto>>>, category: MovieCategory){
         viewModelScope.launch {
             flow.collect { result ->
                 when(result){
@@ -65,7 +65,7 @@ class HomeViewModel(
         }
     }
 
-    private suspend fun addListByCategory(list: List<TMDBMovies.MovieInfo>, category: MovieCategory){
+    private suspend fun addListByCategory(list: List<ResponseMoviesDto.MovieInfo>, category: MovieCategory){
         when(category){
             MovieCategory.NOW_PLAYING -> _nowList.emit(list)
             MovieCategory.POPULAR -> _popList.emit(list)

@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 
 interface LoginRepository {

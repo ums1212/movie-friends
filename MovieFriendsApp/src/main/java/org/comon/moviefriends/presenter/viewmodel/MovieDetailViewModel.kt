@@ -10,11 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.ResponseCreditDto
-import org.comon.moviefriends.data.model.TMDBMovieDetail
-import org.comon.moviefriends.data.model.UserInfo
-import org.comon.moviefriends.data.model.UserRate
-import org.comon.moviefriends.data.model.UserWantMovieInfo
+import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserRate
+import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import retrofit2.Response
@@ -35,7 +35,7 @@ class MovieDetailViewModel(
         _userInfo.value = userInfo
     }
 
-    private val _movieDetail = MutableStateFlow<APIResult<Response<TMDBMovieDetail>>>(APIResult.NoConstructor)
+    private val _movieDetail = MutableStateFlow<APIResult<Response<ResponseMovieDetailDto>>>(APIResult.NoConstructor)
     val movieDetail get() = _movieDetail.asStateFlow()
 
     private val _movieCredit = MutableStateFlow<APIResult<Response<ResponseCreditDto>>>(APIResult.NoConstructor)
@@ -115,9 +115,9 @@ class MovieDetailViewModel(
         }
     }
 
-    private val _movieInfo: MutableStateFlow<TMDBMovieDetail?> = MutableStateFlow(null)
+    private val _movieInfo: MutableStateFlow<ResponseMovieDetailDto?> = MutableStateFlow(null)
     val movieInfo get() = _movieInfo.asStateFlow()
-    fun setMovieInfo(movieInfo: TMDBMovieDetail) {
+    fun setMovieInfo(movieInfo: ResponseMovieDetailDto) {
         _movieInfo.value = movieInfo
     }
 

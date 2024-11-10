@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.NAV_ROUTE
-import org.comon.moviefriends.data.model.UserWantMovieInfo
+import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -22,7 +22,7 @@ fun MFBottomSheet(
     dismissSheet: () -> Unit,
     userWantList: List<UserWantMovieInfo?>? = null,
 
-) {
+    ) {
     ModalBottomSheet(onDismissRequest = dismissSheet) {
         when(content){
             /** 이 영화를 보고 싶은 사람 */

@@ -15,7 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
-import org.comon.moviefriends.data.model.PostInfo
+import org.comon.moviefriends.data.model.firebase.PostInfo
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,9 +1,7 @@
 package org.comon.moviefriends.data.datasource.lbs
 
 import com.google.gson.GsonBuilder
-import org.comon.moviefriends.data.datasource.tmdb.TMDBOkHttpClient
-import org.comon.moviefriends.data.model.ResponseRegionDto
-import org.comon.moviefriends.data.model.TMDBMovies
+import org.comon.moviefriends.data.model.tmdb.ResponseRegionDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

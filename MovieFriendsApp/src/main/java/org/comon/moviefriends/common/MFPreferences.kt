@@ -2,7 +2,7 @@ package org.comon.moviefriends.common
 
 import android.content.Context
 import com.google.gson.Gson
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 
 object MFPreferences {
 

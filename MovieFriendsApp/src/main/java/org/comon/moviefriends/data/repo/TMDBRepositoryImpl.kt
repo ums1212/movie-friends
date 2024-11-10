@@ -5,8 +5,8 @@ import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
-import org.comon.moviefriends.data.model.TMDBMovieDetail
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.model.firebase.UserInfo
 
 class TMDBRepositoryImpl(
     private val fs: MovieDetailDataSourceImpl = MovieDetailDataSourceImpl()
@@ -57,7 +57,7 @@ class TMDBRepositoryImpl(
     override suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo) =
         fs.getStateWantThisMovie(movieId, userInfo)
 
-    override suspend fun changeStateWantThisMovie(movieInfo: TMDBMovieDetail, userInfo: UserInfo, nowLocation: List<Double>) =
+    override suspend fun changeStateWantThisMovie(movieInfo: ResponseMovieDetailDto, userInfo: UserInfo, nowLocation: List<Double>) =
         fs.changeStateWantThisMovie(movieInfo, userInfo, nowLocation)
 
     override suspend fun getUserWantList(movieId: Int) =

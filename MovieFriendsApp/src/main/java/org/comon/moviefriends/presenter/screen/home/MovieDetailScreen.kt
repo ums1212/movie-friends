@@ -49,8 +49,8 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.ResponseCreditDto
-import org.comon.moviefriends.data.model.TMDBMovieDetail
+import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
@@ -265,8 +265,8 @@ fun MovieDetailScreen(
 
 @Composable
 private fun MovieDetailView(
-    movieItem: APIResult<Response<TMDBMovieDetail>>,
-    setMovieInfo: (TMDBMovieDetail) -> Unit,
+    movieItem: APIResult<Response<ResponseMovieDetailDto>>,
+    setMovieInfo: (ResponseMovieDetailDto) -> Unit,
     context: Context
 ) {
     when (movieItem) {

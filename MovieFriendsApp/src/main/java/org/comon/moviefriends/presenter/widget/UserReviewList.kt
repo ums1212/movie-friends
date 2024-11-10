@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.data.model.ReplyInfo
+import org.comon.moviefriends.data.model.firebase.ReplyInfo
 
 /** 유저 리뷰 화면 */
 @Preview

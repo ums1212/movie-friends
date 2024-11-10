@@ -3,7 +3,7 @@ package org.comon.moviefriends.presenter.viewmodel
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 
 class ProfileViewModel: ViewModel() {
 

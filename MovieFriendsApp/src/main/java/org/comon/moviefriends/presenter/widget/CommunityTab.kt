@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 
 @Composable
 fun CommunityTab(

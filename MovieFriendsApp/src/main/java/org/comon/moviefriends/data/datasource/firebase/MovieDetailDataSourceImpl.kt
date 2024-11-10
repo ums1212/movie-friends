@@ -1,6 +1,5 @@
 package org.comon.moviefriends.data.datasource.firebase
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.flow.Flow
@@ -9,10 +8,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.TMDBMovieDetail
-import org.comon.moviefriends.data.model.UserInfo
-import org.comon.moviefriends.data.model.UserRate
-import org.comon.moviefriends.data.model.UserWantMovieInfo
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserRate
+import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -38,7 +37,7 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         error -> emit(APIResult.NetworkError(error))
     }
 
-    override suspend fun changeStateWantThisMovie(movieDetail: TMDBMovieDetail, userInfo: UserInfo, nowLocation: List<Double>) = flow {
+    override suspend fun changeStateWantThisMovie(movieDetail: ResponseMovieDetailDto, userInfo: UserInfo, nowLocation: List<Double>) = flow {
         emit(APIResult.Loading)
         // 위치 정보 가져오기
         val region = MFLocationService.getInstance()

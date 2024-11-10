@@ -4,7 +4,7 @@ import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSource
 import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSourceImpl
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 
 class LoginRepositoryImpl(
     private val authDataSource: AuthenticationDataSource = AuthenticationDataSourceImpl()

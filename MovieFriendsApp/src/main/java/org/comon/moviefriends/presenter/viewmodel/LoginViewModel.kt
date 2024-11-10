@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.repo.LoginRepository
 import org.comon.moviefriends.data.repo.LoginRepositoryImpl
 
@@ -64,7 +64,8 @@ class LoginViewModel(
         showErrorMessage: () -> Unit,
     ){
         viewModelScope.launch {
-            repository.googleLogin(context, googleOAuth).collectLatest { result ->
+            repository.googleLogin(context, googleOAuth)
+                .collectLatest { result ->
                 when(result){
                     APIResult.Loading -> loadingState.value = true
                     is APIResult.Success -> {

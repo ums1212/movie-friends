@@ -15,8 +15,7 @@ import androidx.compose.ui.res.colorResource
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.NAV_MENU
-import org.comon.moviefriends.common.NAV_ROUTE
-import org.comon.moviefriends.data.model.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.screen.profile.ProfileType
 
 @Composable

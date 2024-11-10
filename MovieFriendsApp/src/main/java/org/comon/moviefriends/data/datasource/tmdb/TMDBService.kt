@@ -1,9 +1,9 @@
 package org.comon.moviefriends.data.datasource.tmdb
 
 import com.google.gson.GsonBuilder
-import org.comon.moviefriends.data.model.ResponseCreditDto
-import org.comon.moviefriends.data.model.TMDBMovieDetail
-import org.comon.moviefriends.data.model.TMDBMovies
+import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -18,35 +18,35 @@ interface TMDBService {
     suspend fun getNowPlaying(
         @Query("language") language:String = "ko-KR",
         @Query("region") region:String = "kr",
-    ): Response<TMDBMovies>
+    ): Response<ResponseMoviesDto>
 
     // 인기작
     @GET("popular")
     suspend fun getPopular(
         @Query("language") language:String = "ko-KR",
         @Query("region") region:String = "kr",
-    ): Response<TMDBMovies>
+    ): Response<ResponseMoviesDto>
 
     // 랭킹
     @GET("top_rated")
     suspend fun getTopRated(
         @Query("language") language:String = "ko-KR",
         @Query("region") region:String = "kr",
-    ): Response<TMDBMovies>
+    ): Response<ResponseMoviesDto>
 
     // 개봉예정작
     @GET("upcoming")
     suspend fun getUpcoming(
         @Query("language") language:String = "ko-KR",
         @Query("region") region:String = "kr",
-    ): Response<TMDBMovies>
+    ): Response<ResponseMoviesDto>
 
     // 영화 상세정보
     @GET("{movie_id}")
     suspend fun getMovieDetail(
         @Path("movie_id") movieId:Int,
         @Query("language") language:String = "ko-KR",
-    ): Response<TMDBMovieDetail>
+    ): Response<ResponseMovieDetailDto>
 
     // 영화 주요 출연진
     @GET("{movie_id}/credits")
