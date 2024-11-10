@@ -31,7 +31,7 @@ interface TMDBRepository {
 
     suspend fun changeStateWantThisMovie(movieInfo: ResponseMovieDetailDto, userInfo: UserInfo, nowLocation: List<Double>): Flow<APIResult<Boolean>>
 
-    suspend fun getUserWantList(movieId: Int): Flow<APIResult<List<UserWantMovieInfo?>>>
+    suspend fun getUserWantList(movieId: Int, userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
 
     fun requestWatchTogether(movieId: Int, sendUser: UserInfo, receiveUser: UserInfo): Result<Task<QuerySnapshot>>
 

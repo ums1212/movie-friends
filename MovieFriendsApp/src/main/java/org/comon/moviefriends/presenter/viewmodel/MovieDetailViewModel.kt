@@ -142,7 +142,7 @@ class MovieDetailViewModel(
     }
 
     private fun getUserWantList() = viewModelScope.launch {
-        repository.getUserWantList(_movieId.value).collectLatest { result ->
+        repository.getUserWantList(_movieId.value, _userInfo.value?.id ?: "").collectLatest { result ->
             when(result){
                 is APIResult.Success -> {
                     userWantListState.value = true

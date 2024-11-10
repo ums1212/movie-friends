@@ -64,8 +64,8 @@ class TMDBRepositoryImpl(
         nowLocation: List<Double>
     ) = fs.changeStateWantThisMovie(movieInfo, userInfo, nowLocation)
 
-    override suspend fun getUserWantList(movieId: Int) =
-        fs.getUserWantList(movieId)
+    override suspend fun getUserWantList(movieId: Int, userId: String) =
+        fs.getUserWantList(movieId, userId)
 
     override fun requestWatchTogether(
         movieId: Int,

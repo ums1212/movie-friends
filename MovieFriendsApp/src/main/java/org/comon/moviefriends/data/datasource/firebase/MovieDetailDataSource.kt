@@ -13,7 +13,7 @@ import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 interface MovieDetailDataSource {
     suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo): Flow<APIResult<Boolean>>
     suspend fun changeStateWantThisMovie(movieDetail: ResponseMovieDetailDto, userInfo: UserInfo, nowLocation: List<Double>): Flow<APIResult<Boolean>>
-    suspend fun getUserWantList(movieId: Int): Flow<APIResult<List<UserWantMovieInfo?>>>
+    suspend fun getUserWantList(movieId: Int, userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
     fun requestWatchTogether(movieId: Int, sendUser: UserInfo, receiveUser: UserInfo): Result<Task<QuerySnapshot>>
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
     suspend fun getAllUserMovieRating(movieId: Int): Flow<APIResult<List<UserRate?>>>
