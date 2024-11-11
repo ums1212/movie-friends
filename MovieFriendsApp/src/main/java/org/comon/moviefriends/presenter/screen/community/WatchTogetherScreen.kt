@@ -2,6 +2,7 @@ package org.comon.moviefriends.presenter.screen.community
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -26,6 +27,7 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
+import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.UserWantThisMovieList
 
@@ -43,14 +45,12 @@ fun WatchTogetherScreen(
     Column(
         modifier = Modifier.fillMaxWidth().background(FriendsBlack),
     ) {
-        MFText(text = stringResource(R.string.label_menu_watch_together))
+        MFPostTitle(text = stringResource(R.string.label_menu_watch_together))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         WATCH_TOGETHER_MENU.entries.forEach { menu ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+            Column (
+                Modifier
                     .clickableOnce {
                         when(menu){
                             WATCH_TOGETHER_MENU.REQUEST_LIST -> navigateToRequestList()
@@ -58,11 +58,17 @@ fun WatchTogetherScreen(
                             WATCH_TOGETHER_MENU.CHAT_ROOM_LIST -> navigateToChatRoomList()
                         }
                     },
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                MFText(menu.description)
+            ){
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    MFText(menu.description)
+                }
+                HorizontalDivider()
             }
-            HorizontalDivider()
         }
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))

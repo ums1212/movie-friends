@@ -1,8 +1,11 @@
 package org.comon.moviefriends.data.repo
 
+import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSource
 import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSourceImpl
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.PostInfo
+import org.comon.moviefriends.data.model.firebase.ReplyInfo
 
 class CommunityPostRepositoryImpl(
     private val fs: CommunityPostDataSource = CommunityPostDataSourceImpl()
@@ -21,4 +24,13 @@ class CommunityPostRepositoryImpl(
 
     override suspend fun getALLPost() =
         fs.getALLPost()
+
+    override suspend fun insertReply(replyInfo: ReplyInfo) =
+        fs.insertReply(replyInfo)
+
+    override suspend fun deleteReply(replyId: String) =
+        fs.deleteReply(replyId)
+
+    override suspend fun getALLReply(postId: String) =
+        fs.getALLReply(postId)
 }

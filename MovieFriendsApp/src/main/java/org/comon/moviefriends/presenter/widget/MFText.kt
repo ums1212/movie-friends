@@ -25,7 +25,7 @@ fun MFPostTitle(text:String, modifier: Modifier = Modifier){
         modifier = modifier,
         text = text,
         color = FriendsWhite,
-        fontSize = 18.sp
+        fontSize = 24.sp
     )
 }
 

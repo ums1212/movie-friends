@@ -3,56 +3,98 @@ package org.comon.moviefriends.presenter.widget
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import org.comon.moviefriends.data.model.firebase.PostInfo
+import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import org.comon.moviefriends.R
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityList(
     paddingValues: PaddingValues? = null,
     scrollBehavior: TopAppBarScrollBehavior? = null,
-    onNavigateToPostDetail: (postId: Int) -> Unit
+    onNavigateToPostDetail: (postId: String) -> Unit
 ) {
 
-    val isLoading = remember { mutableStateOf(true) }
-    val mutableList = remember { listOf<PostInfo>() }
-    val stateLists = remember { mutableStateOf(mutableList) }
+    val viewModel: CommunityPostViewModel = viewModel()
 
-    LaunchedEffect(isLoading.value){
-//        list.collectLatest {
-//            stateLists.value = it
-//        }
+    val getAllPostState by viewModel.getAllPostState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = Unit){
+        viewModel.getALLPost()
     }
 
+    /** 커뮤니티 메뉴일 때 */
     val modifier = if(scrollBehavior != null) {
         Modifier.fillMaxSize()
             .padding(paddingValues?: PaddingValues(0.dp))
             .nestedScroll(scrollBehavior.nestedScrollConnection)
-    }else{
+    }
+    /** 프로필 메뉴일 때 */
+    else{
         Modifier.fillMaxSize()
             .padding(paddingValues?: PaddingValues(0.dp))
     }
-
     LazyColumn (modifier = modifier) {
-//        items(stateLists.value) { item ->
-        items(listOf(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20)) { item ->
-            CommunityListItem {
-//                onNavigateToPostDetail(item.id)
-                onNavigateToPostDetail(0)
+        when(val state = getAllPostState){
+            APIResult.Loading -> {
+                item {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
             }
-            Spacer(modifier = Modifier.padding(vertical = 6.dp))
+            is APIResult.NetworkError -> {
+                item {
+                    Spacer(Modifier.padding(vertical = 6.dp))
+                    MFText(
+                        textStyle = TextStyle(fontSize = 18.sp),
+                        text = stringResource(R.string.network_error),
+                    )
+                }
+            }
+            is APIResult.Success -> {
+                if(state.resultData.isEmpty()){
+                    item {
+                        Spacer(Modifier.padding(vertical = 6.dp))
+                        MFText(
+                            textStyle = TextStyle(fontSize = 18.sp),
+                            text = stringResource(R.string.no_post),
+                        )
+                    }
+                }else{
+                    items(state.resultData) { item ->
+                        if(item != null){
+                            CommunityListItem(
+                                post = item,
+                                onNavigateToPostDetail = { onNavigateToPostDetail(item.id) }
+                            )
+                            Spacer(modifier = Modifier.padding(vertical = 6.dp))
+                        }
+                    }
+                }
+            }
+            else -> {
+                item {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
+            }
         }
     }
-
 }

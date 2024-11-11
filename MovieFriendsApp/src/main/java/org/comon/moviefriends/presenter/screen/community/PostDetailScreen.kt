@@ -58,7 +58,7 @@ import org.comon.moviefriends.presenter.widget.MFText
 
 @Composable
 fun PostDetailScreen(
-    communityId: Int,
+    postId: String,
     navigatePop: () -> Unit,
     navigateToLogin: () -> Unit
 ) {

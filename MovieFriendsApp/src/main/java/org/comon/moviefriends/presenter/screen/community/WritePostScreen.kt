@@ -30,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,24 +44,29 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
+import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.widget.CategoryModal
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 
 @Composable
 fun WritePostScreen(
-    navigateToPostDetail: (Int) -> Unit,
+    navigateToPostDetail: (String) -> Unit = {},
+    navigateToPostDetailAfterUpdate: () -> Unit = {},
     navigatePop: () -> Unit,
+    postId: String?,
 ) {
+    val viewModel: CommunityPostViewModel = viewModel()
     val scrollState = rememberScrollState()
 
     val isCategoryMenuShown = remember { mutableStateOf(false) }
@@ -69,9 +75,32 @@ fun WritePostScreen(
     val isImageUploaded = remember { mutableStateOf(false) }
     val stateImageList = remember { mutableStateListOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10) }
 
+    val getPostState = viewModel.getPostState.collectAsStateWithLifecycle()
+
+    val insertState = viewModel.insertState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(key1 = Unit) {
+        if(postId != null){
+            viewModel.setPostId(postId)
+            viewModel.getPost()
+        }
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        topBar = { DetailTopAppBar(navigatePop, { navigateToPostDetail(0) }, true) },
+        topBar = {
+            DetailTopAppBar(
+                navigatePop = navigatePop,
+                navigateToPostDetail = {
+                    if(postId != null){
+                        navigateToPostDetailAfterUpdate()
+                    }else{
+                        navigateToPostDetail("0")
+                    }
+                },
+                writePost = true
+            )
+        },
     ) { innerPadding ->
         if(true){
             LinearProgressIndicator(

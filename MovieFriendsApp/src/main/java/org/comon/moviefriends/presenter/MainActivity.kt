@@ -214,9 +214,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     /** 커뮤니티 상세글 화면 */
-                    composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{communityId}") { backStackEntry ->
+                    composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{postId}") { backStackEntry ->
                         PostDetailScreen(
-                            communityId = backStackEntry.arguments?.getInt("communityId") ?: 0,
+                            postId = backStackEntry.arguments?.getString("postId") ?: "",
                             navigatePop = { navController.popBackStack() },
                             navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
@@ -224,9 +224,19 @@ class MainActivity : ComponentActivity() {
                     /** 커뮤니티 글작성 화면 */
                     composable(NAV_ROUTE.WRITE_POST.route) {
                         WritePostScreen(
-                            navigateToPostDetail = { communityId ->
-                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}") },
-                            navigatePop = { navController.popBackStack() }
+                            navigateToPostDetail = { postId ->
+                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}") },
+                            navigatePop = { navController.popBackStack() },
+                            postId = null
+                        )
+                    }
+                    /** 커뮤니티 글수정 화면 */
+                    composable("${NAV_ROUTE.WRITE_POST.route}/{postId}") { backStackEntry ->
+                        val postId = backStackEntry.arguments?.getString("postId") ?: ""
+                        WritePostScreen(
+                            navigateToPostDetail = { navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}") },
+                            navigatePop = { navController.popBackStack() },
+                            postId = postId
                         )
                     }
                     /** 커뮤니티 함께보기 화면 */

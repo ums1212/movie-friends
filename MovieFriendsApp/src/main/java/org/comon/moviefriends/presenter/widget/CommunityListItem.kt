@@ -14,12 +14,16 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.comon.moviefriends.common.getTimeDiff
+import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 
 @Composable
-fun CommunityListItem(onNavigateToPostDetail: () -> Unit) {
-    // post: PostInfo
+fun CommunityListItem(
+    post: PostInfo,
+    onNavigateToPostDetail: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -39,20 +43,16 @@ fun CommunityListItem(onNavigateToPostDetail: () -> Unit) {
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            //        MFText(post.title)
-            MFPostTitle("글 제목")
+            MFPostTitle(post.title)
             Spacer(Modifier.padding(vertical = 12.dp))
-//        MFText(post.content)
-            MFPostListItemContent("글 내용")
+            MFPostListItemContent(post.content)
             Spacer(Modifier.padding(vertical = 12.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-//            MFText(post.createdDate)
-//            MFText("조회수 : ${post.viewCount} 좋아요 : ${post.likes.size} 댓글 : ${post.reply.size}")
-                MFPostView("2시간 전")
-                MFPostView("조회수 : 1 좋아요 : 1 댓글 : 1")
+                MFPostView(getTimeDiff(post.createdDate.seconds))
+                MFPostView("조회수 : ${post.viewCount} 좋아요 : ${post.likes} 댓글 : ${post.reply.size}")
             }
         }
     }

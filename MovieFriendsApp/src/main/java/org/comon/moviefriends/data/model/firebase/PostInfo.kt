@@ -1,18 +1,17 @@
 package org.comon.moviefriends.data.model.firebase
 
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import com.google.firebase.Timestamp
 import java.util.UUID
 
 data class PostInfo(
     val id: String = UUID.randomUUID().toString(),
-    val user: UserInfo,
-    val title: String,
-    val content: String,
-    val imageLink: List<String>,
-    val viewCount: Int,
-    val likes: List<UserInfo>,
-    val reply: List<ReplyInfo>,
-    val createdDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+    val user: UserInfo = UserInfo(),
+    val title: String = "",
+    val content: String = "",
+    val imageLink: String = "",
+    val viewCount: Int = 0,
+    val likes: List<UserInfo> = emptyList(),
+    val reply: List<ReplyInfo> = emptyList(),
+    val createdDate: Timestamp = Timestamp.now(),
     val status: Boolean = true,
 )

@@ -73,14 +73,6 @@ fun ScaffoldScreen(
                 navigateToLogin = navigateToLogin
             )
         },
-        floatingActionButton = {
-            if(currentRoute== NAV_ROUTE.COMMUNITY.route){
-                CommunityFab(
-                    navigateToWritePost = { mainNavController.navigate(NAV_ROUTE.WRITE_POST.route) },
-                    navigateToLogin = navigateToLogin
-                )
-            }
-        },
         bottomBar = {
             MFNavigationBar(
                 selectedItem = selectedBottomMenuItem,
@@ -113,9 +105,11 @@ fun ScaffoldScreen(
                 }
                 composable(COMMUNITY_MENU.COMMUNITY.route) {
                     CommunityScreen(
-                        moveToCommunityDetailScreen = { communityId ->
-                            mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${communityId}")
-                        }
+                        moveToCommunityDetailScreen = { postId ->
+                            mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}")
+                        },
+                        moveToWritePostScreen = { mainNavController.navigate(NAV_ROUTE.WRITE_POST.route) },
+                        navigateToLogin = navigateToLogin
                     )
                 }
                 composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {

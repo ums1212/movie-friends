@@ -15,7 +15,7 @@ import org.comon.moviefriends.presenter.widget.MFPostTitle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileCommunityReplyScreen(
-    moveToCommunityDetailScreen: (Int) -> Unit,
+    moveToCommunityDetailScreen: (String) -> Unit,
 ) {
 //    OnDevelopMark()
     Column {

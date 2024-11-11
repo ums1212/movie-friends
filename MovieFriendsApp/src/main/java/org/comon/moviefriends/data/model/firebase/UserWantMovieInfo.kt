@@ -2,9 +2,10 @@ package org.comon.moviefriends.data.model.firebase
 
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.UUID
 
 data class UserWantMovieInfo (
-    val id: Int = 0,
+    val id: String = UUID.randomUUID().toString(),
     val movieId: Int = 0,
     val moviePosterPath: String = "",
     val userInfo: UserInfo = UserInfo(),
