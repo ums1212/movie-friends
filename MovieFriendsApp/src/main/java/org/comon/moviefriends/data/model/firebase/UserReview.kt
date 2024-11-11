@@ -1,6 +1,6 @@
 package org.comon.moviefriends.data.model.firebase
 
-import java.time.LocalDateTime
+import com.google.firebase.Timestamp
 import java.util.UUID
 
 data class UserReview(
@@ -8,6 +8,6 @@ data class UserReview(
     val movieId: Int = 0,
     val content: String = "",
     val user: UserInfo = UserInfo(),
-    val createdDate: LocalDateTime = LocalDateTime.now(),
+    val createdDate: Timestamp = Timestamp.now(),
     val status: Boolean = true,
 )

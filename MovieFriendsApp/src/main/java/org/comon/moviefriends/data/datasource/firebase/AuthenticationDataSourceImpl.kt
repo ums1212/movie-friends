@@ -121,7 +121,6 @@ class AuthenticationDataSourceImpl(
             emit(APIResult.NetworkError(it))
         }
     }.catch {
-        Log.d("test1234", "$it")
         emit(APIResult.NetworkError(it))
     }
 

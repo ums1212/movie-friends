@@ -284,7 +284,8 @@ fun MovieDetailScreen(
                     content = MFBottomSheetContent.UserReview,
                     dismissSheet = { viewModel.toggleReviewBottomSheetState() },
                     userReviewList = userReviewList,
-                    insertUserReview = { content -> viewModel.insertUserReview(content) }
+                    insertUserReview = { content -> viewModel.insertUserReview(content) },
+                    deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
                 )
             }
         }

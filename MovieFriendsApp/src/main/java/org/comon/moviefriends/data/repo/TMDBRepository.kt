@@ -44,5 +44,7 @@ interface TMDBRepository {
 
     suspend fun insertUserReview(movieId: Int, userInfo: UserInfo, review: String): Flow<APIResult<Boolean>>
 
+    suspend fun deleteUserReview(reviewId: String): Flow<APIResult<Boolean>>
+
     suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
 }

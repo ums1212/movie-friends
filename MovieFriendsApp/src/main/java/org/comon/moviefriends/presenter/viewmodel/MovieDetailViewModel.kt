@@ -251,6 +251,21 @@ class MovieDetailViewModel(
         }
     }
 
+    fun deleteUserReview(reviewId: String){
+        viewModelScope.launch {
+            repository.deleteUserReview(reviewId).collectLatest { result ->
+                when(result){
+                    is APIResult.Success -> {
+                        if(result.resultData){
+                            getUserReview()
+                        }
+                    }
+                    else -> {}
+                }
+            }
+        }
+    }
+
     fun getUserReview(){
         viewModelScope.launch {
             repository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {

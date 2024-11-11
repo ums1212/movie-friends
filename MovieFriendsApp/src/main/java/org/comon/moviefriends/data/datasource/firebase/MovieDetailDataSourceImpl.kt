@@ -1,6 +1,7 @@
 package org.comon.moviefriends.data.datasource.firebase
 
 import com.google.firebase.Firebase
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
@@ -20,6 +21,7 @@ import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.service.FCMSendService
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 
 class MovieDetailDataSourceImpl: MovieDetailDataSource {
@@ -176,6 +178,21 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         )
         db.collection("user_review").add(userReview).await()
         emit(APIResult.Success(true))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun deleteUserReview(
+        reviewId: String,
+    ): Flow<APIResult<Boolean>> = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("user_review").whereEqualTo("id", reviewId).get().await()
+        if(querySnapshot.documents.isEmpty()){
+            emit(APIResult.Success(false))
+        }else{
+            querySnapshot.documents.first().reference.delete().await()
+            emit(APIResult.Success(true))
+        }
     }.catch {
         emit(APIResult.NetworkError(it))
     }

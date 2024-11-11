@@ -89,6 +89,9 @@ class TMDBRepositoryImpl(
     override suspend fun insertUserReview(movieId: Int, userInfo: UserInfo, review: String) =
         fs.insertUserReview(movieId, userInfo, review)
 
+    override suspend fun deleteUserReview(reviewId: String) =
+        fs.deleteUserReview(reviewId)
+
     override suspend fun getUserReview(movieId: Int, userId: String) =
         fs.getUserReview(movieId, userId)
 }

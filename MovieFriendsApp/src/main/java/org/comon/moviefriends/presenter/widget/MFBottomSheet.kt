@@ -28,6 +28,7 @@ fun MFBottomSheet(
     requestWatchTogether: ((UserInfo) -> Result<Task<QuerySnapshot>>)? = null,
     userReviewList: APIResult<List<UserReview?>>? = null,
     insertUserReview: ((String) -> Unit)? = null,
+    deleteUserReview: ((String) -> Unit)? = null,
     ) {
     ModalBottomSheet(onDismissRequest = dismissSheet) {
         when(content){
@@ -52,7 +53,7 @@ fun MFBottomSheet(
                 }
             }
             /** 유저 리뷰 */
-            MFBottomSheetContent.UserReview -> userReviewList?.let { UserReviewList(it, insertUserReview) }
+            MFBottomSheetContent.UserReview -> userReviewList?.let { UserReviewList(it, insertUserReview, deleteUserReview) }
 
         }
     }
