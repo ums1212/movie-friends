@@ -1,6 +1,7 @@
 package org.comon.moviefriends.data.datasource.firebase
 
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -15,6 +16,7 @@ import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
+import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.service.FCMSendService
 import java.time.LocalDateTime
@@ -42,7 +44,11 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         error -> emit(APIResult.NetworkError(error))
     }
 
-    override suspend fun changeStateWantThisMovie(movieDetail: ResponseMovieDetailDto, userInfo: UserInfo, nowLocation: List<Double>) = flow {
+    override suspend fun changeStateWantThisMovie(
+        movieDetail: ResponseMovieDetailDto,
+        userInfo: UserInfo,
+        nowLocation: List<Double>
+    ) = flow {
         emit(APIResult.Loading)
         // 위치 정보 가져오기
         val region = MFLocationService.getInstance()
@@ -77,10 +83,7 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
             .whereEqualTo("movieId", movieId)
             .whereNotEqualTo("userInfo.id", userId)
             .get().await()
-        val userWantList = querySnapshot.documents.map { userWant ->
-            userWant.toObject(UserWantMovieInfo::class.java)
-        }
-        emit(APIResult.Success(userWantList))
+        emit(APIResult.Success(querySnapshot.toObjects(UserWantMovieInfo::class.java)))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
@@ -136,10 +139,11 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         error -> emit(APIResult.NetworkError(error))
     }
 
-    override suspend fun getAllUserMovieRating(movieId: Int): Flow<APIResult<List<UserRate?>>> = flow {
+    override suspend fun getAllUserMovieRating(movieId: Int) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("user_rate").whereEqualTo("movieId", movieId).get().await()
-        emit(APIResult.Success(querySnapshot.documents.map { it.toObject(UserRate::class.java) }))
+        val querySnapshot = db.collection("user_rate")
+            .whereEqualTo("movieId", movieId).get().await()
+        emit(APIResult.Success(querySnapshot.toObjects(UserRate::class.java)))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
@@ -148,6 +152,15 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         movieId: Int,
         userInfo: UserInfo
     ): Flow<APIResult<Int>> = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("user_rate")
+            .whereEqualTo("movieId", movieId)
+            .whereEqualTo("user.id", userInfo.id)
+            .get().await()
+        val rate = querySnapshot.documents.first().toObject(UserRate::class.java)?.rate ?: 0
+        emit(APIResult.Success(rate))
+    }.catch {
+        emit(APIResult.NetworkError(it))
     }
 
     override suspend fun insertUserReview(
@@ -155,9 +168,27 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
         userInfo: UserInfo,
         review: String
     ): Flow<APIResult<Boolean>> = flow {
+        emit(APIResult.Loading)
+        val userReview = UserReview(
+            movieId = movieId,
+            content = review,
+            user = userInfo,
+        )
+        db.collection("user_review").add(userReview).await()
+        emit(APIResult.Success(true))
+    }.catch {
+        emit(APIResult.NetworkError(it))
     }
 
-    override suspend fun getUserReview(movieId: Int, userInfo: UserInfo): Flow<APIResult<String>> = flow {
+    override suspend fun getUserReview(movieId: Int, userId: String) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("user_review")
+            .whereEqualTo("movieId", movieId)
+            .orderBy("createdDate", Query.Direction.ASCENDING)
+            .get().await()
+        emit(APIResult.Success(querySnapshot.toObjects(UserReview::class.java)))
+    }.catch {
+        emit(APIResult.NetworkError(it))
     }
 
 }

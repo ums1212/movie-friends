@@ -103,6 +103,7 @@ fun MovieDetailScreen(
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
     val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
     val movieInfo by viewModel.movieInfo.collectAsStateWithLifecycle()
+    val userReviewList by viewModel.userReview.collectAsStateWithLifecycle()
 
     val isPlayerShown = remember { mutableStateOf(false) }
     val videoKey = remember { mutableStateOf("") }
@@ -275,13 +276,15 @@ fun MovieDetailScreen(
             }
             MFButton({
                 viewModel.toggleReviewBottomSheetState()
+                viewModel.getUserReview()
             }, stringResource(R.string.button_more_user_review))
 
             if(reviewBottomSheetState){
                 MFBottomSheet(
                     content = MFBottomSheetContent.UserReview,
                     dismissSheet = { viewModel.toggleReviewBottomSheetState() },
-                    null
+                    userReviewList = userReviewList,
+                    insertUserReview = { content -> viewModel.insertUserReview(content) }
                 )
             }
         }

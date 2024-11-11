@@ -16,6 +16,7 @@ import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
+import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import org.comon.moviefriends.data.repo.TMDBRepository
@@ -63,6 +64,9 @@ class MovieDetailViewModel(
             _rateModalState.emit(!_rateModalState.value)
         }
     }
+
+    private val _userReview = MutableStateFlow<APIResult<List<UserReview?>>>(APIResult.NoConstructor)
+    val userReview = _userReview.asStateFlow()
 
     private val _reviewBottomSheetState = MutableStateFlow(false)
     val reviewBottomSheetState get() = _reviewBottomSheetState.asStateFlow()
@@ -230,8 +234,29 @@ class MovieDetailViewModel(
         }
     }
 
-    private fun getUserReview(){
+    fun insertUserReview(review: String){
+        viewModelScope.launch {
+            _userInfo.value?.let {
+                repository.insertUserReview(_movieId.value, it, review).collectLatest { result ->
+                    when(result){
+                        is APIResult.Success -> {
+                            if(result.resultData){
+                                getUserReview()
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+        }
+    }
 
+    fun getUserReview(){
+        viewModelScope.launch {
+            repository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {
+                _userReview.emit(it)
+            }
+        }
     }
 
 }

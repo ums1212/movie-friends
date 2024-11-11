@@ -9,6 +9,7 @@ import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserRate
+import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import retrofit2.Response
@@ -40,4 +41,8 @@ interface TMDBRepository {
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
 
     suspend fun getAllUserMovieRating(movieId: Int): Flow<APIResult<List<UserRate?>>>
+
+    suspend fun insertUserReview(movieId: Int, userInfo: UserInfo, review: String): Flow<APIResult<Boolean>>
+
+    suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
 }
