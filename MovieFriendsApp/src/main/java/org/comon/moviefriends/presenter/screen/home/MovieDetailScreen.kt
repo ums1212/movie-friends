@@ -26,7 +26,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -54,12 +53,9 @@ import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayer
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerHostState
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerState
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubeVideoId
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
@@ -150,26 +146,7 @@ fun MovieDetailScreen(
             MFButtonWantThisMovie(
                 clickEvent = {
                     viewModel.changeWantThisMovieStateLoading()
-                    coroutineScope.launch {
-                        MFLocationManager().getCurrentLocation(localContext).collectLatest { result ->
-                            when(result){
-                                is APIResult.Success -> {
-                                    viewModel.changeStateWantThisMovie(result.resultData, navigateToLogin)
-                                }
-                                is APIResult.NetworkError -> {
-                                    coroutineScope.launch {
-                                        snackBarHost.showSnackbar(
-                                            localContext.getString(R.string.network_error),
-                                            null,
-                                            true,
-                                            SnackbarDuration.Short
-                                        )
-                                    }
-                                }
-                                else -> {}
-                            }
-                        }
-                    }
+                    viewModel.changeStateWantThisMovie(localContext, navigateToLogin)
                 },
                 text = stringResource(R.string.button_want_this_movie),
                 isChecked = wantThisMovieState,
@@ -310,7 +287,7 @@ fun MovieDetailScreen(
         }
     }
     if(isPlayerShown.value){
-        MFYouTubePlayer(videoKey.value, coroutineScope, snackBarHost, localContext, isPlayerShown)
+        MFYouTubePlayer(videoKey.value, snackBarHost, localContext, isPlayerShown)
     }
     Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom){
         SnackbarHost(snackBarHost)
@@ -472,16 +449,16 @@ fun CreditItemView(item: ResponseCreditDto.Cast, context: Context) {
 @Composable
 fun MFYouTubePlayer(
     videoKey: String,
-    scope: CoroutineScope,
     snackBarHost: SnackbarHostState,
     localContext: Context,
     isPlayerShown: MutableState<Boolean>
 ){
     val hostState = remember { YouTubePlayerHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     when(hostState.currentState) {
         is YouTubePlayerState.Error -> {
-            scope.launch {
+            coroutineScope.launch {
                 isPlayerShown.value = false
                 snackBarHost.showSnackbar(
                     localContext.getString(R.string.network_error),
@@ -497,7 +474,7 @@ fun MFYouTubePlayer(
         is YouTubePlayerState.Playing -> {
             // Update UI button states
         }
-        YouTubePlayerState.Ready -> scope.launch {
+        YouTubePlayerState.Ready -> coroutineScope.launch {
             hostState.loadVideo(YouTubeVideoId(videoKey))
         }
     }
@@ -546,7 +523,8 @@ fun VideoItemView(item: ResponseMovieVideoDto.Result, posterLink: String?, conte
             contentDescription = "사진",
         )
         Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .background(FriendsBlack.copy(alpha = 0.7f)),
         ){
             Icon(

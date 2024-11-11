@@ -1,6 +1,5 @@
 package org.comon.moviefriends.data.datasource.firebase
 
-import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +59,6 @@ class MovieDetailDataSourceImpl: MovieDetailDataSource {
                 moviePosterPath = movieDetail.posterPath,
                 userInfo = userInfo,
                 userLocation = region ?: "위치 없음",
-                createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
             )
             db.collection("want_movie").add(wantMovieInfo).await()
             emit(APIResult.Success(true))

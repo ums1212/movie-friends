@@ -149,7 +149,7 @@ fun ProfileWantMovieScreen(
         }
 
         MFButtonWantThisMovie(
-            { viewModel.changeStateWantThisMovie(emptyList(), navigateToLogin) },
+            { viewModel.changeStateWantThisMovie(localContext, navigateToLogin) },
             stringResource(R.string.button_want_this_movie),
             wantThisMovieState,
             showErrorMessage = {

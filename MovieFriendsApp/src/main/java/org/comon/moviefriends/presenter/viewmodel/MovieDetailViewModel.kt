@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
@@ -92,9 +94,6 @@ class MovieDetailViewModel(
     val userWantList get() = _userWantList.asStateFlow()
     val userWantListState = mutableStateOf(false)
 
-    private val _moviePosterLink = MutableStateFlow("")
-    val moviePosterLink get() = _moviePosterLink.asStateFlow()
-
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
@@ -130,19 +129,30 @@ class MovieDetailViewModel(
     }
 
     fun changeStateWantThisMovie(
-        nowLocation: List<Double>,
+        context: Context,
         navigateToLogin: () -> Unit
     ) {
-        if(_userInfo.value==null) {
-            navigateToLogin()
-            return
-        }
         viewModelScope.launch {
-            _movieInfo.value?.let {
-                repository.changeStateWantThisMovie(it, _userInfo.value!!, nowLocation).collectLatest { result ->
-                    _wantThisMovieState.emit(result)
+            if(_userInfo.value==null) {
+                navigateToLogin()
+                return@launch
+            }
+            MFLocationManager().getCurrentLocation(context).collectLatest { result ->
+                when(result){
+                    is APIResult.Success -> {
+                        _movieInfo.value?.let {
+                            repository.changeStateWantThisMovie(it, _userInfo.value!!, result.resultData).collectLatest { result ->
+                                _wantThisMovieState.emit(result)
+                            }
+                        }
+                    }
+                    is APIResult.NetworkError -> {
+
+                    }
+                    else -> {}
                 }
             }
+
         }
     }
 

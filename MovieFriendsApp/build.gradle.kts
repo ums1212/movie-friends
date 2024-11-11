@@ -34,7 +34,6 @@ android {
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
         buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
         buildConfigField("String", "KAKAO_REST_KEY", localProperties.getProperty("KAKAO_REST_KEY"))
-        buildConfigField("String", "FIREBASE_API_KEY", localProperties.getProperty("FIREBASE_API_KEY"))
 
         buildConfigField("String", "SERVICE_ACCOUNT_TYPE", localProperties.getProperty("SERVICE_ACCOUNT_TYPE"))
         buildConfigField("String", "PROJECT_ID", localProperties.getProperty("PROJECT_ID"))
