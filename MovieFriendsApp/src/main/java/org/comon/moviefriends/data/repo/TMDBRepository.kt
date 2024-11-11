@@ -1,7 +1,6 @@
 package org.comon.moviefriends.data.repo
 
 import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
@@ -20,7 +19,7 @@ interface TMDBRepository {
 
     fun getPopular(): Flow<APIResult<Response<ResponseMoviesDto>>>
 
-    fun getTopRated(): Flow<APIResult<Response<ResponseMoviesDto>>>
+    fun getTrending(): Flow<APIResult<Response<ResponseMoviesDto>>>
 
     fun getUpcoming(): Flow<APIResult<Response<ResponseMoviesDto>>>
 

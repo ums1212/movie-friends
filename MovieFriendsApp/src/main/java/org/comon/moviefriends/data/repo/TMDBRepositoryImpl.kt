@@ -27,9 +27,9 @@ class TMDBRepositoryImpl(
         error -> emit(APIResult.NetworkError(error))
     }
 
-    override fun getTopRated() = flow {
+    override fun getTrending() = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getTopRated()))
+        emit(APIResult.Success(TMDBService.getInstance().getTrending()))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }

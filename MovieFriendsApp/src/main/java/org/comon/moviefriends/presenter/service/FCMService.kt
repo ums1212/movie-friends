@@ -18,7 +18,6 @@ const val TAG = "FCM_TAG"
 
 class FCMService: FirebaseMessagingService() {
 
-    @RequiresApi(Build.VERSION_CODES.M)
     override fun onMessageReceived(pushMessage: RemoteMessage) {
         super.onMessageReceived(pushMessage)
 
@@ -33,7 +32,6 @@ class FCMService: FirebaseMessagingService() {
 
     private var notificationID = 9312
 
-    @RequiresApi(Build.VERSION_CODES.M)
     private fun sendToStatusBarPushMessage(title: String, body: String) {
         val notificationBuilder: NotificationCompat.Builder =
             NotificationCompat.Builder(this, CHANNEL_ID)
@@ -42,14 +40,12 @@ class FCMService: FirebaseMessagingService() {
                 .setContentText(body)
         val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            )
-            nm.createNotificationChannel(channel)
-        }
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        )
+        nm.createNotificationChannel(channel)
         nm.notify(notificationID, notificationBuilder.build())
     }
 

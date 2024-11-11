@@ -24,8 +24,8 @@ class HomeViewModel(
     private val _popList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val popList get() = _popList.asStateFlow()
 
-    private val _topList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
-    val topList get() = _topList.asStateFlow()
+    private val _trendingList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
+    val trendingList get() = _trendingList.asStateFlow()
 
     private val _upcomingList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())
     val upcomingList get() = _upcomingList.asStateFlow()
@@ -33,14 +33,14 @@ class HomeViewModel(
     fun sendList(category: MovieCategory) = when(category){
         MovieCategory.NOW_PLAYING -> nowList
         MovieCategory.POPULAR -> popList
-        MovieCategory.TOP_RATED -> topList
+        MovieCategory.TRENDING -> trendingList
         MovieCategory.UP_COMING -> upcomingList
     }
 
     fun getAllMovies(){
         getCategoryMovies(repository.getNowPlaying(), MovieCategory.NOW_PLAYING)
         getCategoryMovies(repository.getPopular(), MovieCategory.POPULAR)
-        getCategoryMovies(repository.getTopRated(), MovieCategory.TOP_RATED)
+        getCategoryMovies(repository.getTrending(), MovieCategory.TRENDING)
         getCategoryMovies(repository.getUpcoming(), MovieCategory.UP_COMING)
     }
 
@@ -69,7 +69,7 @@ class HomeViewModel(
         when(category){
             MovieCategory.NOW_PLAYING -> _nowList.emit(list)
             MovieCategory.POPULAR -> _popList.emit(list)
-            MovieCategory.TOP_RATED -> _topList.emit(list)
+            MovieCategory.TRENDING -> _trendingList.emit(list)
             MovieCategory.UP_COMING -> _upcomingList.emit(list)
         }
     }
