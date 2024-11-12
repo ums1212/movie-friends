@@ -105,7 +105,7 @@ class MovieDetailViewModel(
         getStateWantThisMovie()
         getAllUserRate()
         getUserWantList()
-//        getUserReview()
+        getUserReview()
     }
 
     private fun getMovieDetail() = viewModelScope.launch {
@@ -177,7 +177,7 @@ class MovieDetailViewModel(
                     _userWantList.emit(result.resultData)
                 }
                 is APIResult.NetworkError -> {
-                    Log.d("test1234", "${result.exception}")
+                    Log.e("getUserWantList", "${result.exception}")
                 }
                 else -> {
                     userWantListState.value = false

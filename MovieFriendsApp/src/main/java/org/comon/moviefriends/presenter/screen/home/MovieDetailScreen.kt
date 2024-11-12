@@ -14,13 +14,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
@@ -39,6 +39,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -53,6 +54,7 @@ import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayer
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerHostState
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubePlayerState
 import io.github.ilyapavlovskii.multiplatform.youtubeplayer.YouTubeVideoId
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
@@ -195,7 +197,6 @@ fun MovieDetailScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                emptyList<Int>().take(2)
                 if(viewModel.userWantListState.value){
                     if(userWantList.isEmpty()){
                         MFText(stringResource(id = R.string.no_data))
@@ -203,8 +204,8 @@ fun MovieDetailScreen(
                         val previewList = userWantList.take(2)
                         Row(
                             modifier = Modifier
-                                .weight(0.7f)
-                                .wrapContentSize(unbounded = false),
+                                .weight(0.7f),
+                            horizontalArrangement = Arrangement.Start
                         ) {
                             previewList.forEach { item ->
                                 if(item != null){
@@ -269,10 +270,23 @@ fun MovieDetailScreen(
                     .fillMaxWidth()
                     .height(80.dp)
             ) {
-                MFText("유저1: 너무 재밌어요")
-                MFText("유저1: 너무 재밌어요")
-                MFText("유저1: 너무 재밌어요")
-                MFText("...")
+                when(val list = userReviewList){
+                    APIResult.Loading -> CircularProgressIndicator()
+                    is APIResult.Success -> {
+                        if(list.resultData.isEmpty()){
+                            MFText(stringResource(R.string.no_data))
+                        }else{
+                            list.resultData.take(3).forEach { item ->
+                                if(item != null)
+                                    MFText(
+                                        text = "${item.user.nickName}: ${item.content}",
+                                        overflow = TextOverflow.Ellipsis
+                                    )
+                            }
+                        }
+                    }
+                    else -> MFText(stringResource(R.string.no_data))
+                }
             }
             MFButton({
                 viewModel.toggleReviewBottomSheetState()
@@ -450,6 +464,24 @@ fun CreditItemView(item: ResponseCreditDto.Cast, context: Context) {
     )
 }
 
+fun showSnackBar(scope: CoroutineScope, snackBarHost: SnackbarHostState, localContext: Context, isPlayerShown: MutableState<Boolean>){
+    scope.launch {
+        isPlayerShown.value = false
+        snackBarHost.showSnackbar(
+            localContext.getString(R.string.network_error),
+            null,
+            true,
+            SnackbarDuration.Short
+        )
+    }
+}
+
+fun loadVideo(scope: CoroutineScope, hostState: YouTubePlayerHostState, videoKey: String){
+    scope.launch {
+        hostState.loadVideo(YouTubeVideoId(videoKey))
+    }
+}
+
 @Composable
 fun MFYouTubePlayer(
     videoKey: String,
@@ -461,26 +493,14 @@ fun MFYouTubePlayer(
     val coroutineScope = rememberCoroutineScope()
 
     when(hostState.currentState) {
-        is YouTubePlayerState.Error -> {
-            coroutineScope.launch {
-                isPlayerShown.value = false
-                snackBarHost.showSnackbar(
-                    localContext.getString(R.string.network_error),
-                    null,
-                    true,
-                    SnackbarDuration.Short
-                )
-            }
-        }
+        is YouTubePlayerState.Error -> showSnackBar(coroutineScope, snackBarHost, localContext, isPlayerShown)
         YouTubePlayerState.Idle -> {
             // Do nothing, waiting for initialization
         }
         is YouTubePlayerState.Playing -> {
             // Update UI button states
         }
-        YouTubePlayerState.Ready -> coroutineScope.launch {
-            hostState.loadVideo(YouTubeVideoId(videoKey))
-        }
+        YouTubePlayerState.Ready -> loadVideo(coroutineScope, hostState, videoKey)
     }
 
     Box(
