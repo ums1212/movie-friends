@@ -18,18 +18,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.material.icons.outlined.ThumbUp
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,36 +42,53 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.getDateString
+import org.comon.moviefriends.common.showSnackBar
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
+import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
 import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
 import org.comon.moviefriends.presenter.widget.MFPostReply
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFPostView
 import org.comon.moviefriends.presenter.widget.MFText
+import org.comon.moviefriends.presenter.widget.ShimmerEffect
 
 @Composable
 fun PostDetailScreen(
     postId: String,
     navigatePop: () -> Unit,
-    navigateToLogin: () -> Unit
 ) {
     val user = MFPreferences.getUserInfo()
+    val viewModel: CommunityPostViewModel = viewModel()
+
+    LaunchedEffect(Unit) {
+        viewModel.setPostId(postId)
+        viewModel.setIsUpdate(false)
+        viewModel.addViewCount()
+        viewModel.getPost()
+        viewModel.getPostLikeState()
+    }
 
     val scrollState = rememberScrollState()
-
-    val likeState = remember { mutableStateOf(false) }
-    val likeCount = remember { mutableIntStateOf(0) }
+    val snackBarHost = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val localContext = LocalContext.current
+    val post = viewModel.postState.collectAsStateWithLifecycle()
+    val like = viewModel.postLikeState.collectAsStateWithLifecycle()
 
     val dummyList = remember { mutableStateListOf(
         ReplyInfo(content = "댓글 놀이 1등"),
@@ -86,180 +107,243 @@ fun PostDetailScreen(
         modifier = Modifier.fillMaxSize(),
         topBar = { DetailTopAppBar(navigatePop) },
     ) { innerPadding ->
-        Column(
-            Modifier
-                .padding(innerPadding)
-                .padding(12.dp)
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            MFPostTitle(
-                "데드풀과 울버린 되게 재미있다..",
-            )
-            MFPostView(
-                "2024-11-03 17:33",
-                Modifier.padding(end = 8.dp)
-            )
-            Spacer(Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier
-                    .padding(end = 8.dp)
-                    .clickableOnce { },
-                verticalAlignment = Alignment.CenterVertically
+        Box(Modifier.fillMaxSize()){
+            Column(
+                Modifier
+                    .padding(innerPadding)
+                    .padding(12.dp)
+                    .fillMaxSize()
+                    .verticalScroll(scrollState),
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(36.dp)
-                        .padding(end = 4.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("")
-                        .crossfade(true)
-                        .error(R.drawable.logo)
-                        .build(),
-                    contentDescription = "회원 프로필 사진",
-                )
-                Column {
-                    MFText("유저1")
-                }
-            }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .padding(end = 4.dp),
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data("")
-                        .crossfade(true)
-                        .error(R.drawable.logo)
-                        .build(),
-                    contentDescription = "회원 프로필 사진",
-                )
-            }
-            Text(
-                modifier = Modifier.padding(12.dp),
-                color = FriendsWhite,
-                minLines = 10,
-                text = "데드풀과 울버린 보고 왔는데\n" +
-                        "너무 유치한거 같음...\n" +
-                        "\n" +
-                        "님들은 재밌게 봤음?"
-            )
-            Spacer(Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                MFText("좋아요 : ${likeCount.intValue}")
-                if(user!=null){
-                    Icon(
-                        modifier = Modifier
-                            .padding(start = 8.dp)
-                            .clickableOnce {
-                                likeState.value = !likeState.value
-                                if(likeState.value) likeCount.intValue++ else likeCount.intValue--
-                            },
-                        tint = FriendsWhite,
-                        imageVector = if(likeState.value) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
-                        contentDescription = "좋아요"
-                    )
-                }
-            }
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            if(user!=null){
-                var replyValue by remember { mutableStateOf("") }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    BasicTextField(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .weight(1f),
-                        value = replyValue,
-                        onValueChange = {
-                            replyValue = it
-                        },
-                        singleLine = false,
-                        textStyle = TextStyle(
-                            fontSize = 18.sp,
-                            color = FriendsWhite
-                        ),
-                        cursorBrush = SolidColor(FriendsTextGrey),
-                        decorationBox = { innerTextField ->
-                            Surface(
-                                modifier = Modifier
-                                    .padding(6.dp)
-                                    .height(38.dp)
-                                    .align(Alignment.Bottom),
-                                color = FriendsBoxGrey,
-                                shape = RoundedCornerShape(12.dp),
-                            ) {
-                                if(replyValue.isEmpty()){
-                                    Text(text = "댓글 작성", color = FriendsTextGrey, fontSize = 16.sp, modifier = Modifier.padding(4.dp).align(Alignment.CenterVertically))
-                                }
-                                Box(Modifier.padding(horizontal = 2.dp, vertical = 8.dp).align(Alignment.Bottom)){
-                                    innerTextField()
-                                }
-
-                            }
+                when(val postResult = post.value){
+                    is APIResult.Success -> {
+                        if(postResult.resultData == null){
+                            PostDetailShimmer()
+                            showSnackBar(coroutineScope, snackBarHost, localContext)
+                            return@Column
                         }
-                    )
-                    MFButtonWidthResizable({
-                        if(replyValue.isNotEmpty()){
-                            dummyList.add(ReplyInfo(user = user, content = replyValue))
-                            replyValue = ""
-                        }
-                    }, "등록", 80.dp)
-                }
-                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            }
-            Spacer(Modifier.padding(vertical = 8.dp))
-            MFPostTitle("댓글 ${if(dummyList.size==0) "없음" else "(${dummyList.size})"}")
-            Spacer(Modifier.padding(vertical = 8.dp))
-            Column {
-                dummyList.forEach { item ->
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        // 유저 프로필
+                        MFPostTitle(postResult.resultData.title)
+                        MFPostView(
+                            text = getDateString(postResult.resultData.createdDate.seconds),
+                            modifier = Modifier.padding(end = 8.dp)
+                        )
+                        Spacer(Modifier.padding(vertical = 8.dp))
                         Row(
-                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .padding(end = 8.dp)
+                                .clickableOnce { },
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             AsyncImage(
                                 modifier = Modifier
                                     .size(36.dp)
                                     .padding(end = 4.dp),
                                 model = ImageRequest.Builder(LocalContext.current)
-                                    .data(item.user.profileImage)
+                                    .data(postResult.resultData.user.profileImage)
                                     .crossfade(true)
                                     .error(R.drawable.logo)
                                     .build(),
                                 contentDescription = "회원 프로필 사진",
                             )
                             Column {
-                                MFText("유저 ${item.user.id}")
+                                MFText(postResult.resultData.user.nickName)
                             }
                         }
-                        if(user!=null && user.id == item.user.id){
-                            // 삭제 버튼
-                            IconButton(
-                                onClick = { dummyList.remove(item) },
-                            ) {
-                                Icon(Icons.Filled.Clear, "삭제")
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.Center
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier
+                                    .padding(end = 4.dp),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(postResult.resultData.imageLink)
+                                    .crossfade(true)
+                                    .error(R.drawable.logo)
+                                    .build(),
+                                contentDescription = "회원 프로필 사진",
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.padding(12.dp),
+                            color = FriendsWhite,
+                            minLines = 10,
+                            text = postResult.resultData.content
+                        )
+                        Spacer(Modifier.padding(vertical = 8.dp))
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.End,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            MFText("좋아요 : ")
+                            when(val likeInfo = like.value){
+                                APIResult.Loading -> CircularProgressIndicator(Modifier.size(24.dp))
+                                is APIResult.NetworkError -> CircularProgressIndicator(Modifier.size(24.dp))
+                                APIResult.NoConstructor -> {
+                                    MFText("${postResult.resultData.likes.size}")
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(start = 8.dp),
+                                        tint = FriendsWhite,
+                                        imageVector = Icons.Outlined.ThumbUp,
+                                        contentDescription = "좋아요"
+                                    )
+                                }
+                                is APIResult.Success -> {
+                                    MFText("${likeInfo.resultData.likeCount}")
+                                    if(user!=null){
+                                        Icon(
+                                            modifier = Modifier
+                                                .padding(start = 8.dp)
+                                                .clickableOnce {
+                                                    viewModel.changePostLikeState()
+                                                },
+                                            tint = FriendsWhite,
+                                            imageVector = if (likeInfo.resultData.isLiked) Icons.Filled.ThumbUp else Icons.Outlined.ThumbUp,
+                                            contentDescription = "좋아요"
+                                        )
+                                    }
+                                }
                             }
+                        }
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        if(user!=null){
+                            var replyValue by remember { mutableStateOf("") }
+
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                BasicTextField(
+                                    modifier = Modifier
+                                        .align(Alignment.CenterVertically)
+                                        .weight(1f),
+                                    value = replyValue,
+                                    onValueChange = {
+                                        replyValue = it
+                                    },
+                                    singleLine = false,
+                                    textStyle = TextStyle(
+                                        fontSize = 18.sp,
+                                        color = FriendsWhite
+                                    ),
+                                    cursorBrush = SolidColor(FriendsTextGrey),
+                                    decorationBox = { innerTextField ->
+                                        Surface(
+                                            modifier = Modifier
+                                                .padding(6.dp)
+                                                .height(38.dp)
+                                                .align(Alignment.Bottom),
+                                            color = FriendsBoxGrey,
+                                            shape = RoundedCornerShape(12.dp),
+                                        ) {
+                                            if(replyValue.isEmpty()){
+                                                Text(text = "댓글 작성", color = FriendsTextGrey, fontSize = 16.sp, modifier = Modifier
+                                                    .padding(4.dp)
+                                                    .align(Alignment.CenterVertically))
+                                            }
+                                            Box(
+                                                Modifier
+                                                    .padding(horizontal = 2.dp, vertical = 8.dp)
+                                                    .align(Alignment.Bottom)){
+                                                innerTextField()
+                                            }
+
+                                        }
+                                    }
+                                )
+                                MFButtonWidthResizable({
+                                    if(replyValue.isNotEmpty()){
+                                        dummyList.add(ReplyInfo(user = user, content = replyValue))
+                                        replyValue = ""
+                                    }
+                                }, "등록", 80.dp)
+                            }
+                            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         }
                     }
-                    MFPostReply(item.content)
-                    Spacer(Modifier.padding(vertical = 8.dp))
-                    HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    is APIResult.NetworkError -> {
+                        PostDetailShimmer()
+                        showSnackBar(coroutineScope, snackBarHost, localContext)
+                    }
+                    else -> PostDetailShimmer()
+                }
+
+                Spacer(Modifier.padding(vertical = 8.dp))
+                MFPostTitle("댓글 ${if(dummyList.size==0) "없음" else "(${dummyList.size})"}")
+                Spacer(Modifier.padding(vertical = 8.dp))
+                Column {
+                    dummyList.forEach { item ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            // 유저 프로필
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(36.dp)
+                                        .padding(end = 4.dp),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(item.user.profileImage)
+                                        .crossfade(true)
+                                        .error(R.drawable.logo)
+                                        .build(),
+                                    contentDescription = "회원 프로필 사진",
+                                )
+                                Column {
+                                    MFText("유저 ${item.user.id}")
+                                }
+                            }
+                            if(user!=null && user.id == item.user.id){
+                                // 삭제 버튼
+                                IconButton(
+                                    onClick = { dummyList.remove(item) },
+                                ) {
+                                    Icon(Icons.Filled.Clear, "삭제")
+                                }
+                            }
+                        }
+                        MFPostReply(item.content)
+                        Spacer(Modifier.padding(vertical = 8.dp))
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                    }
                 }
             }
         }
     }
+    SnackbarHost(snackBarHost)
+}
+
+@Composable
+fun PostDetailShimmer(){
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(100.dp))
+    Spacer(Modifier.padding(vertical = 8.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(100.dp))
+    HorizontalDivider()
+    Spacer(Modifier.padding(vertical = 4.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(40.dp))
+    Spacer(Modifier.padding(vertical = 2.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(40.dp))
+    Spacer(Modifier.padding(vertical = 2.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(40.dp))
 }

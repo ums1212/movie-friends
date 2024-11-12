@@ -3,6 +3,7 @@ package org.comon.moviefriends.presenter.widget
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Create
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -13,7 +14,12 @@ import org.comon.moviefriends.R
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-fun DetailTopAppBar(navigatePop: () -> Unit, navigateToPostDetail: () -> Unit = {}, writePost: Boolean = false) {
+fun DetailTopAppBar(
+    navigatePop: () -> Unit,
+    writePost: () -> Unit = {},
+    isWritePost: Boolean = false,
+    isMyPost: Boolean = false,
+) {
     TopAppBar(
         title = {},
         navigationIcon = {
@@ -28,13 +34,24 @@ fun DetailTopAppBar(navigatePop: () -> Unit, navigateToPostDetail: () -> Unit = 
             }
         },
         actions = {
-            if(writePost){
+            if(isWritePost){
                 IconButton(
-                    onClick = navigateToPostDetail
+                    onClick = writePost
                 ) {
                     Icon(
                         Icons.Filled.Create,
                         contentDescription = "작성 버튼",
+                        tint = colorResource(R.color.friends_white)
+                    )
+                }
+            }
+            if(isMyPost){
+                IconButton(
+                    onClick = {}
+                ) {
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = "수정 메뉴 버튼",
                         tint = colorResource(R.color.friends_white)
                     )
                 }

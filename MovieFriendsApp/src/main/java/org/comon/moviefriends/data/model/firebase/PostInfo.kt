@@ -6,6 +6,7 @@ import java.util.UUID
 data class PostInfo(
     val id: String = UUID.randomUUID().toString(),
     val user: UserInfo = UserInfo(),
+    val category: String = "",
     val title: String = "",
     val content: String = "",
     val imageLink: String = "",

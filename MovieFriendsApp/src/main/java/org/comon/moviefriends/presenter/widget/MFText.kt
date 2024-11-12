@@ -10,12 +10,13 @@ import androidx.compose.ui.unit.sp
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 
 @Composable
-fun MFText(text:String, modifier: Modifier = Modifier, textStyle: TextStyle = TextStyle.Default){
+fun MFText(text:String, modifier: Modifier = Modifier, textStyle: TextStyle = TextStyle.Default, overflow: TextOverflow = TextOverflow.Clip){
     Text(
         modifier = modifier,
         text = text,
         color = FriendsWhite,
-        style = textStyle
+        style = textStyle,
+        overflow = overflow,
     )
 }
 

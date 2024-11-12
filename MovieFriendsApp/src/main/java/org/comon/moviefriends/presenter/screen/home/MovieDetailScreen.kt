@@ -58,6 +58,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
@@ -464,18 +465,6 @@ fun CreditItemView(item: ResponseCreditDto.Cast, context: Context) {
     )
 }
 
-fun showSnackBar(scope: CoroutineScope, snackBarHost: SnackbarHostState, localContext: Context, isPlayerShown: MutableState<Boolean>){
-    scope.launch {
-        isPlayerShown.value = false
-        snackBarHost.showSnackbar(
-            localContext.getString(R.string.network_error),
-            null,
-            true,
-            SnackbarDuration.Short
-        )
-    }
-}
-
 fun loadVideo(scope: CoroutineScope, hostState: YouTubePlayerHostState, videoKey: String){
     scope.launch {
         hostState.loadVideo(YouTubeVideoId(videoKey))
@@ -493,7 +482,9 @@ fun MFYouTubePlayer(
     val coroutineScope = rememberCoroutineScope()
 
     when(hostState.currentState) {
-        is YouTubePlayerState.Error -> showSnackBar(coroutineScope, snackBarHost, localContext, isPlayerShown)
+        is YouTubePlayerState.Error -> showSnackBar(coroutineScope, snackBarHost, localContext){
+            isPlayerShown.value = false
+        }
         YouTubePlayerState.Idle -> {
             // Do nothing, waiting for initialization
         }

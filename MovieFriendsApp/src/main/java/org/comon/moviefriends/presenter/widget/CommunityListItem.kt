@@ -27,7 +27,7 @@ fun CommunityListItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .height(160.dp)
+            .height(180.dp)
             .clickableOnce { onNavigateToPostDetail() },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
@@ -44,15 +44,15 @@ fun CommunityListItem(
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             MFPostTitle(post.title)
-            Spacer(Modifier.padding(vertical = 12.dp))
+            Spacer(Modifier.padding(vertical = 4.dp))
             MFPostListItemContent(post.content)
-            Spacer(Modifier.padding(vertical = 12.dp))
+            Spacer(Modifier.padding(vertical = 4.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 MFPostView(getTimeDiff(post.createdDate.seconds))
-                MFPostView("조회수 : ${post.viewCount} 좋아요 : ${post.likes} 댓글 : ${post.reply.size}")
+                MFPostView("조회수 : ${post.viewCount} 좋아요 : ${post.likes.size} 댓글 : ${post.reply.size}")
             }
         }
     }

@@ -8,16 +8,13 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.view.animation.AnticipateInterpolator
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.AlertDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
@@ -218,14 +215,16 @@ class MainActivity : ComponentActivity() {
                         PostDetailScreen(
                             postId = backStackEntry.arguments?.getString("postId") ?: "",
                             navigatePop = { navController.popBackStack() },
-                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
                     }
                     /** 커뮤니티 글작성 화면 */
                     composable(NAV_ROUTE.WRITE_POST.route) {
                         WritePostScreen(
                             navigateToPostDetail = { postId ->
-                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}") },
+                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}"){
+                                    popUpTo(NAV_ROUTE.COMMUNITY_DETAIL.route){ inclusive = true}
+                                }
+                            },
                             navigatePop = { navController.popBackStack() },
                             postId = null
                         )
@@ -234,7 +233,11 @@ class MainActivity : ComponentActivity() {
                     composable("${NAV_ROUTE.WRITE_POST.route}/{postId}") { backStackEntry ->
                         val postId = backStackEntry.arguments?.getString("postId") ?: ""
                         WritePostScreen(
-                            navigateToPostDetail = { navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}") },
+                            navigateToPostDetail = {
+                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}"){
+                                    popUpTo(NAV_ROUTE.COMMUNITY_DETAIL.route){ inclusive = true}
+                                }
+                            },
                             navigatePop = { navController.popBackStack() },
                             postId = postId
                         )
