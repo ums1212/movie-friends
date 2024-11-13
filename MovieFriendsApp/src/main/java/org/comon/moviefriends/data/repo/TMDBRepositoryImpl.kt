@@ -1,11 +1,13 @@
 package org.comon.moviefriends.data.repo
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 
@@ -79,6 +81,9 @@ class TMDBRepositoryImpl(
 
     override suspend fun getMyRequestList(userId: String) =
         fs.getMyRequestList(userId)
+
+    override suspend fun getMyReceiveList(userId: String) =
+        fs.getMyReceiveList(userId)
 
     override fun requestWatchTogether(
         movieId: Int,

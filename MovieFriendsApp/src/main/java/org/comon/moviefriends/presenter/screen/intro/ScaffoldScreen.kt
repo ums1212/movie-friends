@@ -125,7 +125,9 @@ fun ScaffoldScreen(
                     )
                 }
                 composable(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) {
-                    ReceiveListScreen()
+                    ReceiveListScreen(
+                        navigateToMovieDetail = { movieId -> mainNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")}
+                    )
                 }
                 composable(COMMUNITY_MENU.RECOMMEND.route) {
                     RecommendScreen()

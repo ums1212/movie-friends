@@ -100,7 +100,10 @@ class MovieDetailDataSourceImpl(
         val wantList = wantQuerySnapshot.toObjects(UserWantMovieInfo::class.java)
         val myRequestList = requestQuerySnapshot.toObjects(RequestChatInfo::class.java)
         val filteredList = wantList.filter { want ->
-            myRequestList.find { request -> request.receiveUser.id == want.userInfo.id } == null
+            myRequestList.find { request ->
+                request.receiveUser.id == want.userInfo.id
+                        && request.movieId == want.movieId
+            } == null
         }
         emit(APIResult.Success(filteredList))
     }.catch {
@@ -117,7 +120,19 @@ class MovieDetailDataSourceImpl(
         val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
         emit(APIResult.Success(requestList))
     }.catch {
-        Log.d("test1234", "$it")
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun getMyReceiveList(userId: String) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("request_chat")
+            .whereEqualTo("receiveUser.id", userId)
+            .whereEqualTo("status", true)
+            .orderBy("createdDate", Query.Direction.DESCENDING)
+            .get().await()
+        val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
+        emit(APIResult.Success(requestList))
+    }.catch {
         emit(APIResult.NetworkError(it))
     }
 

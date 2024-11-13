@@ -41,6 +41,8 @@ interface TMDBRepository {
 
     suspend fun getMyRequestList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
 
+    suspend fun getMyReceiveList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
+
     fun requestWatchTogether(movieId: Int, moviePosterPath: String, sendUser: UserInfo, receiveUser: UserInfo, receiveUserRegion: String): Result<Task<QuerySnapshot>>
 
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>

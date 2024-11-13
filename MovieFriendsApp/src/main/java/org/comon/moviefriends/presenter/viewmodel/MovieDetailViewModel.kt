@@ -111,6 +111,9 @@ class MovieDetailViewModel(
     private val _myChatRequestList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
     val myChatRequestList = _myChatRequestList.asStateFlow()
 
+    private val _myChatReceiveList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
+    val myChatReceiveList = _myChatReceiveList.asStateFlow()
+
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
@@ -205,6 +208,12 @@ class MovieDetailViewModel(
     fun getMyRequestList() = viewModelScope.launch {
         repository.getMyRequestList(_userInfo.value?.id ?: "").collectLatest {
             _myChatRequestList.emit(it)
+        }
+    }
+
+    fun getMyReceiveList() = viewModelScope.launch {
+        repository.getMyReceiveList(_userInfo.value?.id ?: "").collectLatest {
+            _myChatReceiveList.emit(it)
         }
     }
 

@@ -172,7 +172,7 @@ fun MFButtonWatchTogether(
             }
         },
         modifier = Modifier
-            .width(120.dp),
+            .width(80.dp),
         border = BorderStroke(1.dp, FriendsTextGrey),
         colors = ButtonColors(
             containerColor = FriendsBoxGrey,
@@ -308,3 +308,16 @@ fun GoogleLoginButton(clickEvent: () -> Unit) {
     }
 }
 
+@Composable
+fun MFButtonReceive(onClick: () -> Unit, text: String){
+    Button(
+        onClick = onClick,
+        border = BorderStroke(1.dp, FriendsTextGrey),
+        colors = ButtonColors(
+            containerColor = FriendsBoxGrey,
+            contentColor = White,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.LightGray
+        )
+    ) { Text(text) }
+}

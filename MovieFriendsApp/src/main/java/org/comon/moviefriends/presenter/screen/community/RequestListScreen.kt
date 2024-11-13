@@ -141,6 +141,8 @@ fun RequestListScreen(
                                     proposalFlag = item.proposalFlag
                                 )
                             }
+                            Spacer(Modifier.padding(vertical = 4.dp))
+                            HorizontalDivider()
                         }
                     }
                 }
