@@ -4,6 +4,7 @@ import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
@@ -36,7 +37,11 @@ interface TMDBRepository {
 
     suspend fun getUserWantList(movieId: Int, userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
 
-    fun requestWatchTogether(movieId: Int, sendUser: UserInfo, receiveUser: UserInfo): Result<Task<QuerySnapshot>>
+    suspend fun getAllUserWantList(userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
+
+    suspend fun getMyRequestList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
+
+    fun requestWatchTogether(movieId: Int, moviePosterPath: String, sendUser: UserInfo, receiveUser: UserInfo, receiveUserRegion: String): Result<Task<QuerySnapshot>>
 
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
 
@@ -47,4 +52,6 @@ interface TMDBRepository {
     suspend fun deleteUserReview(reviewId: String): Flow<APIResult<Boolean>>
 
     suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
+
+    suspend fun getAllChatRequestCount(userId: String): Flow<APIResult<Map<String, Int>>>
 }

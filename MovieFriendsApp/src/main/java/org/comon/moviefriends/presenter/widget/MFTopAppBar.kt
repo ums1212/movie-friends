@@ -26,6 +26,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.PROFILE_MENU
+import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,6 +53,7 @@ fun MFTopAppBar(
                     !route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
                     && !route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
                     && !PROFILE_MENU.entries.any { route.contains(it.route) }
+                    && !WATCH_TOGETHER_MENU.entries.any { route.contains(it.route)}
                     ) {
                     Image(
                         modifier = Modifier
@@ -65,6 +67,7 @@ fun MFTopAppBar(
                 if(route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
                     || route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
                     || route.contains(NAV_ROUTE.WRITE_POST.route)
+                    || WATCH_TOGETHER_MENU.entries.any { route.contains(it.route)}
                     || PROFILE_MENU.entries.any { route.contains(it.route)  }
                 ) {
                     IconButton(

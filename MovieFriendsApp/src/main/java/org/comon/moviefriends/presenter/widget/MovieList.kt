@@ -2,6 +2,7 @@ package org.comon.moviefriends.presenter.widget
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -48,51 +49,62 @@ fun MovieList(
         Modifier.height(280.dp)
     ) {
         MFPostTitle(text = category.str)
-        LazyRow(
-            Modifier.fillMaxWidth()
-        ) {
-            items(stateLists.value) { item ->
-                Column(
-                    modifier = Modifier
-                        .width(160.dp)
-                        .clickableOnce { onNavigateToMovieDetail(item.id) },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Card(
+        if(stateLists.value.isEmpty()){
+            Row(
+                Modifier.fillMaxWidth()
+            ) {
+                ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
+                ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
+                ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
+                ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
+            }
+        }else{
+            LazyRow(
+                Modifier.fillMaxWidth()
+            ) {
+                items(stateLists.value) { item ->
+                    Column(
                         modifier = Modifier
-                            .width(150.dp)
-                            .height(200.dp)
-                            .padding(8.dp),
-                        shape = RoundedCornerShape(8.dp),
-                        border = BorderStroke(1.dp, Color.LightGray),
-                        elevation = CardDefaults.cardElevation(
-                            defaultElevation = 8.dp,
-                            pressedElevation = 16.dp
-                        )
+                            .width(160.dp)
+                            .clickableOnce { onNavigateToMovieDetail(item.id) },
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        AsyncImage(
-                            modifier = Modifier.fillMaxSize(),
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data("$BASE_TMDB_IMAGE_URL${item.posterPath}")
-                                .crossfade(true)
-                                .error(R.drawable.yoshicat)
-                                .build(),
-                            contentDescription = "작품 정보",
-                            contentScale = ContentScale.Fit
+                        Card(
+                            modifier = Modifier
+                                .width(150.dp)
+                                .height(200.dp)
+                                .padding(8.dp),
+                            shape = RoundedCornerShape(8.dp),
+                            border = BorderStroke(1.dp, Color.LightGray),
+                            elevation = CardDefaults.cardElevation(
+                                defaultElevation = 8.dp,
+                                pressedElevation = 16.dp
+                            )
+                        ) {
+                            AsyncImage(
+                                modifier = Modifier.fillMaxSize(),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data("$BASE_TMDB_IMAGE_URL${item.posterPath}")
+                                    .crossfade(true)
+                                    .error(R.drawable.yoshicat)
+                                    .build(),
+                                contentDescription = "작품 정보",
+                                contentScale = ContentScale.Fit
+                            )
+                        }
+                        Text(
+                            text = item.title,
+                            color = colorResource(id = R.color.friends_white),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
+                        )
+                        Text(
+                            text = item.releaseDate,
+                            color = colorResource(id = R.color.friends_white),
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 1,
                         )
                     }
-                    Text(
-                        text = item.title,
-                        color = colorResource(id = R.color.friends_white),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        )
-                    Text(
-                        text = item.releaseDate,
-                        color = colorResource(id = R.color.friends_white),
-                        overflow = TextOverflow.Ellipsis,
-                        maxLines = 1,
-                        )
                 }
             }
         }

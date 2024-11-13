@@ -1,11 +1,7 @@
 package org.comon.moviefriends.presenter.service
 
-import android.content.Context
 import android.util.Log
 import com.google.auth.oauth2.GoogleCredentials
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.ktx.messaging
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import okhttp3.MediaType.Companion.toMediaType
@@ -60,7 +56,7 @@ object FCMSendService {
         }
     }
 
-    fun getAccessToken(): String? {
+    private fun getAccessToken(): String? {
         return try {
             val jsonContent = """
             {

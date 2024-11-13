@@ -74,11 +74,19 @@ class TMDBRepositoryImpl(
     override suspend fun getUserWantList(movieId: Int, userId: String) =
         fs.getUserWantList(movieId, userId)
 
+    override suspend fun getAllUserWantList(userId: String) =
+        fs.getAllUserWantList(userId)
+
+    override suspend fun getMyRequestList(userId: String) =
+        fs.getMyRequestList(userId)
+
     override fun requestWatchTogether(
         movieId: Int,
+        moviePosterPath: String,
         sendUser: UserInfo,
-        receiveUser: UserInfo
-    ) = fs.requestWatchTogether(movieId, sendUser, receiveUser)
+        receiveUser: UserInfo,
+        receiveUserRegion: String,
+    ) = fs.requestWatchTogether(movieId, moviePosterPath, sendUser, receiveUser, receiveUserRegion)
 
     override suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int) =
         fs.voteUserMovieRating(movieId, userInfo, rating)
@@ -94,4 +102,7 @@ class TMDBRepositoryImpl(
 
     override suspend fun getUserReview(movieId: Int, userId: String) =
         fs.getUserReview(movieId, userId)
+
+    override suspend fun getAllChatRequestCount(userId: String) =
+        fs.getAllChatRequestCount(userId)
 }

@@ -53,6 +53,8 @@
     <string name="label_request_list">요청 내역</string>
     <string name="button_request_cancel">요청 취소</string>
     <string name="button_request_denied">거절 됨</string>
+    <string name="button_request_waiting">대기중</string>
+    <string name="button_request_confirmed">승인 됨</string>
     <string name="label_receive_list">받은 내역</string>
     <string name="label_receive_confirm">승인</string>
     <string name="label_receive_deny">거절</string>

@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -57,7 +57,7 @@ fun CommunityList(
         when(val state = getAllPostState){
             APIResult.Loading -> {
                 item {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                    CommunityListShimmer()
                 }
             }
             is APIResult.NetworkError -> {
@@ -97,4 +97,23 @@ fun CommunityList(
             }
         }
     }
+}
+
+@Composable
+fun CommunityListShimmer(){
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(180.dp))
+    Spacer(Modifier.padding(vertical = 8.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(180.dp))
+    Spacer(Modifier.padding(vertical = 8.dp))
+    ShimmerEffect(
+        Modifier
+            .fillMaxWidth()
+            .height(180.dp))
+    Spacer(Modifier.padding(vertical = 8.dp))
 }

@@ -25,7 +25,7 @@ fun MFBottomSheet(
     content: MFBottomSheetContent,
     dismissSheet: () -> Unit,
     userWantList: List<UserWantMovieInfo?>? = null,
-    requestWatchTogether: ((UserInfo) -> Result<Task<QuerySnapshot>>)? = null,
+    requestWatchTogether: ((Int, String, UserInfo, String) -> Result<Task<QuerySnapshot>>)? = null,
     userReviewList: APIResult<List<UserReview?>>? = null,
     insertUserReview: ((String) -> Unit)? = null,
     deleteUserReview: ((String) -> Unit)? = null,
@@ -45,7 +45,7 @@ fun MFBottomSheet(
                             screen = NAV_ROUTE.MOVIE_DETAIL.route,
                             wantList = userWantList,
                             navigateToMovieDetail = null,
-                            requestWatchTogether = { receiveUser -> requestWatchTogether(receiveUser) }
+                            requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion -> requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion) }
                         )
                     }else{
                         Text(text = stringResource(id = R.string.network_error))

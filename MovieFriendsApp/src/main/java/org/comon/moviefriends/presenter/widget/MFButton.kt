@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.theme.Black
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
@@ -142,25 +143,30 @@ fun MFButtonWantThisMovie(
     }
 }
 
-enum class WatchTogetherButtonState {
-    NOTHING,
-    LOADING,
-    SUCCESS,
-}
-
 @Composable
 fun MFButtonWatchTogether(
     clickEvent: () -> Result<Task<QuerySnapshot>>,
-    requestState: MutableState<Boolean>,
+    requestState: MutableState<String>,
+    showErrorSnackBar: () -> Unit,
+    proposalFlag: String = "",
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val cancel = stringResource(id = R.string.button_request_cancel)
+    val request = stringResource(id = R.string.button_watch_together)
     Button(
         shape = RoundedCornerShape(25),
         onClick = {
+            if(proposalFlag.isNotEmpty() && proposalFlag!=ProposalFlag.WAITING.str) return@Button
             coroutineScope.launch {
                 clickEvent().onSuccess { task ->
                     task.addOnSuccessListener { snapshot ->
-                        requestState.value = snapshot.isEmpty
+                        if(snapshot.isEmpty){
+                            requestState.value = request
+                        }else{
+                            requestState.value = cancel
+                        }
+                    }.addOnFailureListener {
+                        showErrorSnackBar()
                     }
                 }
             }
@@ -181,10 +187,21 @@ fun MFButtonWatchTogether(
             bottom = 2.dp,
         )
     ) {
-        if(requestState.value){
-            Text(stringResource(R.string.button_cancel))
-        }else{
-            Text(stringResource(R.string.button_watch_together))
+        when(proposalFlag){
+            ProposalFlag.WAITING.str -> {
+                if(requestState.value==cancel){
+                    Text(stringResource(R.string.button_watch_together))
+                }else{
+                    Text(stringResource(R.string.button_cancel))
+                }
+            }
+            ProposalFlag.DENIED.str -> {
+                Text(stringResource(R.string.button_request_denied))
+            }
+            ProposalFlag.CONFIRMED.str -> {
+                Text(stringResource(R.string.button_request_confirmed))
+            }
+            else -> Text(stringResource(R.string.button_watch_together))
         }
     }
 }

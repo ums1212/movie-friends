@@ -8,7 +8,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -18,7 +17,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import org.comon.moviefriends.common.COMMUNITY_MENU
-import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.PROFILE_MENU
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
@@ -37,7 +35,6 @@ import org.comon.moviefriends.presenter.screen.profile.ProfileScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileSettingScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileWantMovieScreen
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.widget.CommunityFab
 import org.comon.moviefriends.presenter.widget.MFNavigationBar
 import org.comon.moviefriends.presenter.widget.MFTopAppBar
 
@@ -123,7 +120,9 @@ fun ScaffoldScreen(
                     )
                 }
                 composable(WATCH_TOGETHER_MENU.REQUEST_LIST.route) {
-                    RequestListScreen()
+                    RequestListScreen(
+                        navigateToMovieDetail = { movieId -> mainNavController.navigate("${NAV_ROUTE.MOVIE_DETAIL.route}/${movieId}")}
+                    )
                 }
                 composable(WATCH_TOGETHER_MENU.RECEIVE_LIST.route) {
                     ReceiveListScreen()

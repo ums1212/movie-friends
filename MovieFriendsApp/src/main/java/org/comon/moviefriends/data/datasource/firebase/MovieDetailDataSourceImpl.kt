@@ -1,5 +1,6 @@
 package org.comon.moviefriends.data.datasource.firebase
 
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
@@ -20,8 +21,6 @@ import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.service.FCMSendService
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 class MovieDetailDataSourceImpl(
     private val db: FirebaseFirestore = Firebase.firestore
@@ -90,37 +89,74 @@ class MovieDetailDataSourceImpl(
         emit(APIResult.NetworkError(it))
     }
 
+    override suspend fun getAllUserWantList(userId: String) = flow {
+        emit(APIResult.Loading)
+        val wantQuerySnapshot = db.collection("want_movie")
+            .whereNotEqualTo("userInfo.id", userId)
+            .get().await()
+        val requestQuerySnapshot = db.collection("request_chat")
+            .whereEqualTo("sendUser.id", userId)
+            .get().await()
+        val wantList = wantQuerySnapshot.toObjects(UserWantMovieInfo::class.java)
+        val myRequestList = requestQuerySnapshot.toObjects(RequestChatInfo::class.java)
+        val filteredList = wantList.filter { want ->
+            myRequestList.find { request -> request.receiveUser.id == want.userInfo.id } == null
+        }
+        emit(APIResult.Success(filteredList))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun getMyRequestList(userId: String) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("request_chat")
+            .whereEqualTo("sendUser.id", userId)
+            .whereEqualTo("status", true)
+            .orderBy("createdDate", Query.Direction.DESCENDING)
+            .get().await()
+        val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
+        emit(APIResult.Success(requestList))
+    }.catch {
+        Log.d("test1234", "$it")
+        emit(APIResult.NetworkError(it))
+    }
+
     override fun requestWatchTogether(
         movieId: Int,
+        moviePosterPath: String,
         sendUser: UserInfo,
-        receiveUser: UserInfo
+        receiveUser: UserInfo,
+        receiveUserRegion: String,
     ) = runCatching {
         val requestChatInfo = RequestChatInfo(
             movieId = movieId,
+            moviePosterPath = moviePosterPath,
             sendUser = sendUser,
             receiveUser = receiveUser,
-            proposalFlag = false,
-            createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+            receiveUserRegion = receiveUserRegion
         )
         db.collection("request_chat")
             .whereEqualTo("movieId", movieId)
-            .whereEqualTo("sendUser", sendUser)
-            .whereEqualTo("receiveUser", receiveUser).get()
+            .whereEqualTo("sendUser.id", sendUser.id)
+            .whereEqualTo("receiveUser.id", receiveUser.id).get()
             .addOnSuccessListener { result ->
                 if(result.isEmpty){
                     db.collection("request_chat").add(requestChatInfo)
                     CoroutineScope(Dispatchers.IO).launch {
                         // 테스트용으로 자신한테 보내기
                         FCMSendService.sendNotificationToToken(
-                            sendUser.fcmToken,
-                            "영화 같이 보기 요청",
-                            "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다."
+                            token = sendUser.fcmToken,
+                            title = "영화 같이 보기 요청",
+                            body = "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다."
                         )
 //                        FCMSendService.sendNotificationToToken(receiveUser.fcmToken, "영화 같이 보기 요청", "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
                     }
                 }else{
                     result.documents.first().reference.delete()
                 }
+            }
+            .addOnFailureListener {
+                Log.e("requestWatchTogether", "$it")
             }
     }
 
@@ -204,6 +240,17 @@ class MovieDetailDataSourceImpl(
             .orderBy("createdDate", Query.Direction.ASCENDING)
             .get().await()
         emit(APIResult.Success(querySnapshot.toObjects(UserReview::class.java)))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun getAllChatRequestCount(userId: String) = flow {
+        emit(APIResult.Loading)
+        val countMap = mutableMapOf(
+            "sendCount" to db.collection("request_chat").whereEqualTo("sendUser.id", userId).get().await().documents.size,
+            "receiveCount" to db.collection("request_chat").whereEqualTo("receiveUser.id", userId).get().await().documents.size,
+        )
+        emit(APIResult.Success(countMap))
     }.catch {
         emit(APIResult.NetworkError(it))
     }

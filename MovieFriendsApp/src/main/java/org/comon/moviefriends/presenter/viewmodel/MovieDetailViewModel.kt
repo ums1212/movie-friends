@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
@@ -98,6 +99,18 @@ class MovieDetailViewModel(
     val userWantList get() = _userWantList.asStateFlow()
     val userWantListState = mutableStateOf(false)
 
+    private val _movieInfo = MutableStateFlow<ResponseMovieDetailDto?>(null)
+    val movieInfo get() = _movieInfo.asStateFlow()
+    fun setMovieInfo(movieInfo: ResponseMovieDetailDto) {
+        _movieInfo.value = movieInfo
+    }
+
+    private val _allChatRequestCount = MutableStateFlow<APIResult<Map<String, Int>>>(APIResult.NoConstructor)
+    val allChatRequestCount = _allChatRequestCount.asStateFlow()
+
+    private val _myChatRequestList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
+    val myChatRequestList = _myChatRequestList.asStateFlow()
+
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
@@ -124,12 +137,6 @@ class MovieDetailViewModel(
         repository.getMovieVideo(movieId.value).collectLatest {
             _movieVideo.emit(it)
         }
-    }
-
-    private val _movieInfo: MutableStateFlow<ResponseMovieDetailDto?> = MutableStateFlow(null)
-    val movieInfo get() = _movieInfo.asStateFlow()
-    fun setMovieInfo(movieInfo: ResponseMovieDetailDto) {
-        _movieInfo.value = movieInfo
     }
 
     fun changeStateWantThisMovie(
@@ -186,8 +193,23 @@ class MovieDetailViewModel(
         }
     }
 
-    fun requestWatchTogether(receiveUser: UserInfo) =
-        repository.requestWatchTogether(_movieId.value, _userInfo.value!!, receiveUser)
+    private val _allUserWantList = MutableStateFlow<APIResult<List<UserWantMovieInfo?>>>(APIResult.NoConstructor)
+    val allUserWantList = _allUserWantList.asStateFlow()
+
+    fun getAllUserWantList() = viewModelScope.launch {
+        repository.getAllUserWantList(_userInfo.value?.id ?: "").collectLatest {
+            _allUserWantList.emit(it)
+        }
+    }
+
+    fun getMyRequestList() = viewModelScope.launch {
+        repository.getMyRequestList(_userInfo.value?.id ?: "").collectLatest {
+            _myChatRequestList.emit(it)
+        }
+    }
+
+    fun requestWatchTogether(movieId: Int, moviePosterPath: String, receiveUser: UserInfo, receiveUserRegion: String) =
+        repository.requestWatchTogether(movieId, moviePosterPath, _userInfo.value!!, receiveUser, receiveUserRegion)
 
     private fun getAllUserRate() = viewModelScope.launch {
         repository.getAllUserMovieRating(_movieId.value).collectLatest {
@@ -270,6 +292,14 @@ class MovieDetailViewModel(
         viewModelScope.launch {
             repository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {
                 _userReview.emit(it)
+            }
+        }
+    }
+
+    fun getAllWantMovieRequest(){
+        viewModelScope.launch {
+            repository.getAllChatRequestCount(_userInfo.value?.id ?: "").collectLatest {
+                _allChatRequestCount.emit(it)
             }
         }
     }
