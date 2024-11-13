@@ -50,6 +50,7 @@ import org.comon.moviefriends.presenter.screen.intro.SubmitNickNameScreen
 import org.comon.moviefriends.presenter.screen.community.WritePostScreen
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.MovieFriendsTheme
+import org.comon.moviefriends.presenter.viewmodel.JoinType
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import java.net.URLEncoder
@@ -149,8 +150,17 @@ class MainActivity : ComponentActivity() {
                         LoginScreen(
                             { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
                             { user, joinType ->
-                                val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
-                                navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}/${user?.displayName}/${encodedUrl}/${joinType}")
+                                when(joinType){
+                                    JoinType.KAKAO.str -> {
+                                        val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
+                                        navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}/${user?.displayName}/${encodedUrl}/${joinType}")
+                                    }
+                                    JoinType.GOOGLE.str -> {
+                                        val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
+                                        navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}//${encodedUrl}/${joinType}")
+                                    }
+                                }
+
                             }
                         )
                     }

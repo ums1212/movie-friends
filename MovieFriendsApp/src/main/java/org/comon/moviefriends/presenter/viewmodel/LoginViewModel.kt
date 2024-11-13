@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.viewmodel
 
+import android.app.Activity
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
@@ -63,7 +64,7 @@ class LoginViewModel(
     }
 
     fun googleLogin(
-        context: Context,
+        context: Activity,
         googleOAuth: String,
         moveToSubmitNickNameScreen: (user: FirebaseUser?) -> Unit,
         loadingState: MutableState<Boolean>,
@@ -80,7 +81,6 @@ class LoginViewModel(
                     loadingState.value = false
                     Log.e("googleLogin", "${result.exception}")
                     showErrorMessage()
-                    moveToSubmitNickNameScreen(null)
                 }
                 else -> loadingState.value = false
             }

@@ -1,5 +1,6 @@
 package org.comon.moviefriends.data.repo
 
+import android.app.Activity
 import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
@@ -16,9 +17,9 @@ interface LoginRepository {
     ): Unit
 
     suspend fun googleLogin(
-        context: Context,
+        context: Activity,
         googleOAuth: String
-    ): Flow<APIResult<FirebaseUser>>
+    ): Flow<APIResult<FirebaseUser?>>
 
     suspend fun insertUserInfoToFireStore(
         userInfo: UserInfo

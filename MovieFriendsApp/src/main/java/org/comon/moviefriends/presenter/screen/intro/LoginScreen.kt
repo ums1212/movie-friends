@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.screen.intro
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -83,7 +84,7 @@ fun LoginScreen(
             Spacer(Modifier.padding(vertical = 12.dp))
             GoogleLoginButton {
                 viewModel.googleLogin(
-                    context = localContext,
+                    context = localContext as Activity,
                     googleOAuth = BuildConfig.GOOGLE_OAUTH,
                     moveToSubmitNickNameScreen = { user -> moveToSubmitNickNameScreen(user, JoinType.GOOGLE.str)},
                     loadingState = loadingUiState,

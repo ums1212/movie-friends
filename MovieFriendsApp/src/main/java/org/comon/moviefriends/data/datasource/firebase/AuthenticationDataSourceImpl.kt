@@ -6,10 +6,8 @@ import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
-import com.google.android.gms.tasks.Task
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
-import com.google.android.play.integrity.internal.u
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
@@ -20,7 +18,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
@@ -29,6 +26,8 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class AuthenticationDataSourceImpl(
     private val auth: FirebaseAuth = Firebase.auth,
@@ -82,44 +81,16 @@ class AuthenticationDataSourceImpl(
 
     }
 
-    override suspend fun googleLogin(context: Context, googleOAuth: String) = flow {
+    override suspend fun googleLogin(context: Activity, googleOAuth: String) = flow {
         emit(APIResult.Loading)
-
-        val credentialManager = CredentialManager.create(context)
-
-        val googleIdOption = GetGoogleIdOption.Builder()
-            .setFilterByAuthorizedAccounts(true)
-            .setServerClientId(googleOAuth)
-            .build()
-
-        val request = GetCredentialRequest.Builder()
-            .addCredentialOption(googleIdOption)
-            .build()
-
-        request.runCatching {
-            credentialManager.getCredential(
-                request = request,
-                context = context,
-            )
-        }.onSuccess {
-            when (it.credential) {
-                is CustomCredential -> {
-                    if (it.credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
-                        // Use googleIdTokenCredential and extract id to validate and
-                        // authenticate on your server.
-                        val googleIdTokenCredential = GoogleIdTokenCredential
-                            .createFrom(it.credential.data)
-                        val signIn =
-                            auth.signInWithCustomToken(googleIdTokenCredential.idToken).await()
-                        signIn.user?.let { user ->
-                            emit(APIResult.Success(user))
-                        }
-                    }
-                }
-            }
-        }.onFailure {
-            emit(APIResult.NetworkError(it))
-        }
+        val provider = OAuthProvider.newBuilder("google.com")
+        val result = auth.startActivityForSignInWithProvider(context, provider.build()).await()
+        Log.d("test1234", "${result.additionalUserInfo?.username}")
+        Log.d("test1234", "${result.additionalUserInfo?.profile}")
+        Log.d("test1234", "${result.user?.displayName}")
+        Log.d("test1234", "${result.user?.photoUrl}")
+        Log.d("test1234", "${result.user?.uid}")
+        emit(APIResult.Success(result.user))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
