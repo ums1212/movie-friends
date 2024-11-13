@@ -3,11 +3,6 @@ package org.comon.moviefriends.data.datasource.firebase
 import android.app.Activity
 import android.content.Context
 import android.util.Log
-import androidx.credentials.CredentialManager
-import androidx.credentials.CustomCredential
-import androidx.credentials.GetCredentialRequest
-import com.google.android.libraries.identity.googleid.GetGoogleIdOption
-import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
@@ -26,8 +21,6 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
-import kotlin.coroutines.resume
-import kotlin.coroutines.resumeWithException
 
 class AuthenticationDataSourceImpl(
     private val auth: FirebaseAuth = Firebase.auth,
@@ -85,11 +78,6 @@ class AuthenticationDataSourceImpl(
         emit(APIResult.Loading)
         val provider = OAuthProvider.newBuilder("google.com")
         val result = auth.startActivityForSignInWithProvider(context, provider.build()).await()
-        Log.d("test1234", "${result.additionalUserInfo?.username}")
-        Log.d("test1234", "${result.additionalUserInfo?.profile}")
-        Log.d("test1234", "${result.user?.displayName}")
-        Log.d("test1234", "${result.user?.photoUrl}")
-        Log.d("test1234", "${result.user?.uid}")
         emit(APIResult.Success(result.user))
     }.catch {
         emit(APIResult.NetworkError(it))
