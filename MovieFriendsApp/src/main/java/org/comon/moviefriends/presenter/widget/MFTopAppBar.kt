@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 @OptIn(ExperimentalMaterial3Api::class)
 fun MFTopAppBar(
     route: String,
+    selectedCommunityTabItem: MutableIntState,
     navigatePop: () -> Unit,
     navigateToCommunityMenu: (String) -> Unit,
     navigateToSearch: () -> Unit,
@@ -40,7 +42,6 @@ fun MFTopAppBar(
     navigateToLogin: () -> Unit,
 ) {
     val isTabMenuShown = remember { mutableStateOf(false) }
-    val selectedTabItem = remember { mutableIntStateOf(0) }
 
     Column {
         TopAppBar(
@@ -150,10 +151,10 @@ fun MFTopAppBar(
         // 탭메뉴
         if(isTabMenuShown.value){
             CommunityTab(
-                selectedItem = selectedTabItem,
+                selectedItem = selectedCommunityTabItem,
                 navigateToCommunityMenu = { route, index ->
                     navigateToCommunityMenu(route)
-                    selectedTabItem.intValue = index
+                    selectedCommunityTabItem.intValue = index
                     isTabMenuShown.value = false
                 },
                 navigateToLogin = navigateToLogin

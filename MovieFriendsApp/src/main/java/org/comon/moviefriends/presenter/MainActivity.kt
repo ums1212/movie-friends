@@ -31,10 +31,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.kakao.sdk.common.KakaoSdk
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.presenter.screen.intro.LoginScreen
 import org.comon.moviefriends.common.NAV_ROUTE
@@ -69,7 +67,6 @@ class MainActivity : ComponentActivity() {
         alertNotificationPermission()
         super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
-        KakaoSdk.init(this, BuildConfig.KAKAO_REST_KEY)
         setContent {
             MovieFriendsApp(startDestination)
         }
@@ -140,6 +137,7 @@ class MainActivity : ComponentActivity() {
         ) {
             val navController = rememberNavController()
             val selectedBottomMenuItem = remember { mutableIntStateOf(0) }
+            val selectedCommunityTabItem = remember { mutableIntStateOf(0) }
 
             Box(modifier = Modifier
                 .background(FriendsBlack)
@@ -195,9 +193,7 @@ class MainActivity : ComponentActivity() {
                         ScaffoldScreen(
                             mainNavController = navController,
                             selectedBottomMenuItem = selectedBottomMenuItem,
-                            changeBottomMenu = { bottomMenuindex ->
-                                selectedBottomMenuItem.intValue = bottomMenuindex
-                            },
+                            selectedCommunityTabItem = selectedCommunityTabItem,
                             navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
                     }

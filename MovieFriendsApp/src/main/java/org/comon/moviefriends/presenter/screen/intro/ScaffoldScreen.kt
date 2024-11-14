@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.IntState
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -41,8 +41,8 @@ import org.comon.moviefriends.presenter.widget.MFTopAppBar
 @Composable
 fun ScaffoldScreen(
     mainNavController: NavHostController,
-    selectedBottomMenuItem: IntState,
-    changeBottomMenu: (Int) -> Unit,
+    selectedBottomMenuItem: MutableIntState,
+    selectedCommunityTabItem: MutableIntState,
     navigateToLogin: () -> Unit
 ){
     val scaffoldNavController = rememberNavController()
@@ -54,6 +54,7 @@ fun ScaffoldScreen(
         topBar = {
             MFTopAppBar(
                 currentRoute ?: NAV_ROUTE.HOME.route,
+                selectedCommunityTabItem = selectedCommunityTabItem,
                 navigatePop =  { scaffoldNavController.popBackStack() },
                 navigateToCommunityMenu = { route ->
                     scaffoldNavController.navigate(route)
@@ -75,7 +76,7 @@ fun ScaffoldScreen(
                 selectedItem = selectedBottomMenuItem,
                 navigateToLogin = navigateToLogin,
                 navigateToMenu = { route, index ->
-                    changeBottomMenu(index)
+                    selectedBottomMenuItem.intValue = index
                     scaffoldNavController.navigate(route) {
                         scaffoldNavController.graph.startDestinationRoute?.let {
                             popUpTo(it) {
