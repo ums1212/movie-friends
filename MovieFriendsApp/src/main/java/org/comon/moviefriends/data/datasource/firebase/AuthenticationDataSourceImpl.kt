@@ -15,6 +15,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
+import com.sendbird.android.SendbirdChat
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,8 +26,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.data.datasource.sendbird.SendBirdService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.model.sendbird.CreateSendBirdUserDto
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 
 class AuthenticationDataSourceImpl(
@@ -78,13 +81,29 @@ class AuthenticationDataSourceImpl(
 
     override suspend fun insertUserInfoToFireStore(userInfo: UserInfo) = flow {
         emit(LoginResult.Loading)
-        val token = FirebaseMessaging.getInstance().token.await()
-        val tokenUser = userInfo.copy(fcmToken = token)
-        MFPreferences.setFcmToken(token)
-        MFPreferences.setUserInfo(tokenUser)
-        insertUserFcmToken(userInfo.id, token)
-        db.collection("user").add(tokenUser).await()
-        emit(LoginResult.Success(true))
+        val sendBirdUser = CreateSendBirdUserDto(
+            userId = userInfo.id,
+            nickname = userInfo.nickName,
+            profileUrl = userInfo.profileImage,
+            issueAccessToken = true,
+            sessionTokenExpiresAt = 1542945056625,
+            metadata = CreateSendBirdUserDto.Metadata("","")
+        )
+        val sendBirdResult = SendBirdService.getInstance().createSendBirdUser(sendBirdUser).body()
+        if(sendBirdResult!=null){
+            val sendBirdId = sendBirdResult.userId
+            val sendBirdToken = sendBirdResult.accessToken
+            MFPreferences.setSendBirdToken(sendBirdToken)
+            val token = FirebaseMessaging.getInstance().token.await()
+            val tokenUser = userInfo.copy(fcmToken = token, sendBirdId = sendBirdId, sendBirdToken = sendBirdToken)
+            MFPreferences.setFcmToken(token)
+            MFPreferences.setUserInfo(tokenUser)
+            insertUserFcmToken(userInfo.id, token)
+            db.collection("user").add(tokenUser).await()
+            emit(LoginResult.Success(true))
+        }else{
+            emit(LoginResult.NetworkError(Exception("sendbird 네트워크 에러")))
+        }
     }.catch {
         emit(LoginResult.NetworkError(it))
     }

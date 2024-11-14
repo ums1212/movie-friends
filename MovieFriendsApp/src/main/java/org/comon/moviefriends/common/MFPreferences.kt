@@ -48,4 +48,12 @@ object MFPreferences {
             .putBoolean("notiPermission", isPermission)
             .apply()
     }
+
+    fun getSendBirdToken() = mfPreferences.getString("sendBirdToken", "")
+
+    fun setSendBirdToken(token: String){
+        mfPreferences.edit()
+            .putString("sendBirdToken", token)
+            .apply()
+    }
 }

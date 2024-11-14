@@ -34,6 +34,8 @@ android {
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
         buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
         buildConfigField("String", "KAKAO_REST_KEY", localProperties.getProperty("KAKAO_REST_KEY"))
+        buildConfigField("String", "SENDBIRD_APP_ID", localProperties.getProperty("SENDBIRD_APP_ID"))
+        buildConfigField("String", "SENDBIRD_API_TOKEN", localProperties.getProperty("SENDBIRD_API_TOKEN"))
 
         buildConfigField("String", "SERVICE_ACCOUNT_TYPE", localProperties.getProperty("SERVICE_ACCOUNT_TYPE"))
         buildConfigField("String", "PROJECT_ID", localProperties.getProperty("PROJECT_ID"))
@@ -151,5 +153,7 @@ dependencies {
     // 유튜브 플레이어 라이브러리
     implementation(libs.youtubeplayer.compose)
 
+    // SendBird Chat UIKit
+    implementation(libs.uikit.compose)
 
 }

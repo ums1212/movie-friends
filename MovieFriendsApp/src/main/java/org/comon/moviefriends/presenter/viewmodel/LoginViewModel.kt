@@ -110,14 +110,15 @@ class LoginViewModel(
             when(result){
                 is LoginResult.Loading -> loadingState.value = true
                 is LoginResult.Success -> {
-                    loadingState.value = false
                     if(result.resultData){
                         moveToScaffoldScreen()
                     }else{
                         showErrorMessage()
                     }
+                    loadingState.value = false
                 }
                 is LoginResult.NetworkError -> {
+                    Log.e("test1234", "${result.exception}")
                     loadingState.value = false
                     showErrorMessage()
                 }

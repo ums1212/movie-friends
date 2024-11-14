@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.widget.MFButton
@@ -99,19 +101,11 @@ fun SubmitNickNameScreen(
                     userInfo = userInfo,
                     loadingState = loadingUiState,
                     moveToScaffoldScreen = moveToScaffoldScreen,
-                    showErrorMessage = {
-                        coroutineScope.launch {
-                            snackBarHost.showSnackbar(
-                                localContext.getString(R.string.network_error),
-                                null,
-                                true,
-                                SnackbarDuration.Short
-                            )
-                        }
-                    }
+                    showErrorMessage = {showSnackBar(coroutineScope, snackBarHost, localContext)}
                 )
             }
         }, stringResource(R.string.button_confirm))
     }
+    SnackbarHost(snackBarHost)
 
 }
