@@ -106,7 +106,6 @@ fun MFButtonWantThisMovie(
             }else{
                 // 위치 권한이 없다면 요청
                 launcherMultiplePermissions.launch(MFLocationManager.permissions)
-                Log.d("test1234", "위치 권한이 없음")
             }
                   },
         modifier = Modifier

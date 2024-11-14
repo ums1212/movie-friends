@@ -17,6 +17,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.repo.LoginRepository
@@ -33,6 +35,9 @@ class LoginViewModel(
     private val _user = MutableStateFlow<FirebaseUser?>(null)
     val user = _user.asStateFlow()
 
+    private val _loadingState = MutableStateFlow(false)
+    val loadingState = _loadingState.asStateFlow()
+
     fun checkLogin() = flow {
         emit(LoginResult.Loading)
         auth.currentUser.let {
@@ -48,41 +53,49 @@ class LoginViewModel(
 
     fun kakaoLogin(
         context: Context,
+        showError: () -> Unit,
         moveToScaffoldScreen: () -> Unit,
-        moveToNextScreen: (user: FirebaseUser) -> Unit
+        moveToSubmitNickNameScreen: (user: FirebaseUser) -> Unit,
     ) {
         viewModelScope.launch {
-            repository.kakaoLogin(
-                context = context,
-                moveToScaffoldScreen = moveToScaffoldScreen,
-                moveToNextScreen = { user ->
-                    moveToNextScreen(user)
-                    _user.value = user
+            repository.kakaoLogin(context).collectLatest { result ->
+                when(result){
+                    FirebaseAuthResult.Loading -> _loadingState.emit(true)
+                    is FirebaseAuthResult.NetworkError -> {
+                        _loadingState.emit(false)
+                        showError()
+                    }
+                    is FirebaseAuthResult.LoginSuccess -> {
+                        moveToScaffoldScreen()
+                    }
+                    is FirebaseAuthResult.NewUser -> {
+                        moveToSubmitNickNameScreen(result.resultData)
+                    }
                 }
-            )
+
+            }
         }
     }
 
     fun googleLogin(
         context: Activity,
-        googleOAuth: String,
-        moveToSubmitNickNameScreen: (user: FirebaseUser?) -> Unit,
-        loadingState: MutableState<Boolean>,
-        showErrorMessage: () -> Unit,
+        showError: () -> Unit,
+        moveToScaffoldScreen: () -> Unit,
+        moveToSubmitNickNameScreen: (user: FirebaseUser) -> Unit,
     ) = viewModelScope.launch {
-        repository.googleLogin(context, googleOAuth)
-            .collectLatest { result ->
+        repository.googleLogin(context).collectLatest { result ->
             when(result){
-                APIResult.Loading -> loadingState.value = true
-                is APIResult.Success -> {
+                FirebaseAuthResult.Loading -> _loadingState.emit(true)
+                is FirebaseAuthResult.NetworkError -> {
+                    _loadingState.emit(false)
+                    showError()
+                }
+                is FirebaseAuthResult.LoginSuccess -> {
+                    moveToScaffoldScreen()
+                }
+                is FirebaseAuthResult.NewUser -> {
                     moveToSubmitNickNameScreen(result.resultData)
                 }
-                is APIResult.NetworkError -> {
-                    loadingState.value = false
-                    Log.e("googleLogin", "${result.exception}")
-                    showErrorMessage()
-                }
-                else -> loadingState.value = false
             }
         }
     }

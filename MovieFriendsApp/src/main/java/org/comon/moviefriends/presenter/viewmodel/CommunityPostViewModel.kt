@@ -95,7 +95,6 @@ class CommunityPostViewModel(
                         APIResult.Loading -> isLoading.value = true
                         is APIResult.NetworkError -> {
                             _isLoading.value = false
-                            Log.d("test1234", "error")
                             _errorState.emit(true)
                         }
                         is APIResult.Success -> {
