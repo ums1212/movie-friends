@@ -22,6 +22,7 @@ import org.comon.moviefriends.presenter.screen.profile.ProfileType
 fun MFNavigationBar(
     selectedItem: IntState,
     navigateToLogin: () -> Unit,
+    hideCommunityTabMenu: () -> Unit,
     navigateToMenu: (String, Int) -> Unit,
 ) {
     val user = MFPreferences.getUserInfo()
@@ -47,6 +48,7 @@ fun MFNavigationBar(
                 label = { Text(item.description) },
                 selected = selectedItem.intValue == index,
                 onClick = {
+                    hideCommunityTabMenu()
                     clickNavigationBarItem(user, index, navigateToLogin, navigateToMenu)
                 }
             )

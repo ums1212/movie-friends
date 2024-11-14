@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
@@ -43,6 +44,7 @@ fun ScaffoldScreen(
     mainNavController: NavHostController,
     selectedBottomMenuItem: MutableIntState,
     selectedCommunityTabItem: MutableIntState,
+    isCommunityTabMenuShown: MutableState<Boolean>,
     navigateToLogin: () -> Unit
 ){
     val scaffoldNavController = rememberNavController()
@@ -55,6 +57,7 @@ fun ScaffoldScreen(
             MFTopAppBar(
                 currentRoute ?: NAV_ROUTE.HOME.route,
                 selectedCommunityTabItem = selectedCommunityTabItem,
+                isCommunityTabMenuShown = isCommunityTabMenuShown,
                 navigatePop =  { scaffoldNavController.popBackStack() },
                 navigateToCommunityMenu = { route ->
                     scaffoldNavController.navigate(route)
@@ -75,6 +78,9 @@ fun ScaffoldScreen(
             MFNavigationBar(
                 selectedItem = selectedBottomMenuItem,
                 navigateToLogin = navigateToLogin,
+                hideCommunityTabMenu = {
+                    isCommunityTabMenuShown.value = false
+                },
                 navigateToMenu = { route, index ->
                     selectedBottomMenuItem.intValue = index
                     scaffoldNavController.navigate(route) {

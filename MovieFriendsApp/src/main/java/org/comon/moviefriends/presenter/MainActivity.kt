@@ -138,6 +138,7 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             val selectedBottomMenuItem = remember { mutableIntStateOf(0) }
             val selectedCommunityTabItem = remember { mutableIntStateOf(0) }
+            val isCommunityTabMenuShown = remember { mutableStateOf(false) }
 
             Box(modifier = Modifier
                 .background(FriendsBlack)
@@ -194,6 +195,7 @@ class MainActivity : ComponentActivity() {
                             mainNavController = navController,
                             selectedBottomMenuItem = selectedBottomMenuItem,
                             selectedCommunityTabItem = selectedCommunityTabItem,
+                            isCommunityTabMenuShown = isCommunityTabMenuShown,
                             navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
                         )
                     }
