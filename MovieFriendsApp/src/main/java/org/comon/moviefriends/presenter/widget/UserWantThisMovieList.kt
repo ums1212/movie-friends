@@ -37,6 +37,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
@@ -46,78 +47,71 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 fun UserWantThisMovieList(
     screen: String,
     wantList: List<UserWantMovieInfo?>,
+    myRequestList: List<RequestChatInfo?>,
     navigateToMovieDetail: ((id:Int) -> Unit)?,
     requestWatchTogether: ((Int, String, UserInfo, String) -> Result<Task<QuerySnapshot>>)?,
+    showErrorSnackBar: () -> Unit,
 ){
 
-    val localContext = LocalContext.current
-    val snackBarHost = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
-
-    SnackbarHost(snackBarHost)
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if(wantList.isEmpty()){
+        wantList.forEachIndexed { index, wantMovieInfo ->
+            if(wantMovieInfo==null) return@forEachIndexed
             item {
-                MFText(modifier = Modifier.padding(4.dp), text = stringResource(R.string.no_data))
-            }
-        }else{
-            items(wantList){ want ->
-                if(want!=null){
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ){
-                            if(screen==COMMUNITY_MENU.WATCH_TOGETHER.route){
-                                Card(
-                                    modifier = Modifier
-                                        .width(80.dp)
-                                        .height(120.dp)
-                                        .padding(4.dp)
-                                        .clickableOnce {
-                                            navigateToMovieDetail!!(want.movieId)
-                                        },
-                                    shape = RoundedCornerShape(8.dp),
-                                    border = BorderStroke(1.dp, Color.LightGray),
-                                    elevation = CardDefaults.cardElevation(
-                                        defaultElevation = 8.dp,
-                                        pressedElevation = 16.dp
-                                    )
-                                ) {
-                                    AsyncImage(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        model = ImageRequest.Builder(LocalContext.current)
-                                            .data("$BASE_TMDB_IMAGE_URL${want.moviePosterPath}")
-                                            .error(R.drawable.logo)
-                                            .crossfade(true)
-                                            .build(),
-                                        contentDescription = "작품 정보",
-                                        contentScale = ContentScale.FillBounds
-                                    )
-                                }
+                    ){
+                        if(screen==COMMUNITY_MENU.WATCH_TOGETHER.route){
+                            Card(
+                                modifier = Modifier
+                                    .width(80.dp)
+                                    .height(120.dp)
+                                    .padding(4.dp)
+                                    .clickableOnce {
+                                        navigateToMovieDetail!!(wantMovieInfo.movieId)
+                                    },
+                                shape = RoundedCornerShape(8.dp),
+                                border = BorderStroke(1.dp, Color.LightGray),
+                                elevation = CardDefaults.cardElevation(
+                                    defaultElevation = 8.dp,
+                                    pressedElevation = 16.dp
+                                )
+                            ) {
+                                AsyncImage(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data("$BASE_TMDB_IMAGE_URL${wantMovieInfo.moviePosterPath}")
+                                        .error(R.drawable.logo)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = "작품 정보",
+                                    contentScale = ContentScale.FillBounds
+                                )
                             }
-                            UserWantListItem(want.userInfo, want.userLocation)
                         }
-
-                        if (requestWatchTogether != null) {
-                            val requestState = remember { mutableStateOf("") }
-                            MFButtonWatchTogether(
-                                clickEvent = { requestWatchTogether(want.movieId, want.moviePosterPath, want.userInfo, want.userLocation) },
-                                requestState = requestState,
-                                showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
-                            )
-                        }
+                        UserWantListItem(wantMovieInfo.userInfo, wantMovieInfo.userLocation)
                     }
-                    Spacer(Modifier.padding(bottom = 8.dp))
+
+                    if (requestWatchTogether != null) {
+                        val requestState = remember {
+                            mutableStateOf(myRequestList.find { it?.receiveUser?.id == wantMovieInfo.userInfo.id } != null)
+                        }
+                        MFButtonWatchTogether(
+                            clickEvent = { requestWatchTogether(wantMovieInfo.movieId, wantMovieInfo.moviePosterPath, wantMovieInfo.userInfo, wantMovieInfo.userLocation) },
+                            requestState = requestState,
+                            showErrorSnackBar = showErrorSnackBar
+                        )
+                    }
                 }
+                Spacer(Modifier.padding(bottom = 8.dp))
             }
         }
-
     }
 }

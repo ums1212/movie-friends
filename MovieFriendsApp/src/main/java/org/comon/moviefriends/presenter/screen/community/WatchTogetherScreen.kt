@@ -17,8 +17,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -27,6 +29,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
@@ -50,13 +53,17 @@ fun WatchTogetherScreen(
 
     val requestCountMap = viewModel.allChatRequestCount.collectAsStateWithLifecycle()
     val allUserWantList = viewModel.allUserWantList.collectAsStateWithLifecycle()
+    val myRequestList = viewModel.myRequestList.collectAsStateWithLifecycle()
 
+    val localContext = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
     val snackBarHost = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserInfo(user)
         viewModel.getAllWantMovieRequest()
         viewModel.getAllUserWantList()
+        viewModel.getMyRequestList()
     }
 
     Column(
@@ -123,14 +130,16 @@ fun WatchTogetherScreen(
             }
             is APIResult.Success -> {
                 UserWantThisMovieList(
-                    wantList = list.resultData,
                     screen = COMMUNITY_MENU.WATCH_TOGETHER.route,
+                    wantList = list.resultData,
+                    myRequestList = myRequestList.value,
                     navigateToMovieDetail = { movieId ->
                         navigateToMovieDetail(movieId)
                     },
                     requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion ->
                         viewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion)
-                    }
+                    },
+                    showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
                 )
             }
             else -> {}

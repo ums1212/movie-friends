@@ -158,12 +158,6 @@ class MovieDetailDataSourceImpl(
                 if(result.isEmpty){
                     db.collection("request_chat").add(requestChatInfo)
                     CoroutineScope(Dispatchers.IO).launch {
-                        // 테스트용으로 자신한테 보내기
-//                        FCMSendService.sendNotificationToToken(
-//                            token = sendUser.fcmToken,
-//                            title = "영화 같이 보기 요청",
-//                            body = "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다."
-//                        )
                         FCMSendService.sendNotificationToToken(receiveUser.fcmToken, "영화 같이 보기 요청", "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
                     }
                 }else{

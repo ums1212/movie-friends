@@ -99,6 +99,9 @@ class MovieDetailViewModel(
     val userWantList get() = _userWantList.asStateFlow()
     val userWantListState = mutableStateOf(false)
 
+    private val _myRequestList = MutableStateFlow<List<RequestChatInfo?>>(emptyList())
+    val myRequestList get() = _myRequestList.asStateFlow()
+
     private val _movieInfo = MutableStateFlow<ResponseMovieDetailDto?>(null)
     val movieInfo get() = _movieInfo.asStateFlow()
     fun setMovieInfo(movieInfo: ResponseMovieDetailDto) {
@@ -121,6 +124,7 @@ class MovieDetailViewModel(
         getStateWantThisMovie()
         getAllUserRate()
         getUserWantList()
+        getMyRequestList()
         getUserReview()
     }
 
@@ -179,7 +183,7 @@ class MovieDetailViewModel(
         }
     }
 
-    private fun getUserWantList() = viewModelScope.launch {
+    fun getUserWantList() = viewModelScope.launch {
         repository.getUserWantList(_movieId.value, _userInfo.value?.id ?: "").collectLatest { result ->
             when(result){
                 is APIResult.Success -> {
@@ -208,6 +212,10 @@ class MovieDetailViewModel(
     fun getMyRequestList() = viewModelScope.launch {
         repository.getMyRequestList(_userInfo.value?.id ?: "").collectLatest {
             _myChatRequestList.emit(it)
+            when(it){
+                is APIResult.Success -> _myRequestList.emit(it.resultData)
+                else -> {}
+            }
         }
     }
 

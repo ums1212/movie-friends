@@ -133,7 +133,7 @@ fun RequestListScreen(
                                     }
                                     UserWantListItem(item.receiveUser, item.receiveUserRegion)
                                 }
-                                val requestState = remember { mutableStateOf("") }
+                                val requestState = remember { mutableStateOf(true) }
                                 MFButtonWatchTogether(
                                     clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
                                     requestState = requestState,

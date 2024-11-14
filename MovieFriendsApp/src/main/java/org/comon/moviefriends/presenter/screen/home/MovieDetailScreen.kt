@@ -69,13 +69,14 @@ import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
-import org.comon.moviefriends.presenter.widget.MFBottomSheet
 import org.comon.moviefriends.presenter.widget.MFBottomSheetContent
 import org.comon.moviefriends.presenter.widget.MFButton
 import org.comon.moviefriends.presenter.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
 import org.comon.moviefriends.presenter.widget.MFPostTitle
+import org.comon.moviefriends.presenter.widget.MFReviewBottomSheet
 import org.comon.moviefriends.presenter.widget.MFText
+import org.comon.moviefriends.presenter.widget.MFWantMovieBottomSheet
 import org.comon.moviefriends.presenter.widget.MovieCreditShimmer
 import org.comon.moviefriends.presenter.widget.MovieDetailShimmer
 import org.comon.moviefriends.presenter.widget.RateModal
@@ -105,6 +106,7 @@ fun MovieDetailScreen(
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
     val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
+    val myRequestList by viewModel.myRequestList.collectAsStateWithLifecycle()
     val movieInfo by viewModel.movieInfo.collectAsStateWithLifecycle()
     val userReviewList by viewModel.userReview.collectAsStateWithLifecycle()
 
@@ -226,11 +228,8 @@ fun MovieDetailScreen(
             }
 
             if(userWantBottomSheetState){
-                MFBottomSheet(
-                    content = MFBottomSheetContent.UserWantList,
+                MFWantMovieBottomSheet(
                     dismissSheet = { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
-                    userWantList = userWantList,
-                    requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion -> viewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion) }
                 )
             }
 
@@ -295,10 +294,8 @@ fun MovieDetailScreen(
             }, stringResource(R.string.button_more_user_review))
 
             if(reviewBottomSheetState){
-                MFBottomSheet(
-                    content = MFBottomSheetContent.UserReview,
-                    dismissSheet = { viewModel.toggleReviewBottomSheetState() },
-                    userReviewList = userReviewList,
+                MFReviewBottomSheet(
+                    dismissSheet= { viewModel.toggleReviewBottomSheetState() },
                     insertUserReview = { content -> viewModel.insertUserReview(content) },
                     deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
                 )

@@ -27,6 +27,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -145,13 +146,11 @@ fun MFButtonWantThisMovie(
 @Composable
 fun MFButtonWatchTogether(
     clickEvent: () -> Result<Task<QuerySnapshot>>,
-    requestState: MutableState<String>,
+    requestState: MutableState<Boolean>,
     showErrorSnackBar: () -> Unit,
     proposalFlag: String = "",
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val cancel = stringResource(id = R.string.button_request_cancel)
-    val request = stringResource(id = R.string.button_watch_together)
     Button(
         shape = RoundedCornerShape(25),
         onClick = {
@@ -159,11 +158,7 @@ fun MFButtonWatchTogether(
             coroutineScope.launch {
                 clickEvent().onSuccess { task ->
                     task.addOnSuccessListener { snapshot ->
-                        if(snapshot.isEmpty){
-                            requestState.value = request
-                        }else{
-                            requestState.value = cancel
-                        }
+                        requestState.value = snapshot.isEmpty
                     }.addOnFailureListener {
                         showErrorSnackBar()
                     }
@@ -187,20 +182,19 @@ fun MFButtonWatchTogether(
         )
     ) {
         when(proposalFlag){
-            ProposalFlag.WAITING.str -> {
-                if(requestState.value==cancel){
-                    Text(stringResource(R.string.button_watch_together))
-                }else{
-                    Text(stringResource(R.string.button_cancel))
-                }
-            }
             ProposalFlag.DENIED.str -> {
                 Text(stringResource(R.string.button_request_denied))
             }
             ProposalFlag.CONFIRMED.str -> {
                 Text(stringResource(R.string.button_request_confirmed))
             }
-            else -> Text(stringResource(R.string.button_watch_together))
+            else -> {
+                if(requestState.value){
+                    Text(stringResource(R.string.button_cancel))
+                }else {
+                    Text(stringResource(R.string.button_watch_together))
+                }
+            }
         }
     }
 }

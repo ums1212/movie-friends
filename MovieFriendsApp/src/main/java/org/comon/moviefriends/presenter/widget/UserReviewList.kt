@@ -48,129 +48,113 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 /** 유저 리뷰 화면 */
 @Composable
 fun UserReviewList(
-    reviewList: APIResult<List<UserReview?>>,
+    reviewList: List<UserReview?>,
     insertUserReview: ((String) -> Unit)? = null,
     deleteUserReview: ((String) -> Unit)? = null,
 ){
     val user = MFPreferences.getUserInfo()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        MFPostTitle(stringResource(R.string.title_user_review))
-        if(user!=null){
-            Spacer(modifier = Modifier.padding(vertical = 8.dp))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val textValue = remember { mutableStateOf("") }
-                OutlinedTextField(
-                    placeholder = { Text(stringResource(R.string.hint_user_review)) },
-                    shape = RoundedCornerShape(12.dp),
-                    value = textValue.value,
-                    onValueChange = {
-                        textValue.value = it
-                    },
-                    modifier = Modifier
-                        .padding(end = 8.dp)
-                        .width(250.dp),
-                    singleLine = true,
-                    enabled = true,
-                    keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                    keyboardActions = KeyboardActions(onDone = {
-                        if (insertUserReview != null) {
-                            insertUserReview(textValue.value)
-                        }
-                        textValue.value = ""
-                    })
-                )
-                MFButtonWidthResizable({
+    if(user!=null){
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val textValue = remember { mutableStateOf("") }
+            OutlinedTextField(
+                placeholder = { Text(stringResource(R.string.hint_user_review)) },
+                shape = RoundedCornerShape(12.dp),
+                value = textValue.value,
+                onValueChange = {
+                    textValue.value = it
+                },
+                modifier = Modifier
+                    .padding(end = 8.dp)
+                    .width(250.dp),
+                singleLine = true,
+                enabled = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardActions = KeyboardActions(onDone = {
                     if (insertUserReview != null) {
                         insertUserReview(textValue.value)
                     }
                     textValue.value = ""
-                }, stringResource(R.string.button_user_review), 200.dp)
-            }
+                })
+            )
+            MFButtonWidthResizable({
+                if (insertUserReview != null) {
+                    insertUserReview(textValue.value)
+                }
+                textValue.value = ""
+            }, stringResource(R.string.button_user_review), 200.dp)
         }
-        Spacer(modifier = Modifier.padding(vertical = 4.dp))
-        HorizontalDivider()
-        when(reviewList){
-            APIResult.Loading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-            }
-            is APIResult.Success -> {
-                if(reviewList.resultData.isNotEmpty()){
-                    LazyColumn(
+    }
+    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+    HorizontalDivider()
+    if(reviewList.isNotEmpty()){
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
+            items(reviewList){ review ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                ) {
+                    Row(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
-                        items(reviewList.resultData){ review ->
-                            Column(
+                        Row(modifier = Modifier
+                            .wrapContentSize(unbounded = true)
+                            .clickableOnce { },
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            AsyncImage(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(vertical = 4.dp)
-                            ) {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(vertical = 4.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                ) {
-                                    Row(modifier = Modifier
-                                        .wrapContentSize(unbounded = true)
-                                        .clickableOnce { },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        AsyncImage(
-                                            modifier = Modifier
-                                                .size(48.dp)
-                                                .padding(end = 4.dp),
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data(review?.user?.profileImage)
-                                                .crossfade(true)
-                                                .error(R.drawable.logo)
-                                                .build(),
-                                            contentDescription = "회원 프로필 사진",
-                                            contentScale = ContentScale.Fit,
-                                        )
-                                        MFText(review?.user?.nickName ?: "")
-                                    }
-                                    if(review?.user?.id == user?.id){
-                                        IconButton(onClick = {
-                                            if (deleteUserReview != null) {
-                                                review?.id?.let {
-                                                    deleteUserReview(it)
-                                                }
-                                            }
-                                        }) {
-                                            Icon(
-                                                imageVector = Icons.Default.Close,
-                                                contentDescription = "",
-                                                tint = colorResource(id = R.color.friends_white)
-                                            )
-                                        }
+                                    .size(48.dp)
+                                    .padding(end = 4.dp),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(review?.user?.profileImage)
+                                    .crossfade(true)
+                                    .error(R.drawable.logo)
+                                    .build(),
+                                contentDescription = "회원 프로필 사진",
+                                contentScale = ContentScale.Fit,
+                            )
+                            MFText(review?.user?.nickName ?: "")
+                        }
+                        if(review?.user?.id == user?.id){
+                            IconButton(onClick = {
+                                if (deleteUserReview != null) {
+                                    review?.id?.let {
+                                        deleteUserReview(it)
                                     }
                                 }
-                                MFPostTitle("${review?.content}")
-                                Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                                MFText(text = "${review?.createdDate?.let { getTimeDiff(it.seconds) }}")
-                                Spacer(modifier = Modifier.padding(vertical = 4.dp))
-                                HorizontalDivider()
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "",
+                                    tint = colorResource(id = R.color.friends_white)
+                                )
                             }
-
                         }
                     }
-                }else{
-                    Spacer(modifier = Modifier.padding(vertical = 8.dp))
-                    MFPostTitle(text = stringResource(id = R.string.no_data))
+                    MFPostTitle("${review?.content}")
+                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    MFText(text = "${review?.createdDate?.let { getTimeDiff(it.seconds) }}")
+                    Spacer(modifier = Modifier.padding(vertical = 4.dp))
+                    HorizontalDivider()
                 }
+
             }
-            is APIResult.NetworkError -> MFPostTitle(text = stringResource(id = R.string.no_data))
-            else -> {}
         }
+    }else{
+        Spacer(modifier = Modifier.padding(vertical = 8.dp))
+        MFPostTitle(text = stringResource(id = R.string.no_data))
     }
 }
