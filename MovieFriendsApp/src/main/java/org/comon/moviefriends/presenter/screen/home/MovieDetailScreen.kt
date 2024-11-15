@@ -42,7 +42,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -69,7 +69,6 @@ import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
-import org.comon.moviefriends.presenter.widget.MFBottomSheetContent
 import org.comon.moviefriends.presenter.widget.MFButton
 import org.comon.moviefriends.presenter.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
@@ -87,9 +86,9 @@ import retrofit2.Response
 @Composable
 fun MovieDetailScreen(
     movieId: Int,
-    viewModel: MovieDetailViewModel = viewModel(),
     navigatePop: () -> Unit,
     navigateToLogin: () -> Unit,
+    viewModel: MovieDetailViewModel = hiltViewModel(),
 ) {
     val localContext = LocalContext.current
     val coroutineScope = rememberCoroutineScope()

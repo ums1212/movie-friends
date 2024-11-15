@@ -10,17 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.presenter.viewmodel.HomeViewModel
 import org.comon.moviefriends.presenter.widget.MovieList
 
 @Composable
 fun HomeScreen(
-    moveToMovieDetailScreen: (Int) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
+    moveToMovieDetailScreen: (Int) -> Unit
 ) {
 
-    val viewModel: HomeViewModel = viewModel()
     val scrollState = rememberScrollState()
 
     LaunchedEffect(key1 = Unit) {

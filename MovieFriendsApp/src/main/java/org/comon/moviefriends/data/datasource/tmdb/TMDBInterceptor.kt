@@ -4,8 +4,9 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import org.comon.moviefriends.BuildConfig
 import java.io.IOException
+import javax.inject.Inject
 
-class TMDBInterceptor: Interceptor {
+class TMDBInterceptor @Inject constructor(): Interceptor {
 
     @Throws(IOException::class)
     override fun intercept(chain: Interceptor.Chain): Response {

@@ -1,6 +1,5 @@
 package org.comon.moviefriends.presenter.screen.community
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,14 +15,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
@@ -36,8 +32,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -49,24 +45,17 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
-import org.comon.moviefriends.presenter.theme.FriendsTextGrey
-import org.comon.moviefriends.presenter.theme.White
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
-import org.comon.moviefriends.presenter.widget.MFButton
-import org.comon.moviefriends.presenter.widget.MFButtonConfirm
 import org.comon.moviefriends.presenter.widget.MFButtonReceive
-import org.comon.moviefriends.presenter.widget.MFButtonWatchTogether
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.OnDevelopMark
 import org.comon.moviefriends.presenter.widget.ShimmerEffect
 import org.comon.moviefriends.presenter.widget.UserWantListItem
 
 @Composable
 fun ReceiveListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = viewModel()
+    viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
     val user = MFPreferences.getUserInfo()
 
@@ -147,7 +136,6 @@ fun ReceiveListScreen(
                                     }
                                     UserWantListItem(item.sendUser, item.receiveUserRegion)
                                 }
-                                val requestState = remember { mutableStateOf("") }
                                 Column {
                                     MFButtonReceive({}, "승인")
                                     MFButtonReceive({}, "거절")

@@ -5,6 +5,12 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.gms.google-services")
     id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+}
+hilt {
+    // enableAggregatingTask는 Hilt annotation processors의 컴파일 시간을 줄여주고
+    // 호출이 될 때만 실행되게 만들어줍니다.
+    enableAggregatingTask = true
 }
 
 android {
@@ -99,6 +105,12 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Hilt
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.compose)
+
+
     // 구글 로그인
     implementation(libs.googleid)
     implementation(libs.androidx.credentials)
@@ -156,4 +168,8 @@ dependencies {
     // SendBird Chat UIKit
     implementation(libs.uikit.compose)
 
+}
+
+kapt {
+    correctErrorTypes = true
 }

@@ -4,10 +4,12 @@ import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
 import com.sendbird.uikit.compose.SendbirdUikitCompose
 import com.sendbird.uikit.core.data.model.UikitInitParams
+import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.launchIn
 import org.comon.moviefriends.BuildConfig
 
+@HiltAndroidApp
 class MovieFriendsApplication: Application() {
     override fun onCreate() {
         super.onCreate()

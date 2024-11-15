@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -28,9 +27,9 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
-import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
@@ -43,8 +42,8 @@ fun SubmitNickNameScreen(
     photoUrl: String,
     joinType: String,
     moveToScaffoldScreen: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
 ) {
-    val viewModel = LoginViewModel()
     var textValue by remember { mutableStateOf(nickname) }
     val loadingUiState = remember { mutableStateOf(false) }
     val localContext = LocalContext.current

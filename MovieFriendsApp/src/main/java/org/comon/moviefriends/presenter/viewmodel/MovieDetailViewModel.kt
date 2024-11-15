@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -20,12 +21,13 @@ import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
-import org.comon.moviefriends.data.repo.TMDBRepository
-import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
+import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
 import retrofit2.Response
+import javax.inject.Inject
 
-class MovieDetailViewModel(
-    private val repository: TMDBRepository = TMDBRepositoryImpl()
+@HiltViewModel
+class MovieDetailViewModel @Inject constructor (
+    private val repository: TMDBRepository
 ): ViewModel() {
 
     private val _movieId = MutableStateFlow(0)

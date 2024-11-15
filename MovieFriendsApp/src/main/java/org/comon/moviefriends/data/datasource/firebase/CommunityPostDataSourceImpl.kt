@@ -2,13 +2,10 @@ package org.comon.moviefriends.data.datasource.firebase
 
 import android.net.Uri
 import android.util.Log
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.storage
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
@@ -19,10 +16,11 @@ import org.comon.moviefriends.data.model.firebase.LikeInfo
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import javax.inject.Inject
 
-class CommunityPostDataSourceImpl(
-    private val db: FirebaseFirestore = Firebase.firestore,
-    private val storage: FirebaseStorage = Firebase.storage,
+class CommunityPostDataSourceImpl @Inject constructor (
+    private val db: FirebaseFirestore,
+    private val storage: FirebaseStorage,
 ): CommunityPostDataSource {
 
     override suspend fun insertPost(post: PostInfo) = flow {

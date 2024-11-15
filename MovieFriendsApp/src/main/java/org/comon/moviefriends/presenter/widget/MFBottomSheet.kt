@@ -9,7 +9,6 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -18,8 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.NAV_ROUTE
 import org.comon.moviefriends.common.showSnackBar
@@ -30,7 +29,7 @@ import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 @Composable
 fun MFWantMovieBottomSheet(
     dismissSheet: () -> Unit,
-    viewModel: MovieDetailViewModel = viewModel(),
+    viewModel: MovieDetailViewModel = hiltViewModel(),
 ) {
 
     val localContext = LocalContext.current
@@ -73,7 +72,7 @@ fun MFWantMovieBottomSheet(
 @Composable
 fun MFReviewBottomSheet(
     dismissSheet: () -> Unit,
-    viewModel: MovieDetailViewModel = viewModel(),
+    viewModel: MovieDetailViewModel = hiltViewModel(),
     insertUserReview: ((String) -> Unit)? = null,
     deleteUserReview: ((String) -> Unit)? = null,
 ) {
@@ -105,9 +104,4 @@ fun MFReviewBottomSheet(
             }
         }
     }
-}
-
-enum class MFBottomSheetContent {
-    UserWantList,
-    UserReview,
 }

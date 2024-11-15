@@ -2,13 +2,14 @@ package org.comon.moviefriends.data.repo
 
 import android.net.Uri
 import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSource
-import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSourceImpl
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.domain.usecase.repo.CommunityPostRepository
+import javax.inject.Inject
 
-class CommunityPostRepositoryImpl(
-    private val fs: CommunityPostDataSource = CommunityPostDataSourceImpl()
+class CommunityPostRepositoryImpl @Inject constructor (
+    private val fs: CommunityPostDataSource
 ): CommunityPostRepository {
     override suspend fun insertPost(post: PostInfo) =
         fs.insertPost(post)

@@ -15,8 +15,9 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import javax.inject.Inject
 
-class MFLocationManager {
+class MFLocationManager @Inject constructor() {
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
     private lateinit var mLocationRequest: LocationRequest
 

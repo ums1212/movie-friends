@@ -8,8 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -17,16 +16,15 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
-import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.repo.LoginRepository
-import org.comon.moviefriends.data.repo.LoginRepositoryImpl
+import org.comon.moviefriends.domain.usecase.repo.LoginRepository
+import javax.inject.Inject
 
-class LoginViewModel(
-    private val repository: LoginRepository = LoginRepositoryImpl(),
-    private val auth: FirebaseAuth = Firebase.auth,
+@HiltViewModel
+class LoginViewModel @Inject constructor  (
+    private val repository: LoginRepository,
+    private val auth: FirebaseAuth,
 ): ViewModel() {
 
     private val _splashScreenState = MutableStateFlow(true)

@@ -3,6 +3,7 @@ package org.comon.moviefriends.presenter.viewmodel
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -10,12 +11,13 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
-import org.comon.moviefriends.data.repo.TMDBRepository
-import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
+import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
 import retrofit2.Response
+import javax.inject.Inject
 
-class HomeViewModel(
-    private val repository: TMDBRepository = TMDBRepositoryImpl()
+@HiltViewModel
+class HomeViewModel @Inject constructor  (
+    private val repository: TMDBRepository
 ): ViewModel() {
 
     private val _nowList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())

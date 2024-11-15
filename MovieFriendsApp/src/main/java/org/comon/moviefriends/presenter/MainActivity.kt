@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.common.MFPreferences
@@ -54,26 +55,27 @@ import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val loginViewModel:LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         // super.onCreate() 이전에 installSplashScreen() 메서드를 추가
         val splashScreen = installSplashScreen()
         settingSplashScreenAnimation()
-        checkLoginAndStart(splashScreen)
+        super.onCreate(savedInstanceState)
+        checkLoginAndStart(splashScreen, loginViewModel)
         MFPreferences.init(this)
         alertNotificationPermission()
-        super.onCreate(savedInstanceState)
 //        enableEdgeToEdge()
         setContent {
             MovieFriendsApp(startDestination)
         }
     }
 
-    private fun checkLoginAndStart(splashScreen: SplashScreen){
-        checkLogin(startDestination)
+    private fun checkLoginAndStart(splashScreen: SplashScreen, loginViewModel: LoginViewModel){
+        checkLogin(startDestination, loginViewModel)
         collectFlowInActivity(loginViewModel.splashScreenState) {
             splashScreen.setKeepOnScreenCondition {
                 it
@@ -106,7 +108,7 @@ class MainActivity : ComponentActivity() {
 
     private val startDestination = mutableStateOf(NAV_ROUTE.LOGIN.route)
 
-    private fun checkLogin(startDestination: MutableState<String>){
+    private fun checkLogin(startDestination: MutableState<String>, loginViewModel: LoginViewModel){
         lifecycleScope.launch {
             loginViewModel.checkLogin().collectLatest { result ->
                 when(result){

@@ -36,8 +36,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -53,7 +53,7 @@ import org.comon.moviefriends.presenter.widget.MFText
 
 @Composable
 fun ProfileWantMovieScreen(
-    viewModel: MovieDetailViewModel = viewModel(),
+    viewModel: MovieDetailViewModel = hiltViewModel(),
     navigateToLogin: () -> Unit,
 ) {
     val pagerState = rememberPagerState(0, pageCount = { 10 })

@@ -2,15 +2,13 @@ package org.comon.moviefriends.data.repo
 
 import android.app.Activity
 import android.content.Context
-import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.flow.collectLatest
 import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSource
-import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSourceImpl
-import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.domain.usecase.repo.LoginRepository
+import javax.inject.Inject
 
-class LoginRepositoryImpl(
-    private val authDataSource: AuthenticationDataSource = AuthenticationDataSourceImpl()
+class LoginRepositoryImpl @Inject constructor (
+    private val authDataSource: AuthenticationDataSource
 ): LoginRepository {
 
     override suspend fun kakaoLogin(context: Context) =

@@ -2,39 +2,28 @@ package org.comon.moviefriends.data.datasource.firebase
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.OAuthProvider
-import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.toObject
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.sendbird.android.SendbirdChat
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.sendbird.SendBirdService
-import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.sendbird.CreateSendBirdUserDto
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
+import javax.inject.Inject
 
-class AuthenticationDataSourceImpl(
-    private val auth: FirebaseAuth = Firebase.auth,
-    private val db: FirebaseFirestore = Firebase.firestore
+class AuthenticationDataSourceImpl @Inject constructor (
+    private val auth: FirebaseAuth,
+    private val db: FirebaseFirestore,
 ): AuthenticationDataSource {
 
     override suspend fun kakaoLogin(context: Context) = flow {

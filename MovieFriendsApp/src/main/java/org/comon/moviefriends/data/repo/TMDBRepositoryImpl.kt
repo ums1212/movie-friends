@@ -1,65 +1,65 @@
 package org.comon.moviefriends.data.repo
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
-import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
+import javax.inject.Inject
 
-class TMDBRepositoryImpl(
-    private val fs: MovieDetailDataSource = MovieDetailDataSourceImpl()
+class TMDBRepositoryImpl @Inject constructor (
+    private val fs: MovieDetailDataSource,
+    private val rest: TMDBService,
 ): TMDBRepository {
 
     override fun getNowPlaying() = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getNowPlaying()))
+        emit(APIResult.Success(rest.getNowPlaying()))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getPopular() = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getPopular()))
+        emit(APIResult.Success(rest.getPopular()))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getTrending() = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getTrending()))
+        emit(APIResult.Success(rest.getTrending()))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getUpcoming() = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getUpcoming()))
+        emit(APIResult.Success(rest.getUpcoming()))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getMovieDetail(movieId: Int) = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getMovieDetail(movieId)))
+        emit(APIResult.Success(rest.getMovieDetail(movieId)))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getMovieCredit(movieId: Int) = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getMovieCredit(movieId)))
+        emit(APIResult.Success(rest.getMovieCredit(movieId)))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }
 
     override fun getMovieVideo(movieId: Int) = flow {
         emit(APIResult.Loading)
-        emit(APIResult.Success(TMDBService.getInstance().getMovieVideo(movieId)))
+        emit(APIResult.Success(rest.getMovieVideo(movieId)))
     }.catch{
         error -> emit(APIResult.NetworkError(error))
     }

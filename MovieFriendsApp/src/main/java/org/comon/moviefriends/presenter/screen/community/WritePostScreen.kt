@@ -46,8 +46,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.presenter.common.clickableOnce
@@ -66,12 +66,12 @@ fun WritePostScreen(
     navigateToPostDetail: (String) -> Unit,
     navigatePop: () -> Unit,
     postId: String?,
+    viewModel: CommunityPostViewModel = hiltViewModel()
 ) {
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     val localContext = LocalContext.current
 
-    val viewModel: CommunityPostViewModel = viewModel()
     val scrollState = rememberScrollState()
 
     val isCategoryMenuShown = remember { mutableStateOf(false) }

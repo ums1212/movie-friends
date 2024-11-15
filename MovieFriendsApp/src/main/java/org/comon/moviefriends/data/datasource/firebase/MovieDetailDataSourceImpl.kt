@@ -1,10 +1,8 @@
 package org.comon.moviefriends.data.datasource.firebase
 
 import android.util.Log
-import com.google.firebase.Firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.firestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -21,9 +19,10 @@ import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.service.FCMSendService
+import javax.inject.Inject
 
-class MovieDetailDataSourceImpl(
-    private val db: FirebaseFirestore = Firebase.firestore
+class MovieDetailDataSourceImpl @Inject constructor (
+    private val db: FirebaseFirestore
 ): MovieDetailDataSource {
 
     private suspend fun getWantThisMovieInfo(movieId: Int, userInfo: UserInfo)

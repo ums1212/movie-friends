@@ -23,8 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
@@ -46,7 +46,7 @@ fun WatchTogetherScreen(
     navigateToReceiveList: () -> Unit,
     navigateToChatRoomList: () -> Unit,
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = viewModel()
+    viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
 
     val user = MFPreferences.getUserInfo()

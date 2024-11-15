@@ -1,10 +1,10 @@
 package org.comon.moviefriends.presenter.viewmodel
 
 import android.net.Uri
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -14,12 +14,13 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.LikeInfo
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
-import org.comon.moviefriends.data.repo.CommunityPostRepository
-import org.comon.moviefriends.data.repo.CommunityPostRepositoryImpl
+import org.comon.moviefriends.domain.usecase.repo.CommunityPostRepository
 import org.comon.moviefriends.presenter.viewmodel.uistate.PostUiState
+import javax.inject.Inject
 
-class CommunityPostViewModel(
-    private val repository: CommunityPostRepository = CommunityPostRepositoryImpl()
+@HiltViewModel
+class CommunityPostViewModel @Inject constructor (
+    private val repository: CommunityPostRepository
 ): ViewModel() {
 
     private val _user = MFPreferences.getUserInfo()

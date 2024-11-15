@@ -26,8 +26,8 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseUser
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
@@ -41,8 +41,8 @@ import org.comon.moviefriends.presenter.widget.MFButton
 fun LoginScreen(
     moveToScaffoldScreen: () -> Unit,
     moveToSubmitNickNameScreen: (user: FirebaseUser?, joinType: String) -> Unit,
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
-    val viewModel: LoginViewModel = viewModel()
     val localContext = LocalContext.current
 
     val coroutineScope = rememberCoroutineScope()

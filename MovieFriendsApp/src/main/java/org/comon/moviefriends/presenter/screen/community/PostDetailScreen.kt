@@ -42,8 +42,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
@@ -71,9 +71,9 @@ import org.comon.moviefriends.presenter.widget.ShimmerEffect
 fun PostDetailScreen(
     postId: String,
     navigatePop: () -> Unit,
+    viewModel: CommunityPostViewModel = hiltViewModel()
 ) {
     val user = MFPreferences.getUserInfo()
-    val viewModel: CommunityPostViewModel = viewModel()
 
     LaunchedEffect(Unit) {
         viewModel.setPostId(postId)
