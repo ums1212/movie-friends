@@ -10,17 +10,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -29,8 +29,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.auth.FirebaseUser
-import kotlinx.coroutines.launch
-import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.presenter.viewmodel.JoinType
@@ -56,7 +54,7 @@ fun LoginScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(colorResource(id = R.color.friends_black)),
+                .background(colorResource(id = R.color.black)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -66,8 +64,9 @@ fun LoginScreen(
             Image(
                 painterResource(R.drawable.logo),
                 contentDescription = stringResource(R.string.app_name),
+                contentScale = ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .size(320.dp)
                     .padding(bottom = 72.dp)
             )
             MFButton( moveToScaffoldScreen, stringResource(R.string.button_without_login))
