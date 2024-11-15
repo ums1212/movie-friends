@@ -69,8 +69,12 @@ class MainActivity : ComponentActivity() {
         MFPreferences.init(this)
         alertNotificationPermission()
 //        enableEdgeToEdge()
+
+        // 상단 알림바를 클릭하여 들어온 경우 받은 내역 화면으로 이동해야 함
+        val fromFCMRoute = intent.getStringExtra("fromFCMRoute")
+
         setContent {
-            MovieFriendsApp(startDestination)
+            MovieFriendsApp(startDestination, fromFCMRoute)
         }
     }
 
@@ -132,13 +136,16 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     fun MovieFriendsApp(
-        startDestination: MutableState<String>
+        startDestination: MutableState<String>,
+        fromFCMRoute2: String? = null,
     ){
         MovieFriendsTheme(
             darkTheme = true
         ) {
             val navController = rememberNavController()
-            val selectedBottomMenuItem = remember { mutableIntStateOf(0) }
+            val selectedBottomMenuItem = remember {
+                if(fromFCMRoute2!=null) mutableIntStateOf(1) else mutableIntStateOf(0)
+            }
             val selectedCommunityTabItem = remember { mutableIntStateOf(0) }
             val isCommunityTabMenuShown = remember { mutableStateOf(false) }
 
@@ -198,7 +205,8 @@ class MainActivity : ComponentActivity() {
                             selectedBottomMenuItem = selectedBottomMenuItem,
                             selectedCommunityTabItem = selectedCommunityTabItem,
                             isCommunityTabMenuShown = isCommunityTabMenuShown,
-                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
+                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) } ,
+                            fromFCMRoute = fromFCMRoute2,
                         )
                     }
                     /** 검색 화면 */
@@ -252,7 +260,7 @@ class MainActivity : ComponentActivity() {
                             postId = postId
                         )
                     }
-                    /** 커뮤니티 함께보기 화면 */
+                    /** 커뮤니티 채팅방 화면 */
                     composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
                         ChatRoomListScreen()
                     }

@@ -45,7 +45,8 @@ fun ScaffoldScreen(
     selectedBottomMenuItem: MutableIntState,
     selectedCommunityTabItem: MutableIntState,
     isCommunityTabMenuShown: MutableState<Boolean>,
-    navigateToLogin: () -> Unit
+    navigateToLogin: () -> Unit,
+    fromFCMRoute: String? = null,
 ){
     val scaffoldNavController = rememberNavController()
     val currentRoute = scaffoldNavController.currentBackStackEntryAsState().value?.destination?.route
@@ -99,7 +100,7 @@ fun ScaffoldScreen(
         Box(modifier = Modifier.background(FriendsBlack)){
             NavHost(
                 navController = scaffoldNavController,
-                startDestination = NAV_ROUTE.HOME.route,
+                startDestination = fromFCMRoute ?: NAV_ROUTE.HOME.route,
                 modifier = Modifier.padding(innerPadding).padding(start = 12.dp, end = 12.dp, top = 12.dp)
             ) {
                 composable(NAV_ROUTE.HOME.route) {
@@ -113,7 +114,7 @@ fun ScaffoldScreen(
                             mainNavController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}")
                         },
                         moveToWritePostScreen = { mainNavController.navigate(NAV_ROUTE.WRITE_POST.route) },
-                        navigateToLogin = navigateToLogin
+                        navigateToLogin = navigateToLogin,
                     )
                 }
                 composable(COMMUNITY_MENU.WATCH_TOGETHER.route) {
