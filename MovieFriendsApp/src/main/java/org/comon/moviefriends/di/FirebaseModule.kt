@@ -17,6 +17,7 @@ import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSource
 import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSourceImpl
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
+import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
 import org.comon.moviefriends.domain.repo.CommunityPostRepository
 import org.comon.moviefriends.data.repo.CommunityPostRepositoryImpl
@@ -58,8 +59,8 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun providesMovieDetailDataSource(db: FirebaseFirestore): MovieDetailDataSource =
-        MovieDetailDataSourceImpl(db)
+    fun providesMovieDetailDataSource(db: FirebaseFirestore, mfLocationService: MFLocationService): MovieDetailDataSource =
+        MovieDetailDataSourceImpl(db, mfLocationService)
 
     @Singleton
     @Provides

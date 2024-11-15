@@ -27,7 +27,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor (
-    private val repository: TMDBRepository
+    private val repository: TMDBRepository,
+    private val locationManager: MFLocationManager
 ): ViewModel() {
 
     private val _movieId = MutableStateFlow(0)
@@ -157,7 +158,7 @@ class MovieDetailViewModel @Inject constructor (
                 navigateToLogin()
                 return@launch
             }
-            MFLocationManager().getCurrentLocation(context).collectLatest { result ->
+            locationManager.getCurrentLocation(context).collectLatest { result ->
                 when(result){
                     is APIResult.Success -> {
                         _movieInfo.value?.let {

@@ -22,7 +22,8 @@ import org.comon.moviefriends.presenter.service.FCMSendService
 import javax.inject.Inject
 
 class MovieDetailDataSourceImpl @Inject constructor (
-    private val db: FirebaseFirestore
+    private val db: FirebaseFirestore,
+    private val mfLocationService: MFLocationService,
 ): MovieDetailDataSource {
 
     private suspend fun getWantThisMovieInfo(movieId: Int, userInfo: UserInfo)
@@ -51,7 +52,7 @@ class MovieDetailDataSourceImpl @Inject constructor (
     ) = flow {
         emit(APIResult.Loading)
         // 위치 정보 가져오기
-        val region = MFLocationService.getInstance()
+        val region = mfLocationService
             .getCurrentRegion(nowLocation[1], nowLocation[0])
             .body()?.documents?.find {
                 it.regionType == "B"
