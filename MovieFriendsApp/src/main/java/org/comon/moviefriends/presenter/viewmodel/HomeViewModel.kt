@@ -11,7 +11,7 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
-import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.TMDBRepository
 import retrofit2.Response
 import javax.inject.Inject
 

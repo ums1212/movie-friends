@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Context
 import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSource
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.domain.usecase.repo.LoginRepository
+import org.comon.moviefriends.domain.repo.LoginRepository
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor (

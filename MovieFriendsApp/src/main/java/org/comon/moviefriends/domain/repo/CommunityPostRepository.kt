@@ -1,4 +1,4 @@
-package org.comon.moviefriends.domain.usecase.repo
+package org.comon.moviefriends.domain.repo
 
 import android.net.Uri
 import kotlinx.coroutines.flow.Flow

@@ -14,7 +14,7 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.LikeInfo
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
-import org.comon.moviefriends.domain.usecase.repo.CommunityPostRepository
+import org.comon.moviefriends.domain.repo.CommunityPostRepository
 import org.comon.moviefriends.presenter.viewmodel.uistate.PostUiState
 import javax.inject.Inject
 

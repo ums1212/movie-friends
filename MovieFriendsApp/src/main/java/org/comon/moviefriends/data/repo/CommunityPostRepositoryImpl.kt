@@ -5,7 +5,7 @@ import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSource
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.domain.usecase.repo.CommunityPostRepository
+import org.comon.moviefriends.domain.repo.CommunityPostRepository
 import javax.inject.Inject
 
 class CommunityPostRepositoryImpl @Inject constructor (

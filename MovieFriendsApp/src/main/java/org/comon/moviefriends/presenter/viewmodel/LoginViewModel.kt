@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.domain.usecase.repo.LoginRepository
+import org.comon.moviefriends.domain.repo.LoginRepository
 import javax.inject.Inject
 
 @HiltViewModel

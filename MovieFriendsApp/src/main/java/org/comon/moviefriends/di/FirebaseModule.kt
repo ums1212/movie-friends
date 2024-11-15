@@ -18,11 +18,11 @@ import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSourceIm
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
-import org.comon.moviefriends.domain.usecase.repo.CommunityPostRepository
+import org.comon.moviefriends.domain.repo.CommunityPostRepository
 import org.comon.moviefriends.data.repo.CommunityPostRepositoryImpl
-import org.comon.moviefriends.domain.usecase.repo.LoginRepository
+import org.comon.moviefriends.domain.repo.LoginRepository
 import org.comon.moviefriends.data.repo.LoginRepositoryImpl
-import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
 import javax.inject.Singleton
 

@@ -1,4 +1,4 @@
-package org.comon.moviefriends.domain.usecase.repo
+package org.comon.moviefriends.domain.repo
 
 import android.app.Activity
 import android.content.Context

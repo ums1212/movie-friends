@@ -7,7 +7,7 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.TMDBRepository
 import javax.inject.Inject
 
 class TMDBRepositoryImpl @Inject constructor (

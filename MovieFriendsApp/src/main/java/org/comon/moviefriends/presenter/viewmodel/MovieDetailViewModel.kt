@@ -21,7 +21,7 @@ import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
-import org.comon.moviefriends.domain.usecase.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.TMDBRepository
 import retrofit2.Response
 import javax.inject.Inject
 
