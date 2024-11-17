@@ -51,7 +51,7 @@ fun CommunityListItem(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                MFPostView(getTimeDiff(post.createdDate.seconds))
+                MFPostDate(getTimeDiff(post.createdDate.seconds))
                 MFPostView("조회수 : ${post.viewCount} 좋아요 : ${post.likes.size} 댓글 : ${post.reply.size}")
             }
         }
