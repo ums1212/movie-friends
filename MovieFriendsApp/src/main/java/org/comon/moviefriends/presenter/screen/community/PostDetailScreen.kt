@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.screen.community
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import org.comon.moviefriends.common.getTimeDiff
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
@@ -94,7 +96,8 @@ fun PostDetailScreen(
         Modifier
             .padding(12.dp)
             .fillMaxSize()
-            .verticalScroll(scrollState),
+            .verticalScroll(scrollState)
+            .background(FriendsBlack),
     ) {
         when(val postResult = post.value){
             is APIResult.Success -> {

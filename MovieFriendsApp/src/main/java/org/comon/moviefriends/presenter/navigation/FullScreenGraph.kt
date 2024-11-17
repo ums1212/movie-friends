@@ -1,5 +1,7 @@
 package org.comon.moviefriends.presenter.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,7 +27,21 @@ fun NavGraphBuilder.fullScreenGraph(
     postViewModel: CommunityPostViewModel
 ){
     /** 검색 화면 */
-    composable(FullScreenNavRoute.Search.route) {
+    composable(
+        route = FullScreenNavRoute.Search.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         SearchScreen(navigatePop = { navController.popBackStack() })
     }
 
@@ -36,7 +52,19 @@ fun NavGraphBuilder.fullScreenGraph(
             navArgument("movieId"){
                 type = NavType.IntType
             }
-        )
+        ),
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
     ) { backStackEntry ->
         MovieDetailScreen(
             movieId = backStackEntry.arguments?.getInt("movieId") ?: 0,
@@ -46,59 +74,199 @@ fun NavGraphBuilder.fullScreenGraph(
     }
 
     /** 커뮤니티 상세글 화면 */
-    composable("${FullScreenNavRoute.CommunityDetail.route}/{postId}") { backStackEntry ->
+    composable(
+        route = "${FullScreenNavRoute.CommunityDetail.route}/{postId}",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) { backStackEntry ->
         PostDetailScreen(
             postId = backStackEntry.arguments?.getString("postId") ?: "",
         )
     }
 
     /** 커뮤니티 글작성 화면 */
-    composable(FullScreenNavRoute.WritePost.route) {
+    composable(
+        route = FullScreenNavRoute.WritePost.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         WritePostScreen(postId = null, viewModel = postViewModel)
     }
 
     /** 커뮤니티 글수정 화면 */
-    composable("${FullScreenNavRoute.WritePost.route}/{postId}") { backStackEntry ->
+    composable(
+        route = "${FullScreenNavRoute.WritePost.route}/{postId}",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) { backStackEntry ->
         val postId = backStackEntry.arguments?.getString("postId") ?: ""
         WritePostScreen(postId = postId, viewModel = postViewModel)
     }
 
     /** 커뮤니티 채팅방 화면 */
-    composable(FullScreenNavRoute.ChatRoom.route) {
+    composable(
+        route = FullScreenNavRoute.ChatRoom.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ChatRoomListScreen()
     }
 
     /** 내 정보 수정 화면 */
-    composable(FullScreenNavRoute.ProfileSetting.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileSetting.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileSettingScreen()
     }
 
     /** 내 정보 보고 싶은 영화 화면 */
-    composable(FullScreenNavRoute.ProfileWantMovie.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileWantMovie.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileWantMovieScreen(
             navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) }
         )
     }
 
     /** 내 정보 남긴 평점 화면 */
-    composable(FullScreenNavRoute.ProfileRate.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileRate.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileRateScreen()
     }
 
     /** 내 정보 남긴 리뷰 화면 */
-    composable(FullScreenNavRoute.ProfileReview.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileReview.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileReviewScreen()
     }
 
     /** 내 정보 남긴 커뮤니티 글 화면 */
-    composable(FullScreenNavRoute.ProfileCommunityPost.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileCommunityPost.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileCommunityPostScreen{ postId ->
             navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
         }
     }
 
     /** 내 정보 남긴 커뮤니티 댓글 화면 */
-    composable(FullScreenNavRoute.ProfileCommunityReply.route) {
+    composable(
+        route = FullScreenNavRoute.ProfileCommunityReply.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ProfileCommunityReplyScreen{ postId ->
             navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
         }

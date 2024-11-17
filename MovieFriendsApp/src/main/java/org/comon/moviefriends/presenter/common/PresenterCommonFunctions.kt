@@ -7,6 +7,7 @@ import org.comon.moviefriends.data.model.firebase.UserInfo
 fun checkTopBarNeedTitle(route: String) =
     !FullScreenNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)
             && !route.contains(FullScreenNavRoute.MovieDetail.route)
+            && !route.contains(FullScreenNavRoute.CommunityDetail.route)
             && route != ScaffoldNavRoute.RequestList.route
             && route != ScaffoldNavRoute.ReceiveList.route
 
@@ -24,6 +25,7 @@ fun checkTopBarNeedNavigationIcon(route: String) =
         FullScreenNavRoute.ProfileCommunityReply.route,
     ).contains(route)
             || route.contains(FullScreenNavRoute.MovieDetail.route)
+            || route.contains(FullScreenNavRoute.CommunityDetail.route)
 
 fun checkTopBarNeedCommunityMenuButton(route: String) =
     route == FullScreenNavRoute.CommunityDetail.route ||

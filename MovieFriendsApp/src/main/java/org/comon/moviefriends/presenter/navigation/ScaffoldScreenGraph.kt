@@ -1,5 +1,7 @@
 package org.comon.moviefriends.presenter.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -19,14 +21,30 @@ import org.comon.moviefriends.presenter.screen.profile.ProfileScreen
 
 fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
     /** 홈 화면 */
-    composable(ScaffoldNavRoute.Home.route) {
+    composable(
+        route = ScaffoldNavRoute.Home.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         HomeScreen { movieId ->
             navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")
         }
     }
 
     /** 커뮤니티 화면 */
-    composable(ScaffoldNavRoute.Community.route) {
+    composable(
+        route = ScaffoldNavRoute.Community.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         CommunityScreen(
             moveToCommunityDetailScreen = { postId ->
                 navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
@@ -37,7 +55,15 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
     }
 
     /** 함께보기 화면 */
-    composable(ScaffoldNavRoute.WatchTogether.route) {
+    composable(
+        route = ScaffoldNavRoute.WatchTogether.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         WatchTogetherScreen(
             navigateToRequestList = { navController.navigate(ScaffoldNavRoute.RequestList.route) },
             navigateToReceiveList = { navController.navigate(ScaffoldNavRoute.ReceiveList.route) },
@@ -49,26 +75,70 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
     }
 
     /** 요청 내역 화면 */
-    composable(ScaffoldNavRoute.RequestList.route) {
+    composable(
+        route = ScaffoldNavRoute.RequestList.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         RequestListScreen(
             navigateToMovieDetail = { movieId -> navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")}
         )
     }
 
     /** 받은 내역 화면 */
-    composable(ScaffoldNavRoute.ReceiveList.route) {
+    composable(
+        route = ScaffoldNavRoute.ReceiveList.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         ReceiveListScreen(
             navigateToMovieDetail = { movieId -> navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")}
         )
     }
 
     /** 영화 추천 화면 */
-    composable(ScaffoldNavRoute.MovieRecommend.route) {
+    composable(
+        route = ScaffoldNavRoute.MovieRecommend.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         RecommendScreen()
     }
 
     /** 영화 월드컵 화면 */
-    composable(ScaffoldNavRoute.MovieWorldCup.route) {
+    composable(
+        route = ScaffoldNavRoute.MovieWorldCup.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
+    ) {
         WorldCupScreen()
     }
 
@@ -79,7 +149,13 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             navArgument("profileType"){
                 type = NavType.StringType
             }
-        )
+        ),
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Right,
+                animationSpec = tween(700)
+            )
+        },
     ) { backStackEntry ->
         ProfileScreen(
             navigateToUserWant = { navController.navigate(FullScreenNavRoute.ProfileWantMovie.route) },
