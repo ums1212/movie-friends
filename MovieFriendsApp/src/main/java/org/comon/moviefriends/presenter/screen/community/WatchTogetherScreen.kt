@@ -26,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
-import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
@@ -71,7 +71,7 @@ fun WatchTogetherScreen(
             .fillMaxWidth()
             .background(FriendsBlack),
     ) {
-        MFPostTitle(text = stringResource(R.string.label_menu_watch_together))
+        MFPostTitle(text = stringResource(R.string.label_menu_watch_together), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         WATCH_TOGETHER_MENU.entries.forEach { menu ->
@@ -81,7 +81,7 @@ fun WatchTogetherScreen(
                         when(menu){
                             WATCH_TOGETHER_MENU.REQUEST_LIST -> navigateToRequestList()
                             WATCH_TOGETHER_MENU.RECEIVE_LIST -> navigateToReceiveList()
-                            WATCH_TOGETHER_MENU.CHAT_ROOM_LIST -> navigateToChatRoomList()
+                            WATCH_TOGETHER_MENU.CHAT_ROOM -> navigateToChatRoomList()
                         }
                     },
             ){
@@ -117,7 +117,7 @@ fun WatchTogetherScreen(
         }
 
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        MFText(text = stringResource(R.string.title_user_want_movies))
+        MFText(text = stringResource(R.string.title_user_want_movies), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         when(val list = allUserWantList.value){
             APIResult.Loading -> {
@@ -130,7 +130,7 @@ fun WatchTogetherScreen(
             }
             is APIResult.Success -> {
                 UserWantThisMovieList(
-                    screen = COMMUNITY_MENU.WATCH_TOGETHER.route,
+                    screen = ScaffoldNavRoute.WatchTogether.route,
                     wantList = list.resultData,
                     myRequestList = myRequestList.value,
                     navigateToMovieDetail = { movieId ->

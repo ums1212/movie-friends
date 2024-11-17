@@ -11,7 +11,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.presenter.MainActivity
 import java.time.LocalTime
 
@@ -38,7 +38,7 @@ class FCMService: FirebaseMessagingService() {
     private fun sendToStatusBarPushMessage(title: String, body: String) {
 
         val intent = Intent(this@FCMService, MainActivity::class.java).apply {
-            putExtra("fromFCMRoute", WATCH_TOGETHER_MENU.RECEIVE_LIST.route)
+            putExtra("fromFCMRoute", ScaffoldNavRoute.ReceiveList.route)
         }
 
         val pendingIntent = PendingIntent.getActivity(

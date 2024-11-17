@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.screen.intro
+package org.comon.moviefriends.presenter.screen.home
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -29,7 +29,7 @@ import org.comon.moviefriends.presenter.theme.FriendsWhite
 
 @Composable
 fun SearchScreen(
-    moveToScaffoldScreen: () -> Unit
+    navigatePop: () -> Unit
 ){
     val searchValue by remember { mutableStateOf("") }
     Column(
@@ -39,7 +39,7 @@ fun SearchScreen(
             modifier = Modifier.padding(12.dp).padding(top = 8.dp)
         ) {
             IconButton(
-                onClick = moveToScaffoldScreen
+                onClick = navigatePop
             ) {
                 Icon(imageVector = Icons.AutoMirrored.Default.ArrowBack, "취소", tint = FriendsWhite)
             }

@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
-import org.comon.moviefriends.common.NAV_ROUTE
+import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
@@ -55,7 +55,7 @@ fun MFWantMovieBottomSheet(
                 MFText(text = stringResource(id = R.string.no_data))
             }else{
                 UserWantThisMovieList(
-                    screen = NAV_ROUTE.MOVIE_DETAIL.route,
+                    screen = FullScreenNavRoute.MovieDetail.route,
                     wantList = userWantList.value,
                     myRequestList = myRequestList.value,
                     navigateToMovieDetail = null,

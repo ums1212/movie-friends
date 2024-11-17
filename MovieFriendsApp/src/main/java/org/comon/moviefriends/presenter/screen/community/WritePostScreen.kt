@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -46,7 +45,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
@@ -57,16 +55,13 @@ import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.widget.CategoryModal
-import org.comon.moviefriends.presenter.widget.DetailTopAppBar
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import java.util.UUID
 
 @Composable
 fun WritePostScreen(
-    navigateToPostDetail: (String) -> Unit,
-    navigatePop: () -> Unit,
     postId: String?,
-    viewModel: CommunityPostViewModel = hiltViewModel()
+    viewModel: CommunityPostViewModel,
 ) {
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
@@ -88,152 +83,134 @@ fun WritePostScreen(
         }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = {
-            DetailTopAppBar(
-                navigatePop = navigatePop,
-                writePost = {
-                    if(viewModel.isUpdate.value){
-                        viewModel.updatePost()
-                    }else{
-                        viewModel.insertPost(navigateToPostDetail)
-                    }
-                },
-                isWritePost = true
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .verticalScroll(scrollState),
+    ) {
+        if(errorState.value){
+            showSnackBar(coroutineScope, snackBarHost, localContext)
+        }
+        if(viewModel.isLoading.value){
+            LinearProgressIndicator(
+                modifier = Modifier.fillMaxWidth(),
+                color = FriendsRed
             )
-        },
-    ) { innerPadding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp)
-                .verticalScroll(scrollState),
-        ) {
-            if(errorState.value){
-                showSnackBar(coroutineScope, snackBarHost, localContext)
-            }
-            if(viewModel.isLoading.value){
-                LinearProgressIndicator(
-                    modifier = Modifier.fillMaxWidth().padding(innerPadding),
-                    color = FriendsRed
-                )
-            }
-            // 카테고리
-            OutlinedTextField(
-                modifier = Modifier
-                    .width(150.dp)
-                    .clickableOnce {
-                        isCategoryMenuShown.value = !isCategoryMenuShown.value
-                    }
-                ,
-                value = viewModel.postUiState.postCategory.value,
-                onValueChange = {},
-                placeholder = { Text("카테고리") },
-                trailingIcon = { Icon(Icons.Default.ArrowDropDown, "") },
-                readOnly = true,
-                enabled = false,
-                colors = OutlinedTextFieldDefaults.colors(
-                    disabledTextColor = FriendsWhite,
-                    focusedBorderColor = FriendsTextGrey,
-                    unfocusedBorderColor = FriendsTextGrey,
-                    cursorColor = FriendsTextGrey,
-                )
+        }
+        // 카테고리
+        OutlinedTextField(
+            modifier = Modifier
+                .width(150.dp)
+                .clickableOnce {
+                    isCategoryMenuShown.value = !isCategoryMenuShown.value
+                }
+            ,
+            value = viewModel.postUiState.postCategory.value,
+            onValueChange = {},
+            placeholder = { Text("카테고리") },
+            trailingIcon = { Icon(Icons.Default.ArrowDropDown, "") },
+            readOnly = true,
+            enabled = false,
+            colors = OutlinedTextFieldDefaults.colors(
+                disabledTextColor = FriendsWhite,
+                focusedBorderColor = FriendsTextGrey,
+                unfocusedBorderColor = FriendsTextGrey,
+                cursorColor = FriendsTextGrey,
+            )
 
+        )
+        if(isCategoryMenuShown.value){
+            CategoryModal(
+                {isCategoryMenuShown.value = false},
+                {viewModel.postUiState.postCategory.value = it.kor}
             )
-            if(isCategoryMenuShown.value){
-                CategoryModal(
-                    {isCategoryMenuShown.value = false},
-                    {viewModel.postUiState.postCategory.value = it.kor}
-                )
-            }
-            Spacer(Modifier.padding(vertical = 8.dp))
-            Row(
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                MFPostTitle(
-                    "제목",
-                    Modifier.padding(end = 8.dp)
-                )
-                BasicTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .drawBehind {
-                            drawLine(
-                                color = FriendsTextGrey,
-                                Offset(0f, size.height),
-                                Offset(size.width, size.height),
-                                strokeWidth = 2.dp.toPx()
-                            )
-                        }
-                        .padding(6.dp)
-                    ,
-                    value = viewModel.postUiState.postTitle.value,
-                    onValueChange = {
-                        viewModel.postUiState.postTitle.value = it
-                    },
-                    maxLines = 1,
-                    textStyle = TextStyle(
-                        fontSize = 18.sp,
-                        color = FriendsWhite
-                    ),
-                    cursorBrush = SolidColor(FriendsTextGrey)
-                )
-            }
-            Spacer(Modifier.padding(vertical = 8.dp))
-            MFPostTitle("내용")
-            Spacer(Modifier.padding(vertical = 8.dp))
-            TextField(
+        }
+        Spacer(Modifier.padding(vertical = 8.dp))
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            MFPostTitle(
+                "제목",
+                Modifier.padding(end = 8.dp)
+            )
+            BasicTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(250.dp),
-                value = viewModel.postUiState.postContent.value,
+                    .drawBehind {
+                        drawLine(
+                            color = FriendsTextGrey,
+                            Offset(0f, size.height),
+                            Offset(size.width, size.height),
+                            strokeWidth = 2.dp.toPx()
+                        )
+                    }
+                    .padding(6.dp)
+                ,
+                value = viewModel.postUiState.postTitle.value,
                 onValueChange = {
-                    viewModel.postUiState.postContent.value = it
+                    viewModel.postUiState.postTitle.value = it
                 },
-                singleLine = false,
+                maxLines = 1,
                 textStyle = TextStyle(
-                    fontSize = 16.sp
+                    fontSize = 18.sp,
+                    color = FriendsWhite
                 ),
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = FriendsBoxGrey,
-                    unfocusedIndicatorColor = FriendsBoxGrey,
-                    focusedIndicatorColor = FriendsBoxGrey,
-                )
+                cursorBrush = SolidColor(FriendsTextGrey)
             )
-            Spacer(Modifier.padding(vertical = 8.dp))
-            if(viewModel.postUiState.postImageUrI.value.isNotEmpty()){
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 8.dp)
-                ) {
-                    Icon(
-                        modifier = Modifier.clickableOnce {
-                            //                            stateImageList.remove(stateImageList[0])
-                        },
-                        imageVector = Icons.Filled.Clear,
-                        contentDescription = "이미지 삭제 버튼"
-                    )
-                    Image(
-                        painter = painterResource(R.drawable.logo),
-                        contentDescription = "업로드 이미지",
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-            }
-            Spacer(Modifier.padding(vertical = 8.dp))
-            HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-            IconButton(
-                onClick = { viewModel.uploadImage() },
+        }
+        Spacer(Modifier.padding(vertical = 8.dp))
+        MFPostTitle("내용")
+        Spacer(Modifier.padding(vertical = 8.dp))
+        TextField(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(250.dp),
+            value = viewModel.postUiState.postContent.value,
+            onValueChange = {
+                viewModel.postUiState.postContent.value = it
+            },
+            singleLine = false,
+            textStyle = TextStyle(
+                fontSize = 16.sp
+            ),
+            colors = TextFieldDefaults.colors(
+                unfocusedContainerColor = FriendsBoxGrey,
+                unfocusedIndicatorColor = FriendsBoxGrey,
+                focusedIndicatorColor = FriendsBoxGrey,
+            )
+        )
+        Spacer(Modifier.padding(vertical = 8.dp))
+        if(viewModel.postUiState.postImageUrI.value.isNotEmpty()){
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(end = 8.dp)
             ) {
                 Icon(
-                    Icons.Filled.AccountBox,
-                    contentDescription = "이미지 추가 버튼",
-                    tint = colorResource(R.color.friends_white)
+                    modifier = Modifier.clickableOnce {
+                        //                            stateImageList.remove(stateImageList[0])
+                    },
+                    imageVector = Icons.Filled.Clear,
+                    contentDescription = "이미지 삭제 버튼"
+                )
+                Image(
+                    painter = painterResource(R.drawable.logo),
+                    contentDescription = "업로드 이미지",
+                    contentScale = ContentScale.FillWidth
                 )
             }
+        }
+        Spacer(Modifier.padding(vertical = 8.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+        IconButton(
+            onClick = { viewModel.uploadImage() },
+        ) {
+            Icon(
+                Icons.Filled.AccountBox,
+                contentDescription = "이미지 추가 버튼",
+                tint = colorResource(R.color.friends_white)
+            )
         }
     }
     SnackbarHost(snackBarHost)

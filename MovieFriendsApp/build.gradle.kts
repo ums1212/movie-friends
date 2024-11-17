@@ -168,6 +168,7 @@ dependencies {
     // SendBird Chat UIKit
     implementation(libs.uikit.compose)
 
+    implementation(kotlin("reflect"))
 }
 
 kapt {

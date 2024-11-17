@@ -22,7 +22,6 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -74,7 +73,7 @@ fun ReceiveListScreen(
             .fillMaxWidth()
             .background(FriendsBlack),
     ) {
-        MFPostTitle(text = stringResource(R.string.label_receive_list))
+        MFPostTitle(text = stringResource(R.string.label_receive_list), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         SnackbarHost(hostState = snackBarHost)

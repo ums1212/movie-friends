@@ -22,7 +22,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.PlayArrow
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -68,7 +67,6 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
-import org.comon.moviefriends.presenter.widget.DetailTopAppBar
 import org.comon.moviefriends.presenter.widget.MFButton
 import org.comon.moviefriends.presenter.widget.MFButtonWantThisMovie
 import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
@@ -127,178 +125,172 @@ fun MovieDetailScreen(
         viewModel.getAllMovieInfo()
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        topBar = { DetailTopAppBar(navigatePop) },
-    ) { innerPadding ->
+    Column(
+        modifier = Modifier
+            .padding(12.dp)
+            .fillMaxSize()
+            .verticalScroll(scrollState)
+    ) {
+
+        /** 영화 정보 */
+        MovieDetailView(
+            movieItem = movieItem,
+            setMovieInfo = { movieInfo -> viewModel.setMovieInfo(movieInfo) },
+            context = localContext
+        )
+
+        /** 이 영화를 보고 싶다 */
+        Spacer(Modifier.padding(vertical = 4.dp))
+        MFButtonWantThisMovie(
+            clickEvent = {
+                viewModel.changeWantThisMovieStateLoading()
+                viewModel.changeStateWantThisMovie(localContext, navigateToLogin)
+            },
+            text = stringResource(R.string.button_want_this_movie),
+            isChecked = wantThisMovieState,
+            showErrorMessage = {
+                coroutineScope.launch {
+                    snackBarHost.showSnackbar(
+                        localContext.getString(R.string.network_error),
+                        null,
+                        true,
+                        SnackbarDuration.Short
+                    )
+                }
+            }
+        )
+
+        /** 주요 출연진 */
+        Spacer(Modifier.padding(vertical = 12.dp))
+        MFPostTitle(stringResource(R.string.title_credits))
+        MovieDetailListView(
+            MovieDetailListViewType.CREDIT,
+            movieCredit,
+            localContext,
+            null,
+            null,
+            null
+        )
+
+        /** 관련 영상 */
+        Spacer(Modifier.padding(vertical = 12.dp))
+        MFPostTitle(stringResource(R.string.title_videos))
+        MovieDetailListView(
+            MovieDetailListViewType.VIDEO,
+            movieVideo,
+            localContext,
+            isPlayerShown,
+            videoKey,
+            movieInfo?.posterPath,
+        )
+
+        /** 이 영화를 보고 싶은 사람 */
+        Spacer(Modifier.padding(vertical = 12.dp))
+        MFPostTitle(stringResource(R.string.title_user_want_this_movie))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            if(viewModel.userWantListState.value){
+                if(userWantList.isEmpty()){
+                    MFText(stringResource(id = R.string.no_data))
+                }else{
+                    val previewList = userWantList.take(2)
+                    Row(
+                        modifier = Modifier
+                            .weight(0.7f),
+                        horizontalArrangement = Arrangement.Start
+                    ) {
+                        previewList.forEach { item ->
+                            if(item != null){
+                                UserWantListItem(item.userInfo, item.userLocation)
+                            }
+                        }
+                    }
+                    MFButtonWidthResizable(
+                        { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
+                        stringResource(R.string.button_more),
+                        90.dp
+                    )
+                }
+            }else{
+                ShimmerEffect(modifier = Modifier.fillMaxWidth())
+            }
+        }
+
+        if(userWantBottomSheetState){
+            MFWantMovieBottomSheet(
+                dismissSheet = { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
+            )
+        }
+
+        /** 유저 평점 */
+        Spacer(Modifier.padding(vertical = 12.dp))
+        MFPostTitle(stringResource(R.string.title_user_rate))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            RatingBarView(
+                isRatingEditable = false,
+                rating = viewModel.mfAllUserMovieRatingState,
+                ratedStarsColor = FriendsRed,
+            )
+        }
+
+        MFButton({
+            viewModel.toggleRateModalState(navigateToLogin)
+        }, stringResource(R.string.button_user_rate))
+
+        if (rateModalState) {
+            RateModal(
+                dismissModal = { viewModel.toggleRateModalState(navigateToLogin) },
+                userRate = viewModel.userMovieRatingState,
+                voteUserRate = { star ->
+                    viewModel.voteUserRate(star, navigateToLogin)
+                }
+            )
+        }
+
+        /** 유저 리뷰 */
+        Spacer(Modifier.padding(vertical = 12.dp))
+        MFPostTitle(stringResource(R.string.title_user_review))
         Column(
             modifier = Modifier
-                .padding(innerPadding)
                 .padding(12.dp)
-                .fillMaxSize()
-                .verticalScroll(scrollState)
+                .fillMaxWidth()
+                .height(80.dp)
         ) {
-
-            /** 영화 정보 */
-            MovieDetailView(
-                movieItem = movieItem,
-                setMovieInfo = { movieInfo -> viewModel.setMovieInfo(movieInfo) },
-                context = localContext
-            )
-
-            /** 이 영화를 보고 싶다 */
-            Spacer(Modifier.padding(vertical = 4.dp))
-            MFButtonWantThisMovie(
-                clickEvent = {
-                    viewModel.changeWantThisMovieStateLoading()
-                    viewModel.changeStateWantThisMovie(localContext, navigateToLogin)
-                },
-                text = stringResource(R.string.button_want_this_movie),
-                isChecked = wantThisMovieState,
-                showErrorMessage = {
-                    coroutineScope.launch {
-                        snackBarHost.showSnackbar(
-                            localContext.getString(R.string.network_error),
-                            null,
-                            true,
-                            SnackbarDuration.Short
-                        )
-                    }
-                }
-            )
-
-            /** 주요 출연진 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_credits))
-            MovieDetailListView(
-                MovieDetailListViewType.CREDIT,
-                movieCredit,
-                localContext,
-                null,
-                null,
-                null
-            )
-
-            /** 관련 영상 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_videos))
-            MovieDetailListView(
-                MovieDetailListViewType.VIDEO,
-                movieVideo,
-                localContext,
-                isPlayerShown,
-                videoKey,
-                movieInfo?.posterPath,
-            )
-
-            /** 이 영화를 보고 싶은 사람 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_user_want_this_movie))
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                if(viewModel.userWantListState.value){
-                    if(userWantList.isEmpty()){
-                        MFText(stringResource(id = R.string.no_data))
+            when(val list = userReviewList){
+                APIResult.Loading -> CircularProgressIndicator()
+                is APIResult.Success -> {
+                    if(list.resultData.isEmpty()){
+                        MFText(stringResource(R.string.no_data))
                     }else{
-                        val previewList = userWantList.take(2)
-                        Row(
-                            modifier = Modifier
-                                .weight(0.7f),
-                            horizontalArrangement = Arrangement.Start
-                        ) {
-                            previewList.forEach { item ->
-                                if(item != null){
-                                    UserWantListItem(item.userInfo, item.userLocation)
-                                }
-                            }
-                        }
-                        MFButtonWidthResizable(
-                            { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
-                            stringResource(R.string.button_more),
-                            90.dp
-                        )
-                    }
-                }else{
-                    ShimmerEffect(modifier = Modifier.fillMaxWidth())
-                }
-            }
-
-            if(userWantBottomSheetState){
-                MFWantMovieBottomSheet(
-                    dismissSheet = { viewModel.toggleUserWantBottomSheetState(navigateToLogin) },
-                )
-            }
-
-            /** 유저 평점 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_user_rate))
-            Column(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                RatingBarView(
-                    isRatingEditable = false,
-                    rating = viewModel.mfAllUserMovieRatingState,
-                    ratedStarsColor = FriendsRed,
-                )
-            }
-
-            MFButton({
-                viewModel.toggleRateModalState(navigateToLogin)
-            }, stringResource(R.string.button_user_rate))
-
-            if (rateModalState) {
-                RateModal(
-                    dismissModal = { viewModel.toggleRateModalState(navigateToLogin) },
-                    userRate = viewModel.userMovieRatingState,
-                    voteUserRate = { star ->
-                        viewModel.voteUserRate(star, navigateToLogin)
-                    }
-                )
-            }
-
-            /** 유저 리뷰 */
-            Spacer(Modifier.padding(vertical = 12.dp))
-            MFPostTitle(stringResource(R.string.title_user_review))
-            Column(
-                modifier = Modifier
-                    .padding(12.dp)
-                    .fillMaxWidth()
-                    .height(80.dp)
-            ) {
-                when(val list = userReviewList){
-                    APIResult.Loading -> CircularProgressIndicator()
-                    is APIResult.Success -> {
-                        if(list.resultData.isEmpty()){
-                            MFText(stringResource(R.string.no_data))
-                        }else{
-                            list.resultData.take(3).forEach { item ->
-                                if(item != null)
-                                    MFText(
-                                        text = "${item.user.nickName}: ${item.content}",
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                            }
+                        list.resultData.take(3).forEach { item ->
+                            if(item != null)
+                                MFText(
+                                    text = "${item.user.nickName}: ${item.content}",
+                                    overflow = TextOverflow.Ellipsis
+                                )
                         }
                     }
-                    else -> MFText(stringResource(R.string.no_data))
                 }
+                else -> MFText(stringResource(R.string.no_data))
             }
-            MFButton({
-                viewModel.toggleReviewBottomSheetState()
-                viewModel.getUserReview()
-            }, stringResource(R.string.button_more_user_review))
+        }
+        MFButton({
+            viewModel.toggleReviewBottomSheetState()
+            viewModel.getUserReview()
+        }, stringResource(R.string.button_more_user_review))
 
-            if(reviewBottomSheetState){
-                MFReviewBottomSheet(
-                    dismissSheet= { viewModel.toggleReviewBottomSheetState() },
-                    insertUserReview = { content -> viewModel.insertUserReview(content) },
-                    deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
-                )
-            }
+        if(reviewBottomSheetState){
+            MFReviewBottomSheet(
+                dismissSheet= { viewModel.toggleReviewBottomSheetState() },
+                insertUserReview = { content -> viewModel.insertUserReview(content) },
+                deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
+            )
         }
     }
     if(isPlayerShown.value){

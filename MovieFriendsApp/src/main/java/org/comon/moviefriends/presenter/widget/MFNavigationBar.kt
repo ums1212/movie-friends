@@ -10,7 +10,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
@@ -20,6 +19,7 @@ import org.comon.moviefriends.presenter.screen.profile.ProfileType
 
 @Composable
 fun MFNavigationBar(
+    currentRoute: String?,
     selectedItem: IntState,
     navigateToLogin: () -> Unit,
     hideCommunityTabMenu: () -> Unit,

@@ -11,11 +11,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.presenter.common.checkCommunityTabItemNeedLogin
 
 @Composable
 fun CommunityTab(
@@ -56,11 +56,9 @@ fun clickCommunityTab(
     index: Int,
     navigateToCommunityMenu: (String, Int) -> Unit
 ){
-    if(user==null){
-        if(route == COMMUNITY_MENU.WATCH_TOGETHER.route || route == COMMUNITY_MENU.RECOMMEND.route){
-            navigateToLogin()
-            return
-        }
+    if(checkCommunityTabItemNeedLogin(route, user)){
+        navigateToLogin()
+        return
     }
     navigateToCommunityMenu(route, index)
 }

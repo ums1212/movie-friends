@@ -12,11 +12,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,35 +25,27 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.comon.moviefriends.common.FullScreenNavRoute
+import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.presenter.screen.intro.LoginScreen
-import org.comon.moviefriends.common.NAV_ROUTE
-import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.common.collectFlowInActivity
-import org.comon.moviefriends.presenter.screen.community.ChatRoomListScreen
-import org.comon.moviefriends.presenter.screen.home.MovieDetailScreen
-import org.comon.moviefriends.presenter.screen.profile.ProfileSettingScreen
-import org.comon.moviefriends.presenter.screen.community.PostDetailScreen
-import org.comon.moviefriends.presenter.screen.intro.ScaffoldScreen
-import org.comon.moviefriends.presenter.screen.intro.SearchScreen
-import org.comon.moviefriends.presenter.screen.intro.SubmitNickNameScreen
-import org.comon.moviefriends.presenter.screen.community.WritePostScreen
-import org.comon.moviefriends.presenter.theme.FriendsBlack
+import org.comon.moviefriends.presenter.common.checkScreenNeedBottomBar
+import org.comon.moviefriends.presenter.common.checkScreenNeedTopBar
+import org.comon.moviefriends.presenter.navigation.MovieFriendsNavigation
 import org.comon.moviefriends.presenter.theme.MovieFriendsTheme
-import org.comon.moviefriends.presenter.viewmodel.JoinType
+import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
+import org.comon.moviefriends.presenter.widget.MFNavigationBar
+import org.comon.moviefriends.presenter.widget.MFTopAppBar
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -110,7 +102,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private val startDestination = mutableStateOf(NAV_ROUTE.LOGIN.route)
+    private val startDestination = mutableStateOf(IntroNavRoute.Login.route)
 
     private fun checkLogin(startDestination: MutableState<String>, loginViewModel: LoginViewModel){
         lifecycleScope.launch {
@@ -118,16 +110,14 @@ class MainActivity : ComponentActivity() {
                 when(result){
                     is LoginResult.Loading -> Log.d("checkLogin", "로그인여부확인로딩")
                     is LoginResult.Success -> {
-                        Log.d("checkLogin", "로그인여부확인")
                         if(result.resultData) {
-                            startDestination.value = NAV_ROUTE.SCAFFOLD.route
+                            startDestination.value = ScaffoldNavRoute.Home.route
                         }else{
-                            startDestination.value = NAV_ROUTE.LOGIN.route
+                            startDestination.value = IntroNavRoute.Login.route
                         }
                     }
                     else -> {
-                        Log.d("checkLogin", "로그인여부실패")
-                        startDestination.value = NAV_ROUTE.LOGIN.route
+                        startDestination.value = IntroNavRoute.Login.route
                     }
                 }
             }
@@ -148,130 +138,78 @@ class MainActivity : ComponentActivity() {
             }
             val selectedCommunityTabItem = remember { mutableIntStateOf(0) }
             val isCommunityTabMenuShown = remember { mutableStateOf(false) }
+            val navBackStackEntry by navController.currentBackStackEntryAsState()
+            val currentRoute = navBackStackEntry?.destination?.route
+            val postViewModel: CommunityPostViewModel = hiltViewModel()
 
-            Box(modifier = Modifier
-                .background(FriendsBlack)
-                .fillMaxSize()){
-                NavHost(navController = navController, startDestination = startDestination.value) {
-                    /** 로그인 화면 */
-                    composable(NAV_ROUTE.LOGIN.route) {
-                        LoginScreen(
-                            { navController.navigate(NAV_ROUTE.SCAFFOLD.route) },
-                            { user, joinType ->
-                                when(joinType){
-                                    JoinType.KAKAO.str -> {
-                                        val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
-                                        navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}/${user?.displayName}/${encodedUrl}/${joinType}")
-                                    }
-                                    JoinType.GOOGLE.str -> {
-                                        val encodedUrl = URLEncoder.encode(user?.photoUrl.toString(), StandardCharsets.UTF_8.toString())
-                                        navController.navigate("${NAV_ROUTE.SUBMIT_NICKNAME.route}/${user?.uid}//${encodedUrl}/${joinType}")
-                                    }
-                                }
-
-                            }
-                        )
-                    }
-                    /** 닉네임 입력 화면 */
-                    composable(
-                        route = "${NAV_ROUTE.SUBMIT_NICKNAME.route}/{uid}/{nickname}/{photoUrl}/{joinType}",
-                        arguments = listOf(
-                            navArgument("uid") {
-                                type = NavType.StringType
-                            },
-                            navArgument("nickname") {
-                                type = NavType.StringType
-                            },
-                            navArgument("photoUrl") {
-                                type = NavType.StringType
-                            },
-                            navArgument("joinType") {
-                                type = NavType.StringType
-                            }
-                        )
-                    ) { backStackEntry ->
-                        SubmitNickNameScreen(
-                            uid = backStackEntry.arguments?.getString("uid")?:"",
-                            nickname = backStackEntry.arguments?.getString("nickname")?:"",
-                            photoUrl = backStackEntry.arguments?.getString("photoUrl")?:"",
-                            joinType = backStackEntry.arguments?.getString("joinType")?:"",
-                            moveToScaffoldScreen = { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
-                        )
-                    }
-                    /** 메인 화면 */
-                    composable(NAV_ROUTE.SCAFFOLD.route) {
-                        ScaffoldScreen(
-                            mainNavController = navController,
-                            selectedBottomMenuItem = selectedBottomMenuItem,
+            Scaffold(
+                modifier = Modifier
+                    .fillMaxSize(),
+                topBar = {
+                    if(checkScreenNeedTopBar(currentRoute)){
+                        MFTopAppBar(
+                            currentRoute ?: ScaffoldNavRoute.Home.route,
                             selectedCommunityTabItem = selectedCommunityTabItem,
                             isCommunityTabMenuShown = isCommunityTabMenuShown,
-                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) } ,
-                            fromFCMRoute = fromFCMRoute2,
+                            navigatePop =  { navController.popBackStack() },
+                            navigateToCommunityMenu = { route ->
+                                navController.navigate(route)
+                            },
+                            navigateToSearch = {
+                                navController.navigate(FullScreenNavRoute.Search.route)
+                            },
+                            navigateToPostDetail = { postId ->
+                                navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}"){
+                                    popUpTo(FullScreenNavRoute.WritePost.route){ inclusive = true }
+                                }
+                            },
+                            navigateToProfileSetting = {
+                                navController.navigate(FullScreenNavRoute.ProfileSetting.route)
+                            },
+                            navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
+                            postViewModel = postViewModel
                         )
                     }
-                    /** 검색 화면 */
-                    composable(NAV_ROUTE.SEARCH.route) {
-                        SearchScreen { navController.navigate(NAV_ROUTE.SCAFFOLD.route) }
-                    }
-                    /** 영화 상세 정보 화면 */
-                    composable(
-                        route = "${NAV_ROUTE.MOVIE_DETAIL.route}/{movieId}",
-                        arguments = listOf(
-                            navArgument("movieId"){
-                                type = NavType.IntType
+                },
+                bottomBar = {
+                    if(checkScreenNeedBottomBar(currentRoute)){
+                        MFNavigationBar(
+                            currentRoute = currentRoute,
+                            selectedItem = selectedBottomMenuItem,
+                            navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
+                            hideCommunityTabMenu = {
+                                isCommunityTabMenuShown.value = false
+                            },
+                            navigateToMenu = { route, index ->
+                                selectedBottomMenuItem.intValue = index
+                                navController.navigate(route) {
+                                    // 메뉴를 선택할 때 스택에 쌓이지 않도록
+                                    navController.graph.startDestinationRoute?.let {
+                                        popUpTo(it) {
+                                            saveState = true
+                                        }
+                                    }
+                                    // 같은 화면이 여러개 생기지 않도록 하나의 화면을 선택하게 함
+                                    launchSingleTop = true
+                                    // 이전 화면을 다시 선택했을 때 이전 화면의 상태를 재사용
+                                    restoreState = true
+                                }
                             }
                         )
-                    ) { backStackEntry ->
-                        MovieDetailScreen(
-                            movieId = backStackEntry.arguments?.getInt("movieId") ?: 0,
-                            navigatePop = { navController.popBackStack() },
-                            navigateToLogin = { navController.navigate(NAV_ROUTE.LOGIN.route) }
-                        )
                     }
-                    /** 커뮤니티 상세글 화면 */
-                    composable("${NAV_ROUTE.COMMUNITY_DETAIL.route}/{postId}") { backStackEntry ->
-                        PostDetailScreen(
-                            postId = backStackEntry.arguments?.getString("postId") ?: "",
-                            navigatePop = { navController.popBackStack() },
-                        )
-                    }
-                    /** 커뮤니티 글작성 화면 */
-                    composable(NAV_ROUTE.WRITE_POST.route) {
-                        WritePostScreen(
-                            navigateToPostDetail = { postId ->
-                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}"){
-                                    popUpTo(NAV_ROUTE.COMMUNITY_DETAIL.route){ inclusive = true}
-                                }
-                            },
-                            navigatePop = { navController.popBackStack() },
-                            postId = null
-                        )
-                    }
-                    /** 커뮤니티 글수정 화면 */
-                    composable("${NAV_ROUTE.WRITE_POST.route}/{postId}") { backStackEntry ->
-                        val postId = backStackEntry.arguments?.getString("postId") ?: ""
-                        WritePostScreen(
-                            navigateToPostDetail = {
-                                navController.navigate("${NAV_ROUTE.COMMUNITY_DETAIL.route}/${postId}"){
-                                    popUpTo(NAV_ROUTE.COMMUNITY_DETAIL.route){ inclusive = true}
-                                }
-                            },
-                            navigatePop = { navController.popBackStack() },
-                            postId = postId
-                        )
-                    }
-                    /** 커뮤니티 채팅방 화면 */
-                    composable(WATCH_TOGETHER_MENU.CHAT_ROOM_LIST.route) {
-                        ChatRoomListScreen()
-                    }
-                    /** 프로필 수정 화면 */
-                    composable(NAV_ROUTE.PROFILE_SETTING.route) {
-                        ProfileSettingScreen()
-                    }
-                }
+                },
+            ) { innerPadding ->
+                MovieFriendsNavigation(
+                    navController = navController,
+                    startDestination = startDestination.value,
+                    innerPadding = innerPadding,
+                    postViewModel = postViewModel,
+                )
             }
-
-
+//            Box(modifier = Modifier
+//                .background(FriendsBlack)
+//                .fillMaxSize()){
+//            }
         }
     }
 

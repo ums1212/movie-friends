@@ -17,18 +17,18 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
-import org.comon.moviefriends.common.COMMUNITY_MENU
-import org.comon.moviefriends.common.NAV_ROUTE
-import org.comon.moviefriends.common.PROFILE_MENU
-import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
+import org.comon.moviefriends.common.FullScreenNavRoute
+import org.comon.moviefriends.common.ScaffoldNavRoute
+import org.comon.moviefriends.presenter.common.checkTopBarNeedCommunityMenuButton
+import org.comon.moviefriends.presenter.common.checkTopBarNeedNavigationIcon
+import org.comon.moviefriends.presenter.common.checkTopBarNeedSearchButton
+import org.comon.moviefriends.presenter.common.checkTopBarNeedTitle
+import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,11 +39,11 @@ fun MFTopAppBar(
     navigatePop: () -> Unit,
     navigateToCommunityMenu: (String) -> Unit,
     navigateToSearch: () -> Unit,
-    confirmPost: () -> Unit,
+    navigateToPostDetail: (String) -> Unit,
     navigateToProfileSetting: () -> Unit,
     navigateToLogin: () -> Unit,
+    postViewModel: CommunityPostViewModel
 ) {
-    val isTabMenuShown = remember { mutableStateOf(false) }
 
     Column {
         TopAppBar(
@@ -52,12 +52,7 @@ fun MFTopAppBar(
                 titleContentColor = colorResource(R.color.friends_black),
             ),
             title = {
-                if(
-                    !route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
-                    && !route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
-                    && !PROFILE_MENU.entries.any { route.contains(it.route) }
-                    && !WATCH_TOGETHER_MENU.entries.any { route.contains(it.route)}
-                    ) {
+                if(checkTopBarNeedTitle(route)) {
                     Image(
                         modifier = Modifier
                             .size(width = 50.dp, height = 50.dp),
@@ -67,12 +62,7 @@ fun MFTopAppBar(
                 }
             },
             navigationIcon = {
-                if(route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route)
-                    || route.contains(NAV_ROUTE.MOVIE_DETAIL.route)
-                    || route.contains(NAV_ROUTE.WRITE_POST.route)
-                    || WATCH_TOGETHER_MENU.entries.any { route.contains(it.route)}
-                    || PROFILE_MENU.entries.any { route.contains(it.route)  }
-                ) {
+                if(checkTopBarNeedNavigationIcon(route)) {
                     IconButton(
                         onClick = navigatePop
                     ) {
@@ -85,7 +75,7 @@ fun MFTopAppBar(
                 }
             },
             actions = {
-                if(route.contains(NAV_ROUTE.COMMUNITY_DETAIL.route) || COMMUNITY_MENU.entries.any { route.contains(it.route)  }){
+                if(checkTopBarNeedCommunityMenuButton(route)){
                     /** 커뮤니티 메뉴 버튼 */
                     IconButton(
                         onClick = {
@@ -99,14 +89,8 @@ fun MFTopAppBar(
                         )
                     }
                 }
-                if(route== NAV_ROUTE.HOME.route
-                    || route== NAV_ROUTE.MOVIE_DETAIL.route
-                    || route== NAV_ROUTE.COMMUNITY.route
-                    || route== NAV_ROUTE.COMMUNITY_DETAIL.route
-                    || route== COMMUNITY_MENU.WATCH_TOGETHER.route
-                    || route== COMMUNITY_MENU.RECOMMEND.route
-                    || route== COMMUNITY_MENU.WORLD_CUP.route
-                    ){
+
+                if(checkTopBarNeedSearchButton(route)) {
                     /** 검색 버튼 */
                     IconButton(
                         onClick = navigateToSearch
@@ -119,12 +103,18 @@ fun MFTopAppBar(
                     }
                 }
 
-
-
-                if(route== NAV_ROUTE.WRITE_POST.route){
+                if(route== FullScreenNavRoute.WritePost.route){
                     /** 글 작성 버튼 */
                     IconButton(
-                        onClick = confirmPost,
+                        onClick = {
+                            if(postViewModel.isUpdate.value){
+                                postViewModel.updatePost()
+                            }else{
+                                postViewModel.insertPost{ postId ->
+                                    navigateToPostDetail(postId)
+                                }
+                            }
+                        },
                     ) {
                         Icon(
                             Icons.Filled.Check,
@@ -134,7 +124,7 @@ fun MFTopAppBar(
                     }
                 }
 
-                if(route.contains(NAV_ROUTE.PROFILE.route)){
+                if(route == ScaffoldNavRoute.Profile.route){
                     /** 프로필 변경 버튼 */
                     IconButton(
                         onClick = navigateToProfileSetting,

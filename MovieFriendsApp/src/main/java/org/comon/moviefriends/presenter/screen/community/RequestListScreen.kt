@@ -74,7 +74,7 @@ fun RequestListScreen(
             .fillMaxWidth()
             .background(FriendsBlack),
     ) {
-        MFPostTitle(text = stringResource(R.string.label_request_list))
+        MFPostTitle(text = stringResource(R.string.label_request_list), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         SnackbarHost(hostState = snackBarHost)

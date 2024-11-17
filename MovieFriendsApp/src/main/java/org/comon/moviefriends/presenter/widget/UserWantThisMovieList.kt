@@ -10,22 +10,17 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -34,8 +29,7 @@ import coil3.request.error
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.QuerySnapshot
 import org.comon.moviefriends.R
-import org.comon.moviefriends.common.COMMUNITY_MENU
-import org.comon.moviefriends.common.showSnackBar
+import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
@@ -68,7 +62,7 @@ fun UserWantThisMovieList(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ){
-                        if(screen==COMMUNITY_MENU.WATCH_TOGETHER.route){
+                        if(screen==ScaffoldNavRoute.WatchTogether.route){
                             Card(
                                 modifier = Modifier
                                     .width(80.dp)
