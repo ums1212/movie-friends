@@ -1,7 +1,12 @@
 package org.comon.moviefriends.presenter.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -39,7 +44,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         SearchScreen(navigatePop = { navController.popBackStack() })
@@ -63,7 +68,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) { backStackEntry ->
         MovieDetailScreen(
@@ -78,15 +83,15 @@ fun NavGraphBuilder.fullScreenGraph(
         route = "${FullScreenNavRoute.CommunityDetail.route}/{postId}",
         enterTransition = {
             slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Up,
+                AnimatedContentTransitionScope.SlideDirection.Left,
                 animationSpec = tween(700)
             )
         },
         exitTransition = {
             slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Down,
+                AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) { backStackEntry ->
         PostDetailScreen(
@@ -107,7 +112,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         WritePostScreen(postId = null, viewModel = postViewModel)
@@ -126,7 +131,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) { backStackEntry ->
         val postId = backStackEntry.arguments?.getString("postId") ?: ""
@@ -146,7 +151,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ChatRoomListScreen()
@@ -165,7 +170,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileSettingScreen()
@@ -184,7 +189,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileWantMovieScreen(
@@ -205,7 +210,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileRateScreen()
@@ -224,7 +229,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileReviewScreen()
@@ -243,7 +248,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileCommunityPostScreen{ postId ->
@@ -264,7 +269,7 @@ fun NavGraphBuilder.fullScreenGraph(
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ProfileCommunityReplyScreen{ postId ->

@@ -14,8 +14,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -56,14 +58,16 @@ fun ProfileReviewScreen() {
 //    OnDevelopMark()
     val pagerState = rememberPagerState(0, pageCount = { 10 })
     val animationScope = rememberCoroutineScope()
+    val scrollState = rememberScrollState()
 
 //    OnDevelopMark()
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(12.dp),
+            .padding(12.dp)
+            .verticalScroll(scrollState),
     ) {
-        MFPostTitle(stringResource(R.string.button_profile_review))
+        MFPostTitle(stringResource(R.string.button_profile_review), modifier = Modifier.padding(8.dp))
         Spacer(Modifier.padding(vertical = 16.dp))
         Row(
             modifier = Modifier

@@ -62,7 +62,7 @@ fun ProfileRateScreen() {
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        MFPostTitle(stringResource(R.string.button_profile_rate))
+        MFPostTitle(stringResource(R.string.button_profile_rate), modifier = Modifier.padding(8.dp))
         Spacer(Modifier.padding(vertical = 16.dp))
         Row(
             modifier = Modifier

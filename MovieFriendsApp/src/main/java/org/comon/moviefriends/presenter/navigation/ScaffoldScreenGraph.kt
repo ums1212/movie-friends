@@ -2,6 +2,7 @@ package org.comon.moviefriends.presenter.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -27,7 +28,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         HomeScreen { movieId ->
@@ -42,7 +43,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         CommunityScreen(
@@ -61,7 +62,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         WatchTogetherScreen(
@@ -87,7 +88,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         RequestListScreen(
@@ -108,7 +109,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Down,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         ReceiveListScreen(
@@ -123,7 +124,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         RecommendScreen()
@@ -136,7 +137,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) {
         WorldCupScreen()
@@ -154,7 +155,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             slideOutOfContainer(
                 AnimatedContentTransitionScope.SlideDirection.Right,
                 animationSpec = tween(700)
-            )
+            ) + fadeOut()
         },
     ) { backStackEntry ->
         ProfileScreen(

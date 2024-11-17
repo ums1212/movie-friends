@@ -27,13 +27,13 @@ sealed class ScaffoldNavRoute(val route: String){
     data object ReceiveList: ScaffoldNavRoute("receive_list")
     data object MovieRecommend: ScaffoldNavRoute("movie_recommend")
     data object MovieWorldCup: ScaffoldNavRoute("movie_world_cup")
-    data object Profile: ScaffoldNavRoute("profile")
+    data object Profile: ScaffoldNavRoute("user_profile")
 }
 
 enum class NAV_MENU(val route: String, val description: String){
     HOME("home", "홈"),
     COMMUNITY("community", "커뮤니티"),
-    PROFILE("profile", "내 정보"),
+    PROFILE("user_profile", "내 정보"),
 }
 
 enum class COMMUNITY_MENU(val route: String, val description: String){

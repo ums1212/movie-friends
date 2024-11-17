@@ -18,7 +18,9 @@ fun ProfileCommunityPostScreen(
     moveToCommunityDetailScreen: (String) -> Unit,
 ) {
 //    OnDevelopMark()
-    Column {
+    Column(
+        modifier = Modifier.padding(12.dp)
+    ) {
         MFPostTitle(stringResource(R.string.button_profile_community_write))
         Spacer(Modifier.padding(vertical = 12.dp))
         CommunityList { postId ->

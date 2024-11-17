@@ -68,7 +68,7 @@ fun ProfileWantMovieScreen(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        MFPostTitle(stringResource(R.string.button_profile_want_movie))
+        MFPostTitle(stringResource(R.string.button_profile_want_movie), modifier = Modifier.padding(8.dp))
         Spacer(Modifier.padding(vertical = 16.dp))
         Row(
             modifier = Modifier

@@ -1,5 +1,8 @@
 package org.comon.moviefriends.presenter.navigation
 
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -15,7 +18,15 @@ import java.nio.charset.StandardCharsets
 
 fun NavGraphBuilder.introGraph(navController: NavHostController){
     /** 로그인 화면 */
-    composable(IntroNavRoute.Login.route) {
+    composable(
+        route = IntroNavRoute.Login.route,
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            ) + fadeOut()
+        },
+    ) {
         LoginScreen(
             moveToScaffoldScreen = { navController.navigate(ScaffoldNavRoute.Home.route) },
             moveToSubmitNickNameScreen = { user, joinType ->
@@ -41,7 +52,13 @@ fun NavGraphBuilder.introGraph(navController: NavHostController){
             navArgument("nickname") { type = NavType.StringType },
             navArgument("photoUrl") { type = NavType.StringType },
             navArgument("joinType") { type = NavType.StringType }
-        )
+        ),
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Left,
+                animationSpec = tween(700)
+            ) + fadeOut()
+        },
     ) { backStackEntry ->
         SubmitNickNameScreen(
             uid = backStackEntry.arguments?.getString("uid")?:"",
