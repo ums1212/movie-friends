@@ -3,7 +3,6 @@ package org.comon.moviefriends.presenter.widget
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
@@ -27,7 +26,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -221,6 +220,39 @@ fun MFButtonWidthResizable(clickEvent: () -> Unit, text: String, width: Dp) {
         )
     ) {
         Text(text)
+    }
+}
+
+@Composable
+fun MFButtonAddReply(insertState: State<APIResult<Boolean>>, showErrorSnackBar: () -> Unit, clickEvent: () -> Unit) {
+    Button(
+        shape = RoundedCornerShape(25),
+        onClick = clickEvent,
+        modifier = Modifier
+            .width(80.dp),
+        border = BorderStroke(1.dp, FriendsTextGrey),
+        colors = ButtonColors(
+            containerColor = FriendsBoxGrey,
+            contentColor = White,
+            disabledContainerColor = Color.Gray,
+            disabledContentColor = Color.LightGray
+        ),
+        contentPadding = PaddingValues(
+            start = 2.dp,
+            top = 2.dp,
+            end = 2.dp,
+            bottom = 2.dp,
+        )
+    ) {
+        when(insertState.value){
+            APIResult.Loading -> CircularProgressIndicator(Modifier.size(24.dp))
+            is APIResult.NetworkError -> {
+                showErrorSnackBar()
+                Text("등록")
+            }
+            else -> Text("등록")
+        }
+
     }
 }
 

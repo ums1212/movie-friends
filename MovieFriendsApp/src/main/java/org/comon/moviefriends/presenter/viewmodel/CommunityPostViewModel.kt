@@ -203,10 +203,14 @@ class CommunityPostViewModel @Inject constructor (
         }
     }
 
-    fun insertReply() {
+    fun insertReply(reply: String) {
         viewModelScope.launch {
-            val reply = ReplyInfo()
-            repository.insertReply(reply).collectLatest {
+            val replyInfo = ReplyInfo(
+                postId = _postId.value,
+                user = _user?: return@launch,
+                content = reply,
+            )
+            repository.insertReply(_postId.value, replyInfo).collectLatest {
                 _insertReplyState.emit(it)
             }
         }
@@ -214,8 +218,29 @@ class CommunityPostViewModel @Inject constructor (
 
     fun deleteReply(replyId: String) {
         viewModelScope.launch {
-            repository.deleteReply(replyId).collectLatest {
+            repository.deleteReply(_postId.value, replyId).collectLatest {
                 _deleteReplyState.emit(it)
+            }
+        }
+    }
+
+    fun getReplyList() {
+        viewModelScope.launch {
+            repository.getReplyList(_postId.value).collectLatest { result ->
+                when(result){
+                    APIResult.Loading -> _getAllReplyState.emit(APIResult.Loading)
+                    is APIResult.NetworkError -> _getAllReplyState.emit(result)
+                    is APIResult.Success -> {
+                        result.resultData.addSnapshotListener { value, error ->
+                            if(error!=null) _getAllReplyState.value = APIResult.NetworkError(error)
+                            val post = value?.toObject(PostInfo::class.java)
+                            post?.reply?.let { reply ->
+                                _getAllReplyState.value =APIResult.Success(reply)
+                            }
+                        }
+                    }
+                    else -> {}
+                }
             }
         }
     }
@@ -223,7 +248,7 @@ class CommunityPostViewModel @Inject constructor (
     fun getALLReply() {
         viewModelScope.launch {
             repository.getALLReply(_postId.value).collectLatest {
-                _getAllReplyState.emit(it)
+//                _getAllReplyState.emit(it)
             }
         }
     }

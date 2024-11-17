@@ -57,6 +57,9 @@ fun getTimeDiff(time : Long): String {
         for (i in TimeValue.entries) {
             diffTime /= i.value
             if (diffTime < i.maximum) {
+                if(i==TimeValue.DATE_FORMAT){
+                    return getDateString(time)
+                }
                 msg="$diffTime ${i.msg}"
                 break
             }
@@ -68,9 +71,7 @@ fun getTimeDiff(time : Long): String {
 enum class TimeValue(val value: Int,val maximum : Int, val msg : String) {
     SEC(60,60,"분 전"),
     MIN(60,24,"시간 전"),
-    HOUR(24,30,"일 전"),
-    DAY(30,12,"달 전"),
-    MONTH(12,Int.MAX_VALUE,"년 전")
+    DATE_FORMAT(24,Int.MAX_VALUE,""),
 }
 
 fun getDateString(seconds : Long): String {

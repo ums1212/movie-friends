@@ -1,6 +1,7 @@
 package org.comon.moviefriends.domain.repo
 
 import android.net.Uri
+import com.google.firebase.firestore.DocumentReference
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.LikeInfo
@@ -27,9 +28,11 @@ interface CommunityPostRepository {
 
     suspend fun changePostLikeState(postId: String, userInfo: UserInfo): Flow<APIResult<LikeInfo>>
 
-    suspend fun insertReply(replyInfo: ReplyInfo): Flow<APIResult<Boolean>>
+    suspend fun insertReply(postId: String, replyInfo: ReplyInfo): Flow<APIResult<Boolean>>
 
-    suspend fun deleteReply(replyId: String): Flow<APIResult<Boolean>>
+    suspend fun deleteReply(postId: String, replyId: String): Flow<APIResult<Boolean>>
 
-    suspend fun getALLReply(postId: String): Flow<APIResult<List<ReplyInfo?>>>
+    suspend fun getReplyList(postId: String): Flow<APIResult<DocumentReference>>
+
+    suspend fun getALLReply(userId: String): Flow<APIResult<List<ReplyInfo?>>>
 }

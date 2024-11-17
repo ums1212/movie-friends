@@ -30,7 +30,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,19 +50,21 @@ import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.getDateString
+import org.comon.moviefriends.common.getTimeDiff
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.widget.DetailTopAppBar
-import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
+import org.comon.moviefriends.presenter.widget.MFButtonAddReply
+import org.comon.moviefriends.presenter.widget.MFPostCategory
+import org.comon.moviefriends.presenter.widget.MFPostDate
 import org.comon.moviefriends.presenter.widget.MFPostReply
+import org.comon.moviefriends.presenter.widget.MFPostReplyDate
 import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFPostView
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.ShimmerEffect
 
@@ -81,6 +82,7 @@ fun PostDetailScreen(
         viewModel.addViewCount()
         viewModel.getPost()
         viewModel.getPostLikeState()
+        viewModel.getReplyList()
     }
 
     val scrollState = rememberScrollState()
@@ -89,19 +91,7 @@ fun PostDetailScreen(
     val localContext = LocalContext.current
     val post = viewModel.postState.collectAsStateWithLifecycle()
     val like = viewModel.postLikeState.collectAsStateWithLifecycle()
-
-    val dummyList = remember { mutableStateListOf(
-        ReplyInfo(content = "댓글 놀이 1등"),
-        ReplyInfo(content = "댓글 놀이 2등"),
-        ReplyInfo(content = "댓글 놀이 3등"),
-        ReplyInfo(content = "댓글 놀이 4등"),
-        ReplyInfo(content = "댓글 놀이 5등"),
-        ReplyInfo(content = "댓글 놀이 6등"),
-        ReplyInfo(content = "댓글 놀이 7등"),
-        ReplyInfo(content = "댓글 놀이 8등"),
-        ReplyInfo(content = "댓글 놀이 9등"),
-        ReplyInfo(content = "댓글 놀이 10등"),
-    ) }
+    val reply = viewModel.getAllReplyState.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -122,8 +112,10 @@ fun PostDetailScreen(
                             showSnackBar(coroutineScope, snackBarHost, localContext)
                             return@Column
                         }
+                        MFPostCategory(postResult.resultData.category)
+                        Spacer(Modifier.padding(vertical = 8.dp))
                         MFPostTitle(postResult.resultData.title)
-                        MFPostView(
+                        MFPostDate(
                             text = getDateString(postResult.resultData.createdDate.seconds),
                             modifier = Modifier.padding(end = 8.dp)
                         )
@@ -253,12 +245,14 @@ fun PostDetailScreen(
                                         }
                                     }
                                 )
-                                MFButtonWidthResizable({
-                                    if(replyValue.isNotEmpty()){
-                                        dummyList.add(ReplyInfo(user = user, content = replyValue))
+                                MFButtonAddReply(
+                                    insertState = viewModel.insertReplyState.collectAsStateWithLifecycle(),
+                                    showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) },
+                                    clickEvent = {
+                                        viewModel.insertReply(replyValue)
                                         replyValue = ""
                                     }
-                                }, "등록", 80.dp)
+                                )
                             }
                             HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                         }
@@ -271,48 +265,58 @@ fun PostDetailScreen(
                 }
 
                 Spacer(Modifier.padding(vertical = 8.dp))
-                MFPostTitle("댓글 ${if(dummyList.size==0) "없음" else "(${dummyList.size})"}")
-                Spacer(Modifier.padding(vertical = 8.dp))
-                Column {
-                    dummyList.forEach { item ->
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            // 유저 프로필
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .size(36.dp)
-                                        .padding(end = 4.dp),
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(item.user.profileImage)
-                                        .crossfade(true)
-                                        .error(R.drawable.logo)
-                                        .build(),
-                                    contentDescription = "회원 프로필 사진",
-                                )
-                                Column {
-                                    MFText("유저 ${item.user.id}")
-                                }
-                            }
-                            if(user!=null && user.id == item.user.id){
-                                // 삭제 버튼
-                                IconButton(
-                                    onClick = { dummyList.remove(item) },
+                when(val postResult = reply.value){
+                    APIResult.Loading -> ShimmerEffect(Modifier.fillMaxWidth().height(80.dp))
+                    is APIResult.Success -> {
+                        MFPostTitle("댓글 ${if(postResult.resultData.isEmpty()) "없음" else "(${postResult.resultData.size})"}")
+                        Spacer(Modifier.padding(vertical = 8.dp))
+                        if(postResult.resultData.isEmpty()) return@Column
+                        Column(Modifier.fillMaxWidth()) {
+                            postResult.resultData.forEach{ reply ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Icon(Icons.Filled.Clear, "삭제")
+                                    // 유저 프로필
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        AsyncImage(
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .padding(end = 4.dp),
+                                            model = ImageRequest.Builder(LocalContext.current)
+                                                .data(reply?.user?.profileImage)
+                                                .crossfade(true)
+                                                .error(R.drawable.logo)
+                                                .build(),
+                                            contentDescription = "회원 프로필 사진",
+                                        )
+                                        Column {
+                                            MFText(reply?.user?.nickName ?: "정보 없음")
+                                        }
+                                    }
+                                    if(user!=null && user.id == reply?.user?.id){
+                                        // 삭제 버튼
+                                        IconButton(
+                                            onClick = { viewModel.deleteReply(reply.id) },
+                                        ) {
+                                            Icon(Icons.Filled.Clear, "삭제")
+                                        }
+                                    }
                                 }
+                                Spacer(Modifier.padding(vertical = 8.dp))
+                                MFPostReply(reply?.content ?: "정보 없음")
+                                Spacer(Modifier.padding(vertical = 8.dp))
+                                MFPostReplyDate(getTimeDiff(reply?.createdDate?.seconds ?: 0))
+                                HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                             }
                         }
-                        MFPostReply(item.content)
-                        Spacer(Modifier.padding(vertical = 8.dp))
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                     }
+                    else -> {}
                 }
+
             }
         }
     }

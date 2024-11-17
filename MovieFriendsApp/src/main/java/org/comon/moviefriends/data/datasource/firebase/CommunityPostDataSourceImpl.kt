@@ -149,29 +149,50 @@ class CommunityPostDataSourceImpl @Inject constructor (
         emit(APIResult.NetworkError(it))
     }
 
-    override suspend fun insertReply(replyInfo: ReplyInfo) = flow {
+    override suspend fun insertReply(postId: String, replyInfo: ReplyInfo) = flow {
         emit(APIResult.Loading)
-        db.collection("post_reply").add(replyInfo).await()
+        val postSnapshot = db.collection("post").whereEqualTo("id", postId).get().await().documents.first()
+        val replyList = postSnapshot.toObject(PostInfo::class.java)?.reply?.toMutableList()
+        replyList?.add(replyInfo)
+        postSnapshot.reference.update("reply", replyList).await()
         emit(APIResult.Success(true))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
 
-    override suspend fun deleteReply(replyId: String) = flow {
+    override suspend fun deleteReply(postId: String, replyId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post_reply").whereEqualTo("id", replyId).get().await()
-        querySnapshot.documents.first().reference.delete().await()
+        val postSnapshot = db.collection("post").whereEqualTo("id", postId).get().await().documents.first()
+        val replyList = postSnapshot.toObject(PostInfo::class.java)?.reply?.toMutableList()
+        replyList?.removeIf { it.id == replyId }
+        postSnapshot.reference.update("reply", replyList).await()
         emit(APIResult.Success(true))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
 
-    override suspend fun getALLReply(postId: String) = flow {
+    override suspend fun getReplyList(postId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post_reply").orderBy("createdDate", Query.Direction.ASCENDING).get().await()
-        val list = querySnapshot.toObjects(ReplyInfo::class.java)
-        emit(APIResult.Success(list))
+        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val reference = querySnapshot.documents.first().reference
+        emit(APIResult.Success(reference))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
+
+    override suspend fun getALLReply(userId: String) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("post").orderBy("createdDate", Query.Direction.DESCENDING).get().await()
+        val postList = querySnapshot.toObjects(PostInfo::class.java)
+        val replyList = mutableListOf<ReplyInfo>()
+        val postListHasReplyList = postList
+            .filter { post -> post.reply.find { reply -> reply.user.id == userId } != null }
+        postListHasReplyList.forEach {
+            replyList.addAll(it.reply.filter { reply -> reply.user.id == userId })
+        }
+        emit(APIResult.Success(replyList))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
 }

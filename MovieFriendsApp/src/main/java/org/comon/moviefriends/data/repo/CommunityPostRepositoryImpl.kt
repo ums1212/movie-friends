@@ -42,12 +42,15 @@ class CommunityPostRepositoryImpl @Inject constructor (
         userInfo: UserInfo
     ) = fs.changePostLikeState(postId, userInfo)
 
-    override suspend fun insertReply(replyInfo: ReplyInfo) =
-        fs.insertReply(replyInfo)
+    override suspend fun insertReply(postId: String, replyInfo: ReplyInfo) =
+        fs.insertReply(postId, replyInfo)
 
-    override suspend fun deleteReply(replyId: String) =
-        fs.deleteReply(replyId)
+    override suspend fun deleteReply(postId: String, replyId: String) =
+        fs.deleteReply(postId, replyId)
 
-    override suspend fun getALLReply(postId: String) =
-        fs.getALLReply(postId)
+    override suspend fun getReplyList(postId: String) =
+        fs.getReplyList(postId)
+
+    override suspend fun getALLReply(userId: String) =
+        fs.getALLReply(userId)
 }
