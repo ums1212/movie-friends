@@ -1,6 +1,7 @@
 package org.comon.moviefriends.presenter.common
 
 import org.comon.moviefriends.common.FullScreenNavRoute
+import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.data.model.firebase.UserInfo
 
@@ -57,6 +58,7 @@ fun checkCommunityTabItemNeedLogin(route: String, user: UserInfo?) =
 fun checkScreenNeedTopBar(route: String?) =
     route != FullScreenNavRoute.Search.route
             && route != FullScreenNavRoute.ChatRoom.route
+            && !IntroNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)
 
 fun checkScreenNeedBottomBar(route: String?) =
     route in ScaffoldNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }
