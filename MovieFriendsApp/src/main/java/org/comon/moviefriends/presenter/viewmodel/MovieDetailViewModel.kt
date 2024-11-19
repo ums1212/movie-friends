@@ -120,6 +120,9 @@ class MovieDetailViewModel @Inject constructor (
     private val _myChatReceiveList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
     val myChatReceiveList = _myChatReceiveList.asStateFlow()
 
+    private val _requestState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
+    val requestState = _requestState.asStateFlow()
+
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
@@ -320,6 +323,22 @@ class MovieDetailViewModel @Inject constructor (
         viewModelScope.launch {
             repository.getAllChatRequestCount(_userInfo.value?.id ?: "").collectLatest {
                 _allChatRequestCount.emit(it)
+            }
+        }
+    }
+
+    fun confirmRequest(requestChatInfo: RequestChatInfo){
+        viewModelScope.launch {
+            repository.confirmRequest(requestChatInfo).collectLatest {
+                _requestState.emit(it)
+            }
+        }
+    }
+
+    fun denyRequest(requestChatInfo: RequestChatInfo){
+        viewModelScope.launch {
+            repository.denyRequest(requestChatInfo).collectLatest {
+                _requestState.emit(it)
             }
         }
     }

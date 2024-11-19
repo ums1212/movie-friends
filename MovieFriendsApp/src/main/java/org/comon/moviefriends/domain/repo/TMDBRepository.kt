@@ -56,4 +56,8 @@ interface TMDBRepository {
     suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
 
     suspend fun getAllChatRequestCount(userId: String): Flow<APIResult<Map<String, Int>>>
+
+    suspend fun confirmRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
+
+    suspend fun denyRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 }

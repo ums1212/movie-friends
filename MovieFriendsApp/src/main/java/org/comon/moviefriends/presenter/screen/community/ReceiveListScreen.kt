@@ -39,13 +39,16 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.getDateString
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.widget.MFButtonReceive
+import org.comon.moviefriends.presenter.widget.MFPostDate
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.ShimmerEffect
@@ -93,12 +96,17 @@ fun ReceiveListScreen(
                     Box(Modifier.fillMaxSize()){
                         MFText(modifier = Modifier.padding(8.dp), text = stringResource(id = R.string.no_data))
                     }
-                }else{
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxSize()
-                    ) {
-                        items(list.resultData.filterNotNull()){ item ->
+                    return@Column
+                }
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    items(list.resultData.filterNotNull()){ item ->
+                        Column(
+                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                            horizontalAlignment = Alignment.End
+                        ){
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
@@ -109,8 +117,7 @@ fun ReceiveListScreen(
                                 ) {
                                     Card(
                                         modifier = Modifier
-                                            .width(80.dp)
-                                            .height(120.dp)
+                                            .width(60.dp)
                                             .padding(4.dp)
                                             .clickableOnce {
                                                 navigateToMovieDetail(item.movieId)
@@ -135,14 +142,23 @@ fun ReceiveListScreen(
                                     }
                                     UserWantListItem(item.sendUser, item.receiveUserRegion)
                                 }
-                                Column {
-                                    MFButtonReceive({}, "승인")
-                                    MFButtonReceive({}, "거절")
+                                if(item.proposalFlag==ProposalFlag.WAITING.str){
+                                    Column {
+                                        MFButtonReceive("승인"){
+                                            viewModel.confirmRequest(item)
+                                        }
+                                        MFButtonReceive("거절"){
+                                            viewModel.denyRequest(item)
+                                        }
+                                    }
+                                }else{
+                                    MFText(text = item.proposalFlag)
                                 }
                             }
-                            Spacer(Modifier.padding(vertical = 4.dp))
-                            HorizontalDivider()
+                            MFPostDate(getDateString(item.createdDate.seconds))
                         }
+                        Spacer(Modifier.padding(vertical = 4.dp))
+                        HorizontalDivider()
                     }
                 }
             }

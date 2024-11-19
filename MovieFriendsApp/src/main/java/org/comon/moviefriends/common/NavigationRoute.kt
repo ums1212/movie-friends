@@ -10,7 +10,6 @@ sealed class FullScreenNavRoute(val route: String){
     data object MovieDetail: FullScreenNavRoute("movie_detail")
     data object CommunityDetail: FullScreenNavRoute("community_detail")
     data object WritePost: FullScreenNavRoute("write_post")
-    data object ChatRoom: FullScreenNavRoute("chat_room")
     data object ProfileSetting: FullScreenNavRoute("profile_setting")
     data object ProfileWantMovie: FullScreenNavRoute("profile_want_movie")
     data object ProfileRate: FullScreenNavRoute("profile_rate")
@@ -25,6 +24,7 @@ sealed class ScaffoldNavRoute(val route: String){
     data object WatchTogether: ScaffoldNavRoute("watch_together")
     data object RequestList: ScaffoldNavRoute("request_list")
     data object ReceiveList: ScaffoldNavRoute("receive_list")
+    data object ChatList: ScaffoldNavRoute("chat_list")
     data object MovieRecommend: ScaffoldNavRoute("movie_recommend")
     data object MovieWorldCup: ScaffoldNavRoute("movie_world_cup")
     data object Profile: ScaffoldNavRoute("user_profile")
@@ -46,5 +46,5 @@ enum class COMMUNITY_MENU(val route: String, val description: String){
 enum class WATCH_TOGETHER_MENU(val route: String, val description: String){
     REQUEST_LIST("request_list", "요청 내역"),
     RECEIVE_LIST("receive_list", "받은 내역"),
-    CHAT_ROOM("chat_room", "채팅방"),
+    CHAT_LIST("chat_list", "채팅방"),
 }

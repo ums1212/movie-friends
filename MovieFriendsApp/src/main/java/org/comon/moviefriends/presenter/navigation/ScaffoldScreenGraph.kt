@@ -8,9 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.sendbird.uikit.compose.navigation.navigateToChannel
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.ScaffoldNavRoute
+import org.comon.moviefriends.presenter.screen.community.ChatRoomListScreen
 import org.comon.moviefriends.presenter.screen.community.CommunityScreen
 import org.comon.moviefriends.presenter.screen.community.ReceiveListScreen
 import org.comon.moviefriends.presenter.screen.community.RecommendScreen
@@ -68,7 +70,7 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
         WatchTogetherScreen(
             navigateToRequestList = { navController.navigate(ScaffoldNavRoute.RequestList.route) },
             navigateToReceiveList = { navController.navigate(ScaffoldNavRoute.ReceiveList.route) },
-            navigateToChatRoomList = { navController.navigate(FullScreenNavRoute.ChatRoom.route) },
+            navigateToChatRoomList = { navController.navigate(ScaffoldNavRoute.ChatList.route) },
             navigateToMovieDetail = { movieId ->
                 navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")
             },
@@ -114,6 +116,29 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
     ) {
         ReceiveListScreen(
             navigateToMovieDetail = { movieId -> navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")}
+        )
+    }
+
+    /** 커뮤니티 채팅방 리스트 화면 */
+    composable(
+        route = ScaffoldNavRoute.ChatList.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            ) + fadeOut()
+        },
+    ) {
+        ChatRoomListScreen(
+            navigateToChannel = { channelUrl ->
+                navController.navigateToChannel(channelUrl)
+            }
         )
     }
 

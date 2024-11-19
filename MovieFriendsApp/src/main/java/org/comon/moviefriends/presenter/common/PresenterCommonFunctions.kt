@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.common
 
+import com.sendbird.uikit.compose.navigation.SendbirdNavigationRoute
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.ScaffoldNavRoute
@@ -11,6 +12,7 @@ fun checkTopBarNeedTitle(route: String) =
             && !route.contains(FullScreenNavRoute.CommunityDetail.route)
             && route != ScaffoldNavRoute.RequestList.route
             && route != ScaffoldNavRoute.ReceiveList.route
+            && route != ScaffoldNavRoute.ChatList.route
 
 fun checkTopBarNeedNavigationIcon(route: String) =
     listOf(
@@ -18,7 +20,7 @@ fun checkTopBarNeedNavigationIcon(route: String) =
         FullScreenNavRoute.WritePost.route,
         ScaffoldNavRoute.RequestList.route,
         ScaffoldNavRoute.ReceiveList.route,
-        FullScreenNavRoute.ChatRoom.route,
+        ScaffoldNavRoute.ChatList.route,
         FullScreenNavRoute.ProfileWantMovie.route,
         FullScreenNavRoute.ProfileRate.route,
         FullScreenNavRoute.ProfileReview.route,
@@ -57,8 +59,8 @@ fun checkCommunityTabItemNeedLogin(route: String, user: UserInfo?) =
 
 fun checkScreenNeedTopBar(route: String?) =
     route != FullScreenNavRoute.Search.route
-            && route != FullScreenNavRoute.ChatRoom.route
             && !IntroNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)
+            && route?.contains(SendbirdNavigationRoute.Channel.Route) != true
 
 fun checkScreenNeedBottomBar(route: String?) =
     route in ScaffoldNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }

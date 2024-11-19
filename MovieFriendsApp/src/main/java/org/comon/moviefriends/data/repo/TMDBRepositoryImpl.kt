@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.domain.repo.TMDBRepository
@@ -110,4 +111,10 @@ class TMDBRepositoryImpl @Inject constructor (
 
     override suspend fun getAllChatRequestCount(userId: String) =
         fs.getAllChatRequestCount(userId)
+
+    override suspend fun confirmRequest(requestChatInfo: RequestChatInfo) =
+        fs.confirmRequest(requestChatInfo)
+
+    override suspend fun denyRequest(requestChatInfo: RequestChatInfo) =
+        fs.denyRequest(requestChatInfo)
 }

@@ -1,12 +1,8 @@
 package org.comon.moviefriends.presenter.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.runtime.Composable
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -14,7 +10,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
-import org.comon.moviefriends.presenter.screen.community.ChatRoomListScreen
 import org.comon.moviefriends.presenter.screen.community.PostDetailScreen
 import org.comon.moviefriends.presenter.screen.community.WritePostScreen
 import org.comon.moviefriends.presenter.screen.home.MovieDetailScreen
@@ -136,25 +131,6 @@ fun NavGraphBuilder.fullScreenGraph(
     ) { backStackEntry ->
         val postId = backStackEntry.arguments?.getString("postId") ?: ""
         WritePostScreen(postId = postId, viewModel = postViewModel)
-    }
-
-    /** 커뮤니티 채팅방 화면 */
-    composable(
-        route = FullScreenNavRoute.ChatRoom.route,
-        enterTransition = {
-            slideIntoContainer(
-                AnimatedContentTransitionScope.SlideDirection.Up,
-                animationSpec = tween(700)
-            )
-        },
-        exitTransition = {
-            slideOutOfContainer(
-                AnimatedContentTransitionScope.SlideDirection.Down,
-                animationSpec = tween(700)
-            ) + fadeOut()
-        },
-    ) {
-        ChatRoomListScreen()
     }
 
     /** 내 정보 수정 화면 */

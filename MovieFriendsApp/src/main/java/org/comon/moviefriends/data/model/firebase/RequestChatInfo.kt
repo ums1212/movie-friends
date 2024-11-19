@@ -12,6 +12,7 @@ data class RequestChatInfo(
     val receiveUserRegion: String = "위치 없음",
     val proposalFlag: String = ProposalFlag.WAITING.str,
     val createdDate: Timestamp = Timestamp.now(),
+    val channelUrl: String = "",
     val status: Boolean = true,
 )
 

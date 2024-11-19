@@ -68,7 +68,7 @@ fun WatchTogetherScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(FriendsBlack),
     ) {
         MFPostTitle(text = stringResource(R.string.label_menu_watch_together), modifier = Modifier.padding(8.dp))
@@ -81,7 +81,7 @@ fun WatchTogetherScreen(
                         when(menu){
                             WATCH_TOGETHER_MENU.REQUEST_LIST -> navigateToRequestList()
                             WATCH_TOGETHER_MENU.RECEIVE_LIST -> navigateToReceiveList()
-                            WATCH_TOGETHER_MENU.CHAT_ROOM -> navigateToChatRoomList()
+                            WATCH_TOGETHER_MENU.CHAT_LIST -> navigateToChatRoomList()
                         }
                     },
             ){
@@ -129,6 +129,10 @@ fun WatchTogetherScreen(
                 }
             }
             is APIResult.Success -> {
+                if(list.resultData.isEmpty()) {
+                    MFText(stringResource(R.string.no_data), modifier = Modifier.padding(8.dp))
+                    return@Column
+                }
                 UserWantThisMovieList(
                     screen = ScaffoldNavRoute.WatchTogether.route,
                     wantList = list.resultData,

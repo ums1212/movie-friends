@@ -19,12 +19,14 @@ import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
 import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
+import org.comon.moviefriends.data.repo.ChatRepositoryImpl
 import org.comon.moviefriends.domain.repo.CommunityPostRepository
 import org.comon.moviefriends.data.repo.CommunityPostRepositoryImpl
 import org.comon.moviefriends.domain.repo.LoginRepository
 import org.comon.moviefriends.data.repo.LoginRepositoryImpl
 import org.comon.moviefriends.domain.repo.TMDBRepository
 import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
+import org.comon.moviefriends.domain.repo.ChatRepository
 import javax.inject.Singleton
 
 
@@ -80,5 +82,9 @@ object FirebaseModule {
     ): TMDBRepository =
         TMDBRepositoryImpl(dataSource, rest)
 
+    @Singleton
+    @Provides
+    fun providesChatRepository(dataSource: MovieDetailDataSource): ChatRepository =
+        ChatRepositoryImpl(dataSource)
 
 }

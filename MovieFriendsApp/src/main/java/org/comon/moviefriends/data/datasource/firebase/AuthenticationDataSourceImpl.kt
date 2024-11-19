@@ -2,12 +2,14 @@ package org.comon.moviefriends.data.datasource.firebase
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.auth.OAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.messaging.FirebaseMessaging
+import com.sendbird.android.SendbirdChat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -41,6 +43,7 @@ class AuthenticationDataSourceImpl @Inject constructor (
             // 기존 유저일 경우
             try {
                 val userInfo = getUserInfoFromFireStore(user.uid)
+                connectSendBird(userInfo.sendBirdId, userInfo.sendBirdToken)
                 MFPreferences.setUserInfo(userInfo)
                 MFPreferences.setFcmToken(userInfo.fcmToken)
                 emit(FirebaseAuthResult.LoginSuccess)
@@ -67,6 +70,7 @@ class AuthenticationDataSourceImpl @Inject constructor (
             // 기존 유저일 경우
             try {
                 val userInfo = getUserInfoFromFireStore(user.uid)
+                connectSendBird(userInfo.sendBirdId, userInfo.sendBirdToken)
                 MFPreferences.setUserInfo(userInfo)
                 MFPreferences.setFcmToken(userInfo.fcmToken)
                 emit(FirebaseAuthResult.LoginSuccess)
@@ -121,6 +125,20 @@ class AuthenticationDataSourceImpl @Inject constructor (
             sessionTokenExpiresAt = 1542945056625,
             metadata = CreateSendBirdUserDto.Metadata("","")
         )
-        return SendBirdService.getInstance().createSendBirdUser(sendBirdUser).body()
+        val result = SendBirdService.getInstance().createSendBirdUser(sendBirdUser).body()
+        if(result!=null){
+            connectSendBird(result.userId, result.accessToken)
+        }
+        return result
+    }
+
+    override suspend fun connectSendBird(sendBirdId: String, sendBirdToken: String) {
+        SendbirdChat.connect(sendBirdId, sendBirdToken){ _, sendbirdException ->
+            if(sendbirdException!=null){
+                Log.e("connectSendBird", "$sendbirdException")
+            }else{
+                Log.e("connectSendBird", "success")
+            }
+        }
     }
 }

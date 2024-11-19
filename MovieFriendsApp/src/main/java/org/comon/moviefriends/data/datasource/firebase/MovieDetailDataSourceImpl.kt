@@ -3,6 +3,9 @@ package org.comon.moviefriends.data.datasource.firebase
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.sendbird.android.channel.OpenChannel
+import com.sendbird.android.ktx.extension.channel.awaitCreateChannel
+import com.sendbird.android.params.OpenChannelCreateParams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +15,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
@@ -128,6 +132,20 @@ class MovieDetailDataSourceImpl @Inject constructor (
         val querySnapshot = db.collection("request_chat")
             .whereEqualTo("receiveUser.id", userId)
             .whereEqualTo("status", true)
+            .orderBy("createdDate", Query.Direction.DESCENDING)
+            .get().await()
+        val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
+        emit(APIResult.Success(requestList))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun getConfirmedList(userId: String) = flow {
+        emit(APIResult.Loading)
+        val querySnapshot = db.collection("request_chat")
+            .whereEqualTo("receiveUser.id", userId)
+            .whereEqualTo("status", true)
+            .whereEqualTo("proposalFlag", ProposalFlag.CONFIRMED.str)
             .orderBy("createdDate", Query.Direction.DESCENDING)
             .get().await()
         val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
@@ -255,11 +273,62 @@ class MovieDetailDataSourceImpl @Inject constructor (
 
     override suspend fun getAllChatRequestCount(userId: String) = flow {
         emit(APIResult.Loading)
+
+        val sendCount = db.collection("request_chat")
+            .whereEqualTo("sendUser.id", userId)
+            .whereEqualTo("proposalFlag", ProposalFlag.WAITING)
+            .get().await()
+            .documents.size
+
+        val receiveCount = db.collection("request_chat")
+            .whereEqualTo("receiveUser.id", userId)
+            .whereEqualTo("proposalFlag", ProposalFlag.WAITING)
+            .get().await()
+            .documents.size
+
         val countMap = mutableMapOf(
-            "sendCount" to db.collection("request_chat").whereEqualTo("sendUser.id", userId).get().await().documents.size,
-            "receiveCount" to db.collection("request_chat").whereEqualTo("receiveUser.id", userId).get().await().documents.size,
+            "sendCount" to sendCount,
+            "receiveCount" to receiveCount,
         )
+
         emit(APIResult.Success(countMap))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun confirmRequest(requestChatInfo: RequestChatInfo) = flow {
+        emit(APIResult.Loading)
+        // 채널 생성
+        val params = OpenChannelCreateParams().apply {
+            name = "${requestChatInfo.sendUser.nickName} 님과 ${requestChatInfo.receiveUser.nickName} 님의 대화"
+            coverUrl = requestChatInfo.moviePosterPath
+            operatorUserIds = listOf(requestChatInfo.sendUser.sendBirdId, requestChatInfo.receiveUser.sendBirdId)         // Or operators = listOfOperators
+        }
+        val channelUrl = OpenChannel.awaitCreateChannel(params).url
+
+        // 요청 승인으로 업데이트
+        db.collection("request_chat").whereEqualTo("id", requestChatInfo.id).get().await()
+            .documents.first().reference.update("proposalFlag", ProposalFlag.CONFIRMED.str, "channelUrl", channelUrl).await()
+
+        // 승인 앱 푸시
+        FCMSendService.sendNotificationToToken(requestChatInfo.sendUser.fcmToken, "영화 같이 보기 요청 승인", "${requestChatInfo.receiveUser.nickName}님이 같이 보기 요청을 승인하셨습니다.")
+
+        emit(APIResult.Success(true))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun denyRequest(requestChatInfo: RequestChatInfo) = flow {
+        emit(APIResult.Loading)
+
+        // 요청 승인으로 업데이트
+        db.collection("request_chat").whereEqualTo("id", requestChatInfo.id).get().await()
+            .documents.first().reference.update("proposalFlag", ProposalFlag.DENIED.str).await()
+
+        // 거절 앱 푸시
+        FCMSendService.sendNotificationToToken(requestChatInfo.sendUser.fcmToken, "영화 같이 보기 요청 거절", "${requestChatInfo.receiveUser.nickName}님이 같이 보기 요청을 거절하셨습니다.")
+
+        emit(APIResult.Success(true))
     }.catch {
         emit(APIResult.NetworkError(it))
     }

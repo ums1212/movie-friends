@@ -4,7 +4,6 @@ import android.app.Activity
 import android.content.Context
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.flow.Flow
-import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.sendbird.ResponseSendBirdUserDto
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
@@ -28,4 +27,6 @@ interface AuthenticationDataSource {
     )
 
     suspend fun createSendBirdUser(userInfo: UserInfo): ResponseSendBirdUserDto?
+
+    suspend fun connectSendBird(sendBirdId: String, sendBirdToken: String)
 }

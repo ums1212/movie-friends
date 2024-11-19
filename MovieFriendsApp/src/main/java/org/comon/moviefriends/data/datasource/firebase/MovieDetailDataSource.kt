@@ -24,6 +24,8 @@ interface MovieDetailDataSource {
 
     suspend fun getMyReceiveList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
 
+    suspend fun getConfirmedList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
+
     fun requestWatchTogether(movieId: Int, moviePosterPath: String, sendUser: UserInfo, receiveUser: UserInfo, receiveUserRegion: String): Result<Task<QuerySnapshot>>
 
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
@@ -39,4 +41,8 @@ interface MovieDetailDataSource {
     suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
 
     suspend fun getAllChatRequestCount(userId: String): Flow<APIResult<MutableMap<String, Int>>>
+
+    suspend fun confirmRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
+
+    suspend fun denyRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 }

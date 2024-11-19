@@ -334,7 +334,7 @@ fun GoogleLoginButton(clickEvent: () -> Unit) {
 }
 
 @Composable
-fun MFButtonReceive(onClick: () -> Unit, text: String){
+fun MFButtonReceive(text: String, onClick: () -> Unit){
     Button(
         onClick = onClick,
         border = BorderStroke(1.dp, FriendsTextGrey),
