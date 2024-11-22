@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.widget
+package org.comon.moviefriends.presenter.components
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding

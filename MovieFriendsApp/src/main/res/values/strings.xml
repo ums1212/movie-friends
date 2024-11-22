@@ -2,6 +2,8 @@
     <string name="app_name">MovieFriends</string>
     <string name="button_without_login">로그인 없이 시작하기</string>
     <string name="label_input_nickname">사용할 닉네임</string>
+    <string name="label_input_gender">성별</string>
+    <string name="label_input_age">연령대</string>
     <string name="hint_input_nickname">20자 미만으로 입력해주세요</string>
     <string name="button_kakao_login">카카오 로그인</string>
     <string name="button_google_login">구글 로그인</string>

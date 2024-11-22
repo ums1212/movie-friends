@@ -9,8 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
-import org.comon.moviefriends.presenter.widget.CommunityList
-import org.comon.moviefriends.presenter.widget.MFPostTitle
+import org.comon.moviefriends.presenter.components.CommunityList
+import org.comon.moviefriends.presenter.components.MFPostTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

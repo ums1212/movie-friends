@@ -7,6 +7,8 @@ data class UserInfo(
     val id: String = "",
     val joinType: String = "",
     val nickName: String = "",
+    val gender: String = "",
+    val ageRange: Int = -1,
     val createdDate: String = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
     val profileImage: String = "",
     val fcmToken: String = "",

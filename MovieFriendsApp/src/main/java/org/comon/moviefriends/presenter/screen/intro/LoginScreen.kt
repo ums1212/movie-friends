@@ -33,9 +33,9 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.presenter.viewmodel.JoinType
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
-import org.comon.moviefriends.presenter.widget.GoogleLoginButton
-import org.comon.moviefriends.presenter.widget.KakaoLoginButton
-import org.comon.moviefriends.presenter.widget.MFButton
+import org.comon.moviefriends.presenter.components.GoogleLoginButton
+import org.comon.moviefriends.presenter.components.KakaoLoginButton
+import org.comon.moviefriends.presenter.components.MFButton
 
 @Composable
 fun LoginScreen(

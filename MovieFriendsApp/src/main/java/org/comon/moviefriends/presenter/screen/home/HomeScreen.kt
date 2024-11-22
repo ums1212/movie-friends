@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.presenter.viewmodel.HomeViewModel
-import org.comon.moviefriends.presenter.widget.MovieList
+import org.comon.moviefriends.presenter.components.MovieList
 
 @Composable
 fun HomeScreen(

@@ -1,39 +1,36 @@
 package org.comon.moviefriends.presenter.screen.intro
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material3.LinearProgressIndicator
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import kotlinx.coroutines.launch
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
-import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
-import org.comon.moviefriends.presenter.widget.MFButton
+import org.comon.moviefriends.presenter.components.InputAgeRange
+import org.comon.moviefriends.presenter.components.InputGender
+import org.comon.moviefriends.presenter.components.InputNickName
+import org.comon.moviefriends.presenter.components.MFButton
+import org.comon.moviefriends.presenter.components.ProfileCircleImage
 
 @Composable
 fun SubmitNickNameScreen(
@@ -44,11 +41,22 @@ fun SubmitNickNameScreen(
     moveToScaffoldScreen: () -> Unit,
     viewModel: LoginViewModel = hiltViewModel()
 ) {
-    var textValue by remember { mutableStateOf(nickname) }
-    val loadingUiState = remember { mutableStateOf(false) }
+
+    LaunchedEffect(key1 = Unit) {
+        viewModel.setUserUid(uid)
+        viewModel.setUserNickName(nickname)
+        viewModel.setUserPhotoUrl(photoUrl)
+        viewModel.setUserJoinType(joinType)
+    }
+
+    val loadingState = viewModel.loadingState.collectAsStateWithLifecycle()
     val localContext = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val snackBarHost = remember { SnackbarHostState() }
+    val user = viewModel.user.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    val nicknameValue = remember { mutableStateOf(nickname) }
 
     Column(
         modifier = Modifier
@@ -57,52 +65,41 @@ fun SubmitNickNameScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if(loadingUiState.value){
-            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-        }
-        Image(
-            painterResource(R.drawable.logo),
-            contentDescription = stringResource(R.string.app_name),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 72.dp)
-        )
+        if(loadingState.value) LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+        ProfileCircleImage(context, user.value?.photoUrl)
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 36.dp)
                 .padding(bottom = 24.dp),
         ) {
-            Text(
-                stringResource(R.string.label_input_nickname),
-                color = colorResource(R.color.friends_white),
-                modifier = Modifier.padding(bottom = 12.dp)
+            /** 닉네임 입력 */
+            InputNickName(
+                nickNameValue = nicknameValue,
+                setUserNickName = {
+                    viewModel.setUserNickName(it)
+                }
             )
-            OutlinedTextField(
-                shape = RoundedCornerShape(12.dp) ,
-                value = textValue,
-                onValueChange = { textValue = it },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                enabled = true,
-                keyboardActions = KeyboardActions(onDone = { }),
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+            /** 성별 입력 */
+            InputGender(
+                setUserGender = {
+                    viewModel.setUserGender(it)
+                }
+            )
+            Spacer(modifier = Modifier.padding(vertical = 8.dp))
+            /** 연령대 입력 */
+            InputAgeRange(
+                setUserAgeRange = {
+                    viewModel.setUserAgeRange(it)
+                }
             )
         }
         MFButton({
-            coroutineScope.launch {
-                val userInfo = UserInfo(
-                    id = uid,
-                    nickName = textValue,
-                    profileImage = photoUrl,
-                    joinType = joinType,
-                )
-                viewModel.completeJoinUser(
-                    userInfo = userInfo,
-                    loadingState = loadingUiState,
-                    moveToScaffoldScreen = moveToScaffoldScreen,
-                    showErrorMessage = {showSnackBar(coroutineScope, snackBarHost, localContext)}
-                )
-            }
+            viewModel.completeJoinUser(
+                moveToScaffoldScreen = moveToScaffoldScreen,
+                showErrorMessage = {showSnackBar(coroutineScope, snackBarHost, localContext)}
+            )
         }, stringResource(R.string.button_confirm))
     }
     SnackbarHost(snackBarHost)

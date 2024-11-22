@@ -67,18 +67,18 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
-import org.comon.moviefriends.presenter.widget.MFButton
-import org.comon.moviefriends.presenter.widget.MFButtonWantThisMovie
-import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFReviewBottomSheet
-import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.MFWantMovieBottomSheet
-import org.comon.moviefriends.presenter.widget.MovieCreditShimmer
-import org.comon.moviefriends.presenter.widget.MovieDetailShimmer
-import org.comon.moviefriends.presenter.widget.RateModal
-import org.comon.moviefriends.presenter.widget.ShimmerEffect
-import org.comon.moviefriends.presenter.widget.UserWantListItem
+import org.comon.moviefriends.presenter.components.MFButton
+import org.comon.moviefriends.presenter.components.MFButtonWantThisMovie
+import org.comon.moviefriends.presenter.components.MFButtonWidthResizable
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFReviewBottomSheet
+import org.comon.moviefriends.presenter.components.MFText
+import org.comon.moviefriends.presenter.components.MFWantMovieBottomSheet
+import org.comon.moviefriends.presenter.components.MovieCreditShimmer
+import org.comon.moviefriends.presenter.components.MovieDetailShimmer
+import org.comon.moviefriends.presenter.components.RateModal
+import org.comon.moviefriends.presenter.components.ShimmerEffect
+import org.comon.moviefriends.presenter.components.UserWantListItem
 import retrofit2.Response
 
 @Composable

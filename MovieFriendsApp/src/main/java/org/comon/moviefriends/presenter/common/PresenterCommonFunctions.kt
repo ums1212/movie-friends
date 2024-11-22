@@ -58,7 +58,8 @@ fun checkCommunityTabItemNeedLogin(route: String, user: UserInfo?) =
 fun checkScreenNeedTopBar(route: String?) =
     route != FullScreenNavRoute.Search.route
             && route != FullScreenNavRoute.ChatRoom.route
-            && !IntroNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)
+            && route != IntroNavRoute.Login.route
+            && route?.contains(IntroNavRoute.SubmitNickName.route) == false
 
 fun checkScreenNeedBottomBar(route: String?) =
     route in ScaffoldNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }

@@ -54,8 +54,8 @@ import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
-import org.comon.moviefriends.presenter.widget.CategoryModal
-import org.comon.moviefriends.presenter.widget.MFPostTitle
+import org.comon.moviefriends.presenter.components.CategoryModal
+import org.comon.moviefriends.presenter.components.MFPostTitle
 import java.util.UUID
 
 @Composable

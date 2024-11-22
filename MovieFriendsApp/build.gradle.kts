@@ -6,6 +6,7 @@ plugins {
     id("com.google.gms.google-services")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 hilt {
     // enableAggregatingTask는 Hilt annotation processors의 컴파일 시간을 줄여주고
@@ -40,6 +41,7 @@ android {
         buildConfigField("String", "TMDB_API_KEY", localProperties.getProperty("TMDB_API_KEY"))
         buildConfigField("String", "GOOGLE_OAUTH", localProperties.getProperty("GOOGLE_OAUTH"))
         buildConfigField("String", "KAKAO_REST_KEY", localProperties.getProperty("KAKAO_REST_KEY"))
+        buildConfigField("String", "KAKAO_NATIVE_KEY", localProperties.getProperty("KAKAO_NATIVE_KEY"))
         buildConfigField("String", "SENDBIRD_APP_ID", localProperties.getProperty("SENDBIRD_APP_ID"))
         buildConfigField("String", "SENDBIRD_API_TOKEN", localProperties.getProperty("SENDBIRD_API_TOKEN"))
 
