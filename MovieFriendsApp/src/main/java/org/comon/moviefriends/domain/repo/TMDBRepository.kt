@@ -43,7 +43,7 @@ interface TMDBRepository {
 
     suspend fun getMyReceiveList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
 
-    fun requestWatchTogether(movieId: Int, moviePosterPath: String, sendUser: UserInfo, receiveUser: UserInfo, receiveUserRegion: String): Result<Task<QuerySnapshot>>
+    fun requestWatchTogether(requestChatInfo: RequestChatInfo): Result<Task<QuerySnapshot>>
 
     suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
 
@@ -57,7 +57,7 @@ interface TMDBRepository {
 
     suspend fun getAllChatRequestCount(userId: String): Flow<APIResult<Map<String, Int>>>
 
-    suspend fun confirmRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
+    suspend fun confirmRequest(userInfo: UserInfo, requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 
     suspend fun denyRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 }

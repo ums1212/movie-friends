@@ -87,12 +87,8 @@ class TMDBRepositoryImpl @Inject constructor (
         fs.getMyReceiveList(userId)
 
     override fun requestWatchTogether(
-        movieId: Int,
-        moviePosterPath: String,
-        sendUser: UserInfo,
-        receiveUser: UserInfo,
-        receiveUserRegion: String,
-    ) = fs.requestWatchTogether(movieId, moviePosterPath, sendUser, receiveUser, receiveUserRegion)
+        requestChatInfo: RequestChatInfo
+    ) = fs.requestWatchTogether(requestChatInfo)
 
     override suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int) =
         fs.voteUserMovieRating(movieId, userInfo, rating)
@@ -112,8 +108,8 @@ class TMDBRepositoryImpl @Inject constructor (
     override suspend fun getAllChatRequestCount(userId: String) =
         fs.getAllChatRequestCount(userId)
 
-    override suspend fun confirmRequest(requestChatInfo: RequestChatInfo) =
-        fs.confirmRequest(requestChatInfo)
+    override suspend fun confirmRequest(userInfo: UserInfo, requestChatInfo: RequestChatInfo) =
+        fs.confirmRequest(userInfo, requestChatInfo)
 
     override suspend fun denyRequest(requestChatInfo: RequestChatInfo) =
         fs.denyRequest(requestChatInfo)

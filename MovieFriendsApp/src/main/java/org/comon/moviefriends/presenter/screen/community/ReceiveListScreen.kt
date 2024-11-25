@@ -107,6 +107,7 @@ fun ReceiveListScreen(
                             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
                             horizontalAlignment = Alignment.End
                         ){
+                            Spacer(Modifier.padding(vertical = 8.dp))
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,

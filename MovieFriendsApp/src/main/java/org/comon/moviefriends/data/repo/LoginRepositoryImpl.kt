@@ -20,4 +20,7 @@ class LoginRepositoryImpl @Inject constructor (
     override suspend fun insertUserInfoToFireStore(userInfo: UserInfo) =
         authDataSource.insertUserInfoToFireStore(userInfo)
 
+    override fun connectSendBird(sendBirdId: String, sendBirdToken: String) =
+        authDataSource.connectSendBird(sendBirdId, sendBirdToken)
+
 }

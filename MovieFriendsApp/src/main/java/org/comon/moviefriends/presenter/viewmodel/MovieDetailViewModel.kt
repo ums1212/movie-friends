@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.android.gms.tasks.Task
+import com.google.firebase.firestore.QuerySnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -231,8 +233,22 @@ class MovieDetailViewModel @Inject constructor (
         }
     }
 
-    fun requestWatchTogether(movieId: Int, moviePosterPath: String, receiveUser: UserInfo, receiveUserRegion: String) =
-        repository.requestWatchTogether(movieId, moviePosterPath, _userInfo.value!!, receiveUser, receiveUserRegion)
+    fun requestWatchTogether(
+        movieId: Int,
+        moviePosterPath: String,
+        receiveUser: UserInfo,
+        receiveUserRegion: String
+    ): Result<Task<QuerySnapshot>> {
+        val requestChatInfo = RequestChatInfo(
+            movieId = movieId,
+            moviePosterPath = moviePosterPath,
+            sendUser = _userInfo.value!!,
+            receiveUser = receiveUser,
+            receiveUserRegion = receiveUserRegion
+        )
+        return repository.requestWatchTogether(requestChatInfo)
+    }
+
 
     private fun getAllUserRate() = viewModelScope.launch {
         repository.getAllUserMovieRating(_movieId.value).collectLatest {
@@ -329,8 +345,10 @@ class MovieDetailViewModel @Inject constructor (
 
     fun confirmRequest(requestChatInfo: RequestChatInfo){
         viewModelScope.launch {
-            repository.confirmRequest(requestChatInfo).collectLatest {
-                _requestState.emit(it)
+            if(userInfo.value!=null){
+                repository.confirmRequest(userInfo.value!!, requestChatInfo).collectLatest {
+                    _requestState.emit(it)
+                }
             }
         }
     }

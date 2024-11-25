@@ -16,6 +16,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.domain.repo.LoginRepository
@@ -42,7 +43,11 @@ class LoginViewModel @Inject constructor  (
             it?.reload()?.await()
             _user.value = it
             _splashScreenState.emit(false)
-            emit(LoginResult.Success(it != null))
+            val user = MFPreferences.getUserInfo()
+            user?.let {
+                repository.connectSendBird(user.sendBirdId, user.sendBirdToken)
+            }
+            emit(LoginResult.Success(it!=null))
         }
     }.catch {
         _splashScreenState.emit(false)

@@ -40,13 +40,16 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
+import org.comon.moviefriends.common.getDateString
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
+import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.widget.MFButtonWatchTogether
+import org.comon.moviefriends.presenter.widget.MFPostDate
 import org.comon.moviefriends.presenter.widget.MFPostTitle
 import org.comon.moviefriends.presenter.widget.MFText
 import org.comon.moviefriends.presenter.widget.ShimmerEffect
@@ -97,49 +100,60 @@ fun RequestListScreen(
                         modifier = Modifier.fillMaxSize()
                     ) {
                         items(list.resultData.filterNotNull()){ item ->
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
+                            Column(
+                                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
+                                horizontalAlignment = Alignment.End
+                            ){
+                                Spacer(Modifier.padding(vertical = 8.dp))
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Card(
-                                        modifier = Modifier
-                                            .width(80.dp)
-                                            .height(120.dp)
-                                            .padding(4.dp)
-                                            .clickableOnce {
-                                                navigateToMovieDetail(item.movieId)
-                                            },
-                                        shape = RoundedCornerShape(8.dp),
-                                        border = BorderStroke(1.dp, Color.LightGray),
-                                        elevation = CardDefaults.cardElevation(
-                                            defaultElevation = 8.dp,
-                                            pressedElevation = 16.dp
-                                        )
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically
                                     ) {
-                                        AsyncImage(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            model = ImageRequest.Builder(LocalContext.current)
-                                                .data("$BASE_TMDB_IMAGE_URL/${item.moviePosterPath}")
-                                                .error(R.drawable.logo)
-                                                .crossfade(true)
-                                                .build(),
-                                            contentDescription = "작품 정보",
-                                            contentScale = ContentScale.FillBounds
-                                        )
+                                        Card(
+                                            modifier = Modifier
+                                                .width(80.dp)
+                                                .height(120.dp)
+                                                .padding(4.dp)
+                                                .clickableOnce {
+                                                    navigateToMovieDetail(item.movieId)
+                                                },
+                                            shape = RoundedCornerShape(8.dp),
+                                            border = BorderStroke(1.dp, Color.LightGray),
+                                            elevation = CardDefaults.cardElevation(
+                                                defaultElevation = 8.dp,
+                                                pressedElevation = 16.dp
+                                            )
+                                        ) {
+                                            AsyncImage(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                model = ImageRequest.Builder(LocalContext.current)
+                                                    .data("$BASE_TMDB_IMAGE_URL/${item.moviePosterPath}")
+                                                    .error(R.drawable.logo)
+                                                    .crossfade(true)
+                                                    .build(),
+                                                contentDescription = "작품 정보",
+                                                contentScale = ContentScale.FillBounds
+                                            )
+                                        }
+                                        UserWantListItem(item.receiveUser, item.receiveUserRegion)
                                     }
-                                    UserWantListItem(item.receiveUser, item.receiveUserRegion)
+                                    val requestState = remember { mutableStateOf(true) }
+                                    if(item.proposalFlag == ProposalFlag.WAITING.str){
+                                        MFButtonWatchTogether(
+                                            clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
+                                            requestState = requestState,
+                                            showErrorSnackBar = {},
+                                            proposalFlag = item.proposalFlag
+                                        )
+                                    }else{
+                                        MFText(item.proposalFlag)
+                                    }
                                 }
-                                val requestState = remember { mutableStateOf(true) }
-                                MFButtonWatchTogether(
-                                    clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
-                                    requestState = requestState,
-                                    showErrorSnackBar = {},
-                                    proposalFlag = item.proposalFlag
-                                )
+                                MFPostDate(getDateString(item.createdDate.seconds))
                             }
                             Spacer(Modifier.padding(vertical = 4.dp))
                             HorizontalDivider()

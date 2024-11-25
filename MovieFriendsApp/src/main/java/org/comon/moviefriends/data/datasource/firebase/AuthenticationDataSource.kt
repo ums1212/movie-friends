@@ -28,5 +28,5 @@ interface AuthenticationDataSource {
 
     suspend fun createSendBirdUser(userInfo: UserInfo): ResponseSendBirdUserDto?
 
-    suspend fun connectSendBird(sendBirdId: String, sendBirdToken: String)
+    fun connectSendBird(sendBirdId: String, sendBirdToken: String)
 }

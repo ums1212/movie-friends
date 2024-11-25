@@ -18,4 +18,9 @@ interface LoginRepository {
         userInfo: UserInfo
     ): Flow<LoginResult<Boolean>>
 
+    fun connectSendBird(
+        sendBirdId: String,
+        sendBirdToken: String,
+    )
+
 }

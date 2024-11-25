@@ -5,6 +5,7 @@ import java.util.UUID
 
 data class RequestChatInfo(
     val id: String = UUID.randomUUID().toString(),
+    val wantMovieInfoId: String = "",
     val movieId: Int = 0,
     val moviePosterPath: String = "",
     val sendUser: UserInfo = UserInfo(),

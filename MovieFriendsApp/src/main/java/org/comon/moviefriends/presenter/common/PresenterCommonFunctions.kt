@@ -61,6 +61,7 @@ fun checkScreenNeedTopBar(route: String?) =
     route != FullScreenNavRoute.Search.route
             && !IntroNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)
             && route?.contains(SendbirdNavigationRoute.Channel.Route) != true
+            && route?.contains("sb_route_channel") == false
 
 fun checkScreenNeedBottomBar(route: String?) =
     route in ScaffoldNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }

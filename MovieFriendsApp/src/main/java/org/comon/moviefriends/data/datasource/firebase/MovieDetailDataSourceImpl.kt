@@ -3,9 +3,10 @@ package org.comon.moviefriends.data.datasource.firebase
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import com.sendbird.android.channel.OpenChannel
+import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.ktx.extension.channel.awaitCreateChannel
-import com.sendbird.android.params.OpenChannelCreateParams
+import com.sendbird.android.ktx.extension.channel.awaitInvite
+import com.sendbird.android.params.GroupChannelCreateParams
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -88,7 +89,28 @@ class MovieDetailDataSourceImpl @Inject constructor (
             .whereEqualTo("movieId", movieId)
             .whereNotEqualTo("userInfo.id", userId)
             .get().await()
-        emit(APIResult.Success(querySnapshot.toObjects(UserWantMovieInfo::class.java)))
+        val userWantList = querySnapshot.toObjects(UserWantMovieInfo::class.java)
+
+        val requestQuerySnapshot1 = db.collection("request_chat")
+            .whereEqualTo("sendUser.id", userId)
+            .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
+            .get().await()
+
+        val requestQuerySnapshot2 = db.collection("request_chat")
+            .whereEqualTo("receiveUser.id", userId)
+            .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
+            .get().await()
+
+        val myChatList = requestQuerySnapshot1.toObjects(RequestChatInfo::class.java)
+        myChatList.addAll(requestQuerySnapshot2.toObjects(RequestChatInfo::class.java))
+
+        userWantList.filter { userWant ->
+            myChatList.find { myChat ->
+                myChat.wantMovieInfoId == userWant.id
+            } == null
+        }
+
+        emit(APIResult.Success(userWantList))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
@@ -142,41 +164,42 @@ class MovieDetailDataSourceImpl @Inject constructor (
 
     override suspend fun getConfirmedList(userId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("request_chat")
+
+        val querySnapshot1 = db.collection("request_chat")
             .whereEqualTo("receiveUser.id", userId)
             .whereEqualTo("status", true)
             .whereEqualTo("proposalFlag", ProposalFlag.CONFIRMED.str)
             .orderBy("createdDate", Query.Direction.DESCENDING)
             .get().await()
-        val requestList = querySnapshot.toObjects(RequestChatInfo::class.java)
-        emit(APIResult.Success(requestList))
+        val requestList1 = querySnapshot1.toObjects(RequestChatInfo::class.java)
+
+        val querySnapshot2 = db.collection("request_chat")
+            .whereEqualTo("sendUser.id", userId)
+            .whereEqualTo("status", true)
+            .whereEqualTo("proposalFlag", ProposalFlag.CONFIRMED.str)
+            .orderBy("createdDate", Query.Direction.DESCENDING)
+            .get().await()
+        val requestList2 = querySnapshot2.toObjects(RequestChatInfo::class.java)
+
+        requestList1.addAll(requestList2)
+
+        emit(APIResult.Success(requestList1))
     }.catch {
         emit(APIResult.NetworkError(it))
     }
 
     override fun requestWatchTogether(
-        movieId: Int,
-        moviePosterPath: String,
-        sendUser: UserInfo,
-        receiveUser: UserInfo,
-        receiveUserRegion: String,
+        requestChatInfo: RequestChatInfo,
     ) = runCatching {
-        val requestChatInfo = RequestChatInfo(
-            movieId = movieId,
-            moviePosterPath = moviePosterPath,
-            sendUser = sendUser,
-            receiveUser = receiveUser,
-            receiveUserRegion = receiveUserRegion
-        )
         db.collection("request_chat")
-            .whereEqualTo("movieId", movieId)
-            .whereEqualTo("sendUser.id", sendUser.id)
-            .whereEqualTo("receiveUser.id", receiveUser.id).get()
+            .whereEqualTo("movieId", requestChatInfo.movieId)
+            .whereEqualTo("sendUser.id", requestChatInfo.sendUser.id)
+            .whereEqualTo("receiveUser.id", requestChatInfo.receiveUser.id).get()
             .addOnSuccessListener { result ->
                 if(result.isEmpty){
                     db.collection("request_chat").add(requestChatInfo)
                     CoroutineScope(Dispatchers.IO).launch {
-                        FCMSendService.sendNotificationToToken(receiveUser.fcmToken, "영화 같이 보기 요청", "${sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
+                        FCMSendService.sendNotificationToToken(requestChatInfo.receiveUser.fcmToken, "영화 같이 보기 요청", "${requestChatInfo.sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
                     }
                 }else{
                     result.documents.first().reference.delete()
@@ -296,15 +319,18 @@ class MovieDetailDataSourceImpl @Inject constructor (
         emit(APIResult.NetworkError(it))
     }
 
-    override suspend fun confirmRequest(requestChatInfo: RequestChatInfo) = flow {
+    override suspend fun confirmRequest(userInfo: UserInfo, requestChatInfo: RequestChatInfo) = flow {
         emit(APIResult.Loading)
+
         // 채널 생성
-        val params = OpenChannelCreateParams().apply {
+        val params = GroupChannelCreateParams().apply {
             name = "${requestChatInfo.sendUser.nickName} 님과 ${requestChatInfo.receiveUser.nickName} 님의 대화"
             coverUrl = requestChatInfo.moviePosterPath
             operatorUserIds = listOf(requestChatInfo.sendUser.sendBirdId, requestChatInfo.receiveUser.sendBirdId)         // Or operators = listOfOperators
         }
-        val channelUrl = OpenChannel.awaitCreateChannel(params).url
+        val createdChannel = GroupChannel.awaitCreateChannel(params)
+        createdChannel.awaitInvite(listOf(requestChatInfo.sendUser.sendBirdId))
+        val channelUrl = createdChannel.url
 
         // 요청 승인으로 업데이트
         db.collection("request_chat").whereEqualTo("id", requestChatInfo.id).get().await()

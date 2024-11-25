@@ -125,19 +125,15 @@ class AuthenticationDataSourceImpl @Inject constructor (
             sessionTokenExpiresAt = 1542945056625,
             metadata = CreateSendBirdUserDto.Metadata("","")
         )
-        val result = SendBirdService.getInstance().createSendBirdUser(sendBirdUser).body()
-        if(result!=null){
-            connectSendBird(result.userId, result.accessToken)
-        }
-        return result
+        return SendBirdService.getInstance().createSendBirdUser(sendBirdUser).body()
     }
 
-    override suspend fun connectSendBird(sendBirdId: String, sendBirdToken: String) {
-        SendbirdChat.connect(sendBirdId, sendBirdToken){ _, sendbirdException ->
+    override fun connectSendBird(sendBirdId: String, sendBirdToken: String) {
+        SendbirdChat.connect(sendBirdId, sendBirdToken) { _, sendbirdException ->
             if(sendbirdException!=null){
                 Log.e("connectSendBird", "$sendbirdException")
             }else{
-                Log.e("connectSendBird", "success")
+                Log.i("connectSendBird", "success")
             }
         }
     }
