@@ -46,8 +46,8 @@ import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
 
 @Preview
 @Composable

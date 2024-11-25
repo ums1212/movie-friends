@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.widget
+package org.comon.moviefriends.presenter.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column

@@ -2,8 +2,6 @@ package org.comon.moviefriends.presenter.viewmodel
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
@@ -36,6 +34,36 @@ class LoginViewModel @Inject constructor  (
 
     private val _loadingState = MutableStateFlow(false)
     val loadingState = _loadingState.asStateFlow()
+
+    private val _userUid = MutableStateFlow("")
+    fun setUserUid(input: String){
+        _userUid.value = input
+    }
+
+    private val _userPhotoUrl = MutableStateFlow("")
+    fun setUserPhotoUrl(input: String){
+        _userPhotoUrl.value = input
+    }
+
+    private val _userJoinType = MutableStateFlow("")
+    fun setUserJoinType(input: String){
+        _userJoinType.value = input
+    }
+
+    private val _userNickName = MutableStateFlow("")
+    fun setUserNickName(input: String){
+        _userNickName.value = input
+    }
+
+    private val _userGender = MutableStateFlow("")
+    fun setUserGender(input: String){
+        _userGender.value = input
+    }
+
+    private val _userAgeRange = MutableStateFlow(-1)
+    fun setUserAgeRange(input: Int){
+        _userAgeRange.value = input
+    }
 
     fun checkLogin() = flow {
         emit(LoginResult.Loading)
@@ -104,26 +132,34 @@ class LoginViewModel @Inject constructor  (
     }
 
     fun completeJoinUser(
-        userInfo: UserInfo,
-        loadingState: MutableState<Boolean>,
         moveToScaffoldScreen: () -> Unit,
         showErrorMessage: () -> Unit,
-    ) = viewModelScope.launch {
-        repository.insertUserInfoToFireStore(userInfo).collectLatest { result ->
-            when(result){
-                is LoginResult.Loading -> loadingState.value = true
-                is LoginResult.Success -> {
-                    if(result.resultData){
-                        moveToScaffoldScreen()
-                    }else{
+    ){
+        _loadingState.value = true
+        viewModelScope.launch {
+            val userInfo = UserInfo(
+                id = _userUid.value,
+                profileImage = _userPhotoUrl.value,
+                joinType = _userJoinType.value,
+                nickName = _userNickName.value,
+                gender = _userGender.value,
+                ageRange = _userAgeRange.value
+            )
+            repository.insertUserInfoToFireStore(userInfo).collectLatest { result ->
+                when(result){
+                    is LoginResult.Loading -> _loadingState.value = true
+                    is LoginResult.Success -> {
+                        if(result.resultData){
+                            moveToScaffoldScreen()
+                        }else{
+                            showErrorMessage()
+                            _loadingState.value = false
+                        }
+                    }
+                    is LoginResult.NetworkError -> {
+                        _loadingState.value = false
                         showErrorMessage()
                     }
-                    loadingState.value = false
-                }
-                is LoginResult.NetworkError -> {
-                    Log.e("test1234", "${result.exception}")
-                    loadingState.value = false
-                    showErrorMessage()
                 }
             }
         }

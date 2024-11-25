@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.widget
+package org.comon.moviefriends.presenter.components
 
 import androidx.compose.material3.Badge
 import androidx.compose.runtime.Composable

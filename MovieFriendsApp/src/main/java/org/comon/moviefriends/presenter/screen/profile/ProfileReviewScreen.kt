@@ -28,8 +28,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,9 +46,9 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
-import org.comon.moviefriends.presenter.widget.MFButtonWidthResizable
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
+import org.comon.moviefriends.presenter.components.MFButtonWidthResizable
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
 
 @Preview
 @Composable

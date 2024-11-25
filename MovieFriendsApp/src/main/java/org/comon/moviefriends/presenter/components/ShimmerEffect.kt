@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.widget
+package org.comon.moviefriends.presenter.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode

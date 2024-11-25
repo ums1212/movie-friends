@@ -34,11 +34,11 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
-import org.comon.moviefriends.presenter.widget.MFBadge
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.ShimmerEffect
-import org.comon.moviefriends.presenter.widget.UserWantThisMovieList
+import org.comon.moviefriends.presenter.components.MFBadge
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
+import org.comon.moviefriends.presenter.components.ShimmerEffect
+import org.comon.moviefriends.presenter.components.UserWantThisMovieList
 
 @Composable
 fun WatchTogetherScreen(

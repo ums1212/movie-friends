@@ -44,8 +44,8 @@ import org.comon.moviefriends.presenter.theme.MovieFriendsTheme
 import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
-import org.comon.moviefriends.presenter.widget.MFNavigationBar
-import org.comon.moviefriends.presenter.widget.MFTopAppBar
+import org.comon.moviefriends.presenter.components.MFNavigationBar
+import org.comon.moviefriends.presenter.components.MFTopAppBar
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

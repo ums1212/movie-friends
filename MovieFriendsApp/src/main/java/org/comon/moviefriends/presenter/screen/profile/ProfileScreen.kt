@@ -42,7 +42,7 @@ import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 import org.comon.moviefriends.presenter.viewmodel.ProfileViewModel
-import org.comon.moviefriends.presenter.widget.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFPostTitle
 
 @Composable
 fun ProfileScreen(

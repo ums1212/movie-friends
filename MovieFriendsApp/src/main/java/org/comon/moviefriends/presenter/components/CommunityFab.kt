@@ -1,4 +1,4 @@
-package org.comon.moviefriends.presenter.widget
+package org.comon.moviefriends.presenter.components
 
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
@@ -6,7 +6,6 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey

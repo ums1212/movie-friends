@@ -59,14 +59,14 @@ import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
-import org.comon.moviefriends.presenter.widget.MFButtonAddReply
-import org.comon.moviefriends.presenter.widget.MFPostCategory
-import org.comon.moviefriends.presenter.widget.MFPostDate
-import org.comon.moviefriends.presenter.widget.MFPostReply
-import org.comon.moviefriends.presenter.widget.MFPostReplyDate
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.ShimmerEffect
+import org.comon.moviefriends.presenter.components.MFButtonAddReply
+import org.comon.moviefriends.presenter.components.MFPostCategory
+import org.comon.moviefriends.presenter.components.MFPostDate
+import org.comon.moviefriends.presenter.components.MFPostReply
+import org.comon.moviefriends.presenter.components.MFPostReplyDate
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
+import org.comon.moviefriends.presenter.components.ShimmerEffect
 
 @Composable
 fun PostDetailScreen(
