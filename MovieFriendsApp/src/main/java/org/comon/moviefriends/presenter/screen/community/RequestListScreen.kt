@@ -60,10 +60,8 @@ fun RequestListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
-    val user = MFPreferences.getUserInfo()
-
     LaunchedEffect(key1 = Unit) {
-        viewModel.getUserInfo(user)
+        viewModel.getUserInfo(MFPreferences.getUserInfo())
         viewModel.getMyRequestList()
     }
 

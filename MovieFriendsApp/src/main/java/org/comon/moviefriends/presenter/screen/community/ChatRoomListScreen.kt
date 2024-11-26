@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.screen.community
 
+import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import com.sendbird.uikit.core.data.model.UikitCurrentUserInfo
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.components.MFPostTitle
 import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.OnDevelopMark
@@ -30,12 +32,11 @@ import org.comon.moviefriends.presenter.widget.ChatRoomListItem
 @Composable
 fun ChatRoomListScreen(
     navigateToChannel: (String) -> Unit,
+    user: UserInfo? = MFPreferences.getUserInfo(),
+    viewModel: ChatViewModel = hiltViewModel(),
+    context: Context = LocalContext.current
 ) {
-
-    val user = MFPreferences.getUserInfo()
-    val viewModel: ChatViewModel = hiltViewModel()
     val chatList = viewModel.chatList.collectAsStateWithLifecycle()
-    val context = LocalContext.current
 
     // Prepare user information.
     LaunchedEffect(Unit) {

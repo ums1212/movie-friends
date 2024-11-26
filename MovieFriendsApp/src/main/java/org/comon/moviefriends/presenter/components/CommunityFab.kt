@@ -7,7 +7,6 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 
@@ -16,10 +15,8 @@ fun CommunityFab(
     navigateToWritePost: () -> Unit,
     navigateToLogin: () -> Unit
 ) {
-    val user = MFPreferences.getUserInfo()
-
     FloatingActionButton(
-        onClick = { clickCommunityFab(user, navigateToWritePost, navigateToLogin) },
+        onClick = { clickCommunityFab(navigateToWritePost, navigateToLogin) },
         containerColor = FriendsTextGrey,
         shape = CircleShape,
     ) {
@@ -32,11 +29,10 @@ fun CommunityFab(
 }
 
 fun clickCommunityFab(
-    user: UserInfo?,
     navigateToWritePost: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    if(user==null){
+    if(MFPreferences.getUserInfo()==null){
         navigateToLogin()
         return
     }

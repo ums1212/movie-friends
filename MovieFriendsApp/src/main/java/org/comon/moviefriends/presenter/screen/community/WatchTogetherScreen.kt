@@ -49,8 +49,6 @@ fun WatchTogetherScreen(
     viewModel: MovieDetailViewModel = hiltViewModel()
 ) {
 
-    val user = MFPreferences.getUserInfo()
-
     val requestCountMap = viewModel.allChatRequestCount.collectAsStateWithLifecycle()
     val allUserWantList = viewModel.allUserWantList.collectAsStateWithLifecycle()
     val myRequestList = viewModel.myRequestList.collectAsStateWithLifecycle()
@@ -60,7 +58,7 @@ fun WatchTogetherScreen(
     val snackBarHost = remember { SnackbarHostState() }
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getUserInfo(user)
+        viewModel.getUserInfo(MFPreferences.getUserInfo())
         viewModel.getAllWantMovieRequest()
         viewModel.getAllUserWantList()
         viewModel.getMyRequestList()

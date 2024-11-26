@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.common.COMMUNITY_MENU
 import org.comon.moviefriends.common.MFPreferences
-import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.common.checkCommunityTabItemNeedLogin
 
 @Composable
@@ -23,7 +22,6 @@ fun CommunityTab(
     navigateToCommunityMenu: (String, Int) -> Unit,
     navigateToLogin: () -> Unit,
 ) {
-    val user = MFPreferences.getUserInfo()
     TabRow(
         modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
         selectedTabIndex = selectedItem.intValue
@@ -33,7 +31,6 @@ fun CommunityTab(
                 selected = selectedItem.intValue == index,
                 onClick = {
                     clickCommunityTab(
-                        user = user,
                         navigateToLogin = navigateToLogin,
                         route = item.route,
                         index = index,
@@ -50,13 +47,12 @@ fun CommunityTab(
 }
 
 fun clickCommunityTab(
-    user: UserInfo?,
     navigateToLogin: () -> Unit,
     route: String,
     index: Int,
     navigateToCommunityMenu: (String, Int) -> Unit
 ){
-    if(checkCommunityTabItemNeedLogin(route, user)){
+    if(checkCommunityTabItemNeedLogin(route, MFPreferences.getUserInfo())){
         navigateToLogin()
         return
     }

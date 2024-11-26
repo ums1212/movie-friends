@@ -53,6 +53,7 @@ import org.comon.moviefriends.common.getDateString
 import org.comon.moviefriends.common.getTimeDiff
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
@@ -71,9 +72,9 @@ import org.comon.moviefriends.presenter.components.ShimmerEffect
 @Composable
 fun PostDetailScreen(
     postId: String,
-    viewModel: CommunityPostViewModel = hiltViewModel()
+    viewModel: CommunityPostViewModel = hiltViewModel(),
+    user: UserInfo? = MFPreferences.getUserInfo()
 ) {
-    val user = MFPreferences.getUserInfo()
 
     LaunchedEffect(Unit) {
         viewModel.setPostId(postId)

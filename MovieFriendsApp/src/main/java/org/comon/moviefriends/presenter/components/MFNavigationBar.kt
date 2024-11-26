@@ -14,19 +14,15 @@ import androidx.compose.ui.res.colorResource
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.NAV_MENU
-import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.presenter.screen.profile.ProfileType
 
 @Composable
 fun MFNavigationBar(
-    currentRoute: String?,
     selectedItem: IntState,
     navigateToLogin: () -> Unit,
     hideCommunityTabMenu: () -> Unit,
     navigateToMenu: (String, Int) -> Unit,
 ) {
-    val user = MFPreferences.getUserInfo()
-
     val icons = listOf(
         Icons.Filled.Home,
         Icons.Filled.Create,
@@ -49,17 +45,17 @@ fun MFNavigationBar(
                 selected = selectedItem.intValue == index,
                 onClick = {
                     hideCommunityTabMenu()
-                    clickNavigationBarItem(user, index, navigateToLogin, navigateToMenu)
+                    clickNavigationBarItem(index, navigateToLogin, navigateToMenu)
                 }
             )
         }
     }
 }
 
-fun clickNavigationBarItem(user: UserInfo?, index: Int, navigateToLogin: () -> Unit, navigateToMenu: (String, Int) -> Unit){
+fun clickNavigationBarItem(index: Int, navigateToLogin: () -> Unit, navigateToMenu: (String, Int) -> Unit){
     navigateToMenu(
         if(NAV_MENU.entries[index].route==NAV_MENU.PROFILE.route){
-            if(user==null){
+            if(MFPreferences.getUserInfo()==null){
                 navigateToLogin()
                 return
             }

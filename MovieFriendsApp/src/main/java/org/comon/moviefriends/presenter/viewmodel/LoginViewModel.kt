@@ -67,15 +67,14 @@ class LoginViewModel @Inject constructor  (
 
     fun checkLogin() = flow {
         emit(LoginResult.Loading)
-        auth.currentUser.let {
-            it?.reload()?.await()
-            _user.value = it
+        auth.currentUser.let { authUser ->
+            authUser?.reload()?.await()
+            _user.value = authUser
             _splashScreenState.emit(false)
-            val user = MFPreferences.getUserInfo()
-            user?.let {
-                repository.connectSendBird(user.sendBirdId, user.sendBirdToken)
+            MFPreferences.getUserInfo()?.let { userInfo ->
+                repository.connectSendBird(userInfo.sendBirdId, userInfo.sendBirdToken)
             }
-            emit(LoginResult.Success(it!=null))
+            emit(LoginResult.Success(authUser!=null))
         }
     }.catch {
         _splashScreenState.emit(false)
