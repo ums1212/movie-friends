@@ -95,7 +95,7 @@ fun UserWantThisMovieList(
 
                     if (requestWatchTogether != null) {
                         val requestState = remember {
-                            mutableStateOf(myRequestList.find { it?.receiveUser?.id == wantMovieInfo.userInfo.id } != null)
+                            mutableStateOf(myRequestList.find { it?.receiveUser?.id == wantMovieInfo.userInfo.id } == null)
                         }
                         MFButtonWatchTogether(
                             clickEvent = { requestWatchTogether(wantMovieInfo.movieId, wantMovieInfo.moviePosterPath, wantMovieInfo.userInfo, wantMovieInfo.userLocation) },

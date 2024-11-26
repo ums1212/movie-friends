@@ -140,16 +140,16 @@ fun RequestListScreen(
                                         UserWantListItem(item.receiveUser, item.receiveUserRegion)
                                     }
                                     val requestState = remember { mutableStateOf(true) }
-                                    if(item.proposalFlag == ProposalFlag.WAITING.str){
-                                        MFButtonWatchTogether(
-                                            clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
-                                            requestState = requestState,
-                                            showErrorSnackBar = {},
-                                            proposalFlag = item.proposalFlag
-                                        )
-                                    }else{
-                                        MFText(item.proposalFlag)
-                                    }
+                                    MFButtonWatchTogether(
+                                        clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
+                                        requestState = requestState,
+                                        showErrorSnackBar = {},
+                                        proposalFlag = when(item.proposalFlag){
+                                            ProposalFlag.DENIED.str -> ProposalFlag.DENIED
+                                            ProposalFlag.CONFIRMED.str -> ProposalFlag.CONFIRMED
+                                            else -> ProposalFlag.WAITING
+                                        }
+                                    )
                                 }
                                 MFPostDate(getDateString(item.createdDate.seconds))
                             }

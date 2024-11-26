@@ -45,6 +45,7 @@ import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.theme.Black
+import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
 import org.comon.moviefriends.presenter.theme.FriendsWhite
@@ -147,13 +148,13 @@ fun MFButtonWatchTogether(
     clickEvent: () -> Result<Task<QuerySnapshot>>,
     requestState: MutableState<Boolean>,
     showErrorSnackBar: () -> Unit,
-    proposalFlag: String = "",
+    proposalFlag: ProposalFlag = ProposalFlag.WAITING,
 ) {
     val coroutineScope = rememberCoroutineScope()
     Button(
+        enabled = proposalFlag==ProposalFlag.WAITING,
         shape = RoundedCornerShape(25),
         onClick = {
-            if(proposalFlag.isNotEmpty() && proposalFlag!=ProposalFlag.WAITING.str) return@Button
             coroutineScope.launch {
                 clickEvent().onSuccess { task ->
                     task.addOnSuccessListener { snapshot ->
@@ -166,12 +167,12 @@ fun MFButtonWatchTogether(
         },
         modifier = Modifier
             .width(80.dp),
-        border = BorderStroke(1.dp, FriendsTextGrey),
+        border = if(proposalFlag==ProposalFlag.WAITING) BorderStroke(1.dp, FriendsTextGrey) else BorderStroke(0.dp, Color.Transparent),
         colors = ButtonColors(
             containerColor = FriendsBoxGrey,
             contentColor = White,
-            disabledContainerColor = Color.Gray,
-            disabledContentColor = Color.LightGray
+            disabledContainerColor = FriendsBlack,
+            disabledContentColor = White
         ),
         contentPadding = PaddingValues(
             start = 2.dp,
@@ -181,11 +182,11 @@ fun MFButtonWatchTogether(
         )
     ) {
         when(proposalFlag){
-            ProposalFlag.DENIED.str -> {
-                Text(stringResource(R.string.button_request_denied))
+            ProposalFlag.DENIED -> {
+                Text(ProposalFlag.DENIED.str)
             }
-            ProposalFlag.CONFIRMED.str -> {
-                Text(stringResource(R.string.button_request_confirmed))
+            ProposalFlag.CONFIRMED -> {
+                Text(ProposalFlag.CONFIRMED.str)
             }
             else -> {
                 if(requestState.value){
