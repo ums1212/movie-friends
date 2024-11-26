@@ -65,11 +65,12 @@ fun RateModal(
                     MFButtonWidthResizable(dismissModal, stringResource(R.string.button_cancel), 80.dp)
                     Spacer(Modifier.padding(end = 8.dp))
                     MFButtonConfirm(
-                        {
+                        clickEvent = {
                             voteUserRate(userRate.intValue)
-                        dismissModal() },
-                        stringResource(R.string.button_confirm),
-                        80.dp
+                            dismissModal()
+                        },
+                        text = stringResource(R.string.button_confirm),
+                        width = 80.dp
                     )
                 }
             }
