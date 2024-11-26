@@ -25,6 +25,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.components.MFText
 
 @Composable
 fun ChatRoomListItem(context: Context, item: RequestChatInfo?, navigateToChannel: (String) -> Unit){

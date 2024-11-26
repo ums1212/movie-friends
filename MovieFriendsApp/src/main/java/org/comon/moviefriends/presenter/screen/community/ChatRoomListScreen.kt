@@ -21,11 +21,11 @@ import com.sendbird.uikit.core.data.model.UikitCurrentUserInfo
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
+import org.comon.moviefriends.presenter.components.OnDevelopMark
 import org.comon.moviefriends.presenter.viewmodel.ChatViewModel
 import org.comon.moviefriends.presenter.widget.ChatRoomListItem
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.OnDevelopMark
 
 @Composable
 fun ChatRoomListScreen(

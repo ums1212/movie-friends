@@ -10,14 +10,12 @@ import androidx.navigation.compose.NavHost
 import com.sendbird.uikit.compose.channels.group.detail.ChannelScreen
 import com.sendbird.uikit.compose.navigation.sendbirdGroupChannelNavGraph
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 
 @Composable
 fun MovieFriendsNavigation(
     navController: NavHostController,
     startDestination: String,
     innerPadding: PaddingValues,
-    postViewModel: CommunityPostViewModel,
 ){
     NavHost(
         navController = navController,
@@ -25,7 +23,7 @@ fun MovieFriendsNavigation(
         modifier = Modifier.padding(innerPadding).background(FriendsBlack)
     ){
         introGraph(navController)
-        fullScreenGraph(navController, postViewModel)
+        fullScreenGraph(navController)
         scaffoldScreenGraph(navController)
         sendbirdGroupChannelNavGraph(
             navController = navController,

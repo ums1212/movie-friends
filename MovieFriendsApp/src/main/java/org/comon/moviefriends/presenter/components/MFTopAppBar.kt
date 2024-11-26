@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.ScaffoldNavRoute
@@ -42,7 +43,7 @@ fun MFTopAppBar(
     navigateToPostDetail: (String) -> Unit,
     navigateToProfileSetting: () -> Unit,
     navigateToLogin: () -> Unit,
-    postViewModel: CommunityPostViewModel
+    postViewModel: CommunityPostViewModel = hiltViewModel()
 ) {
 
     Column {

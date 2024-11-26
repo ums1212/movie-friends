@@ -45,14 +45,14 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.components.MFButtonReceive
+import org.comon.moviefriends.presenter.components.MFPostDate
+import org.comon.moviefriends.presenter.components.MFPostTitle
+import org.comon.moviefriends.presenter.components.MFText
+import org.comon.moviefriends.presenter.components.ShimmerEffect
+import org.comon.moviefriends.presenter.components.UserWantListItem
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
-import org.comon.moviefriends.presenter.widget.MFButtonReceive
-import org.comon.moviefriends.presenter.widget.MFPostDate
-import org.comon.moviefriends.presenter.widget.MFPostTitle
-import org.comon.moviefriends.presenter.widget.MFText
-import org.comon.moviefriends.presenter.widget.ShimmerEffect
-import org.comon.moviefriends.presenter.widget.UserWantListItem
 
 @Composable
 fun ReceiveListScreen(

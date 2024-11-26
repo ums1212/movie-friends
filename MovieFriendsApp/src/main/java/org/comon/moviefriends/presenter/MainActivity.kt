@@ -140,7 +140,6 @@ class MainActivity : ComponentActivity() {
             val isCommunityTabMenuShown = remember { mutableStateOf(false) }
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route
-            val postViewModel: CommunityPostViewModel = hiltViewModel()
 
             Scaffold(
                 modifier = Modifier
@@ -167,7 +166,6 @@ class MainActivity : ComponentActivity() {
                                 navController.navigate(FullScreenNavRoute.ProfileSetting.route)
                             },
                             navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
-                            postViewModel = postViewModel
                         )
                     }
                 },
@@ -203,7 +201,6 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = startDestination.value,
                     innerPadding = innerPadding,
-                    postViewModel = postViewModel,
                 )
             }
 //            Box(modifier = Modifier

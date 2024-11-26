@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.showSnackBar
@@ -61,7 +62,7 @@ import java.util.UUID
 @Composable
 fun WritePostScreen(
     postId: String?,
-    viewModel: CommunityPostViewModel,
+    viewModel: CommunityPostViewModel = hiltViewModel(),
 ) {
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()

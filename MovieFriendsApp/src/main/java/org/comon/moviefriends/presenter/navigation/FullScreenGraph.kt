@@ -20,11 +20,9 @@ import org.comon.moviefriends.presenter.screen.profile.ProfileRateScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileReviewScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileSettingScreen
 import org.comon.moviefriends.presenter.screen.profile.ProfileWantMovieScreen
-import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 
 fun NavGraphBuilder.fullScreenGraph(
     navController: NavHostController,
-    postViewModel: CommunityPostViewModel
 ){
     /** 검색 화면 */
     composable(
@@ -110,7 +108,7 @@ fun NavGraphBuilder.fullScreenGraph(
             ) + fadeOut()
         },
     ) {
-        WritePostScreen(postId = null, viewModel = postViewModel)
+        WritePostScreen(postId = null)
     }
 
     /** 커뮤니티 글수정 화면 */
@@ -130,7 +128,7 @@ fun NavGraphBuilder.fullScreenGraph(
         },
     ) { backStackEntry ->
         val postId = backStackEntry.arguments?.getString("postId") ?: ""
-        WritePostScreen(postId = postId, viewModel = postViewModel)
+        WritePostScreen(postId = postId)
     }
 
     /** 내 정보 수정 화면 */
