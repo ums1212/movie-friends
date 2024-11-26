@@ -121,7 +121,6 @@ class MovieDetailDataSourceImpl @Inject constructor (
 
         emit(APIResult.Success(filteredList))
     }.catch {
-        Log.e("test1234", "$it")
         emit(APIResult.NetworkError(it))
     }
 
@@ -326,13 +325,13 @@ class MovieDetailDataSourceImpl @Inject constructor (
 
         val sendCount = db.collection("request_chat")
             .whereEqualTo("sendUser.id", userId)
-            .whereEqualTo("proposalFlag", ProposalFlag.WAITING)
+            .whereEqualTo("proposalFlag", ProposalFlag.WAITING.str)
             .get().await()
             .documents.size
 
         val receiveCount = db.collection("request_chat")
             .whereEqualTo("receiveUser.id", userId)
-            .whereEqualTo("proposalFlag", ProposalFlag.WAITING)
+            .whereEqualTo("proposalFlag", ProposalFlag.WAITING.str)
             .get().await()
             .documents.size
 
