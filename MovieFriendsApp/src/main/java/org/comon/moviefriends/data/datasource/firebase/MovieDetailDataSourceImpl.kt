@@ -85,33 +85,43 @@ class MovieDetailDataSourceImpl @Inject constructor (
 
     override suspend fun getUserWantList(movieId: Int, userId: String) = flow {
         emit(APIResult.Loading)
+
         val querySnapshot = db.collection("want_movie")
             .whereEqualTo("movieId", movieId)
             .whereNotEqualTo("userInfo.id", userId)
             .get().await()
         val userWantList = querySnapshot.toObjects(UserWantMovieInfo::class.java)
 
-        val requestQuerySnapshot1 = db.collection("request_chat")
+        val requestQuerySnapshot = db.collection("request_chat")
             .whereEqualTo("sendUser.id", userId)
+            .whereEqualTo("movieId", movieId)
             .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
             .get().await()
 
-        val requestQuerySnapshot2 = db.collection("request_chat")
+        val receiveQuerySnapshot = db.collection("request_chat")
             .whereEqualTo("receiveUser.id", userId)
-            .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
+            .whereEqualTo("movieId", movieId)
             .get().await()
 
-        val myChatList = requestQuerySnapshot1.toObjects(RequestChatInfo::class.java)
-        myChatList.addAll(requestQuerySnapshot2.toObjects(RequestChatInfo::class.java))
-
-        userWantList.filter { userWant ->
-            myChatList.find { myChat ->
-                myChat.wantMovieInfoId == userWant.id
+        val myRequestList = requestQuerySnapshot.toObjects(RequestChatInfo::class.java)
+        val myReceiveList = receiveQuerySnapshot.toObjects(RequestChatInfo::class.java)
+        val filteredList = userWantList.filter { want ->
+            // 이미 요청 내역에 있는 경우 제외
+            myRequestList.find { request ->
+                request.receiveUser.id == want.userInfo.id
+                        && request.movieId == want.movieId
+            } == null
+        }.filter { want ->
+            // 이미 받은 내역에 있는 경우 제외
+            myReceiveList.find { receive ->
+                receive.sendUser.id == want.userInfo.id
+                        && receive.movieId == want.movieId
             } == null
         }
 
-        emit(APIResult.Success(userWantList))
+        emit(APIResult.Success(filteredList))
     }.catch {
+        Log.e("test1234", "$it")
         emit(APIResult.NetworkError(it))
     }
 
@@ -120,15 +130,28 @@ class MovieDetailDataSourceImpl @Inject constructor (
         val wantQuerySnapshot = db.collection("want_movie")
             .whereNotEqualTo("userInfo.id", userId)
             .get().await()
+        // 요청 내역도 같이 불러오기
         val requestQuerySnapshot = db.collection("request_chat")
             .whereEqualTo("sendUser.id", userId)
             .get().await()
+        // 받은 내역도 같이 불러오기
+        val receiveQuerySnapshot = db.collection("request_chat")
+            .whereEqualTo("receiveUser.id", userId)
+            .get().await()
         val wantList = wantQuerySnapshot.toObjects(UserWantMovieInfo::class.java)
         val myRequestList = requestQuerySnapshot.toObjects(RequestChatInfo::class.java)
+        val myReceiveList = receiveQuerySnapshot.toObjects(RequestChatInfo::class.java)
         val filteredList = wantList.filter { want ->
+            // 이미 요청 내역에 있는 경우 제외
             myRequestList.find { request ->
                 request.receiveUser.id == want.userInfo.id
                         && request.movieId == want.movieId
+            } == null
+        }.filter { want ->
+            // 이미 받은 내역에 있는 경우 제외
+            myReceiveList.find { receive ->
+                receive.sendUser.id == want.userInfo.id
+                        && receive.movieId == want.movieId
             } == null
         }
         emit(APIResult.Success(filteredList))
@@ -199,7 +222,11 @@ class MovieDetailDataSourceImpl @Inject constructor (
                 if(result.isEmpty){
                     db.collection("request_chat").add(requestChatInfo)
                     CoroutineScope(Dispatchers.IO).launch {
-                        FCMSendService.sendNotificationToToken(requestChatInfo.receiveUser.fcmToken, "영화 같이 보기 요청", "${requestChatInfo.sendUser.nickName}님이 같이 영화를 보고 싶어 합니다.")
+                        FCMSendService.sendNotificationToToken(
+                            requestChatInfo.receiveUser.fcmToken,
+                            "영화 같이 보기 요청",
+                            "${requestChatInfo.sendUser.nickName}님이 같이 영화를 보고 싶어 합니다."
+                        )
                     }
                 }else{
                     result.documents.first().reference.delete()
