@@ -172,7 +172,6 @@ class MainActivity : ComponentActivity() {
                 bottomBar = {
                     if(checkScreenNeedBottomBar(currentRoute)){
                         MFNavigationBar(
-                            currentRoute = currentRoute,
                             selectedItem = selectedBottomMenuItem,
                             navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
                             hideCommunityTabMenu = {

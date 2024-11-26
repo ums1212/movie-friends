@@ -23,16 +23,18 @@ fun MFNavigationBar(
     hideCommunityTabMenu: () -> Unit,
     navigateToMenu: (String, Int) -> Unit,
 ) {
-    val icons = listOf(
-        Icons.Filled.Home,
-        Icons.Filled.Create,
-        Icons.Filled.AccountBox
-    )
 
     NavigationBar(
         containerColor = colorResource(R.color.friends_black),
         contentColor = colorResource(R.color.friends_black),
     ) {
+
+        val icons = listOf(
+            Icons.Filled.Home,
+            Icons.Filled.Create,
+            Icons.Filled.AccountBox
+        )
+
         NAV_MENU.entries.forEachIndexed { index, item ->
             NavigationBarItem(
                 icon = {
