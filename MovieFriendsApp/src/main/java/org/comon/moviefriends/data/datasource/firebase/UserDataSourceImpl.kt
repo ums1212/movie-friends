@@ -24,10 +24,10 @@ import org.comon.moviefriends.data.model.sendbird.ResponseSendBirdUserDto
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import javax.inject.Inject
 
-class AuthenticationDataSourceImpl @Inject constructor (
+class UserDataSourceImpl @Inject constructor (
     private val auth: FirebaseAuth,
-    private val db: FirebaseFirestore,
-): AuthenticationDataSource {
+    private val fs: FirebaseFirestore,
+): UserDataSource {
 
     override suspend fun kakaoLogin(context: Context) = flow {
         emit(FirebaseAuthResult.Loading)
@@ -94,7 +94,7 @@ class AuthenticationDataSourceImpl @Inject constructor (
             MFPreferences.setFcmToken(token)
             MFPreferences.setUserInfo(tokenUser)
             insertUserFcmToken(userInfo.id, token)
-            db.collection("user").add(tokenUser).await()
+            fs.collection("user").add(tokenUser).await()
             emit(LoginResult.Success(true))
         }else{
             emit(LoginResult.NetworkError(Exception("sendbird 네트워크 에러")))
@@ -104,7 +104,7 @@ class AuthenticationDataSourceImpl @Inject constructor (
     }
 
     override suspend fun getUserInfoFromFireStore(uid: String): UserInfo {
-        val querySnapshot = db.collection("user").whereEqualTo("id", uid).get().await()
+        val querySnapshot = fs.collection("user").whereEqualTo("id", uid).get().await()
         val userInfo = querySnapshot.documents.first().toObject(UserInfo::class.java)
             ?: throw FirebaseFirestoreException("해당 유저가 없습니다.", FirebaseFirestoreException.Code.NOT_FOUND)
         return userInfo
@@ -112,7 +112,7 @@ class AuthenticationDataSourceImpl @Inject constructor (
 
     override suspend fun insertUserFcmToken(userId: String, token: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            db.collection("user_token").add(mapOf("token" to token, "userId" to userId))
+            fs.collection("user_token").add(mapOf("token" to token, "userId" to userId))
         }
     }
 

@@ -18,14 +18,14 @@ import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import javax.inject.Inject
 
-class CommunityPostDataSourceImpl @Inject constructor (
-    private val db: FirebaseFirestore,
+class PostDataSourceImpl @Inject constructor (
+    private val fs: FirebaseFirestore,
     private val storage: FirebaseStorage,
-): CommunityPostDataSource {
+): PostDataSource {
 
     override suspend fun insertPost(post: PostInfo) = flow {
         emit(APIResult.Loading)
-        val reference = db.collection("post").add(post).await()
+        val reference = fs.collection("post").add(post).await()
         val addedPost = reference.get().await().toObject(PostInfo::class.java)
         if(addedPost==null){
             val msg = MovieFriendsApplication.getMovieFriendsApplication().getString(R.string.no_data)
@@ -47,7 +47,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun updatePost(post: PostInfo) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", post.id).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", post.id).get().await()
         querySnapshot.documents.first().reference.set(post).await()
         val updatedPost = querySnapshot.documents.first().toObject(PostInfo::class.java)
         if(updatedPost==null){
@@ -62,7 +62,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun deletePost(postId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
         querySnapshot.documents.first().reference.delete().await()
         emit(APIResult.Success(true))
     }.catch {
@@ -71,7 +71,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun getPost(postId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
         val post = querySnapshot.documents.first().toObject(PostInfo::class.java)
         emit(APIResult.Success(post))
     }.catch {
@@ -80,7 +80,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun getALLPost() = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").orderBy("createdDate", Query.Direction.DESCENDING).get().await()
+        val querySnapshot = fs.collection("post").orderBy("createdDate", Query.Direction.DESCENDING).get().await()
         val list = querySnapshot.toObjects(PostInfo::class.java)
         emit(APIResult.Success(list))
     }.catch {
@@ -89,7 +89,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun addViewCount(postId: String) {
         runCatching {
-            val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+            val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
             var viewCount = querySnapshot.documents.first().data?.get("viewCount") as Long
             querySnapshot.documents.first().reference.update("viewCount", ++viewCount).await()
         }.onSuccess {
@@ -101,7 +101,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun getPostLikeState(postId: String, userId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
         val post = querySnapshot.documents.first().toObject(PostInfo::class.java)
             ?: throw FirebaseFirestoreException("getPostLikeState", FirebaseFirestoreException.Code.DATA_LOSS)
         val likeInfo = LikeInfo(
@@ -117,7 +117,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun changePostLikeState(postId: String, userInfo: UserInfo) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
         val post = querySnapshot.documents.first().toObject(PostInfo::class.java)
             ?: throw FirebaseFirestoreException("changePostLikeState", FirebaseFirestoreException.Code.DATA_LOSS)
         val reference = querySnapshot.documents.first().reference
@@ -151,7 +151,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun insertReply(postId: String, replyInfo: ReplyInfo) = flow {
         emit(APIResult.Loading)
-        val postSnapshot = db.collection("post").whereEqualTo("id", postId).get().await().documents.first()
+        val postSnapshot = fs.collection("post").whereEqualTo("id", postId).get().await().documents.first()
         val replyList = postSnapshot.toObject(PostInfo::class.java)?.reply?.toMutableList()
         replyList?.add(replyInfo)
         postSnapshot.reference.update("reply", replyList).await()
@@ -162,7 +162,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun deleteReply(postId: String, replyId: String) = flow {
         emit(APIResult.Loading)
-        val postSnapshot = db.collection("post").whereEqualTo("id", postId).get().await().documents.first()
+        val postSnapshot = fs.collection("post").whereEqualTo("id", postId).get().await().documents.first()
         val replyList = postSnapshot.toObject(PostInfo::class.java)?.reply?.toMutableList()
         replyList?.removeIf { it.id == replyId }
         postSnapshot.reference.update("reply", replyList).await()
@@ -173,7 +173,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun getReplyList(postId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").whereEqualTo("id", postId).get().await()
+        val querySnapshot = fs.collection("post").whereEqualTo("id", postId).get().await()
         val reference = querySnapshot.documents.first().reference
         emit(APIResult.Success(reference))
     }.catch {
@@ -182,7 +182,7 @@ class CommunityPostDataSourceImpl @Inject constructor (
 
     override suspend fun getALLReply(userId: String) = flow {
         emit(APIResult.Loading)
-        val querySnapshot = db.collection("post").orderBy("createdDate", Query.Direction.DESCENDING).get().await()
+        val querySnapshot = fs.collection("post").orderBy("createdDate", Query.Direction.DESCENDING).get().await()
         val postList = querySnapshot.toObjects(PostInfo::class.java)
         val replyList = mutableListOf<ReplyInfo>()
         val postListHasReplyList = postList

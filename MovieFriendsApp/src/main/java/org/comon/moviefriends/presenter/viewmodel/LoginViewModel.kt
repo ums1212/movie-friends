@@ -17,12 +17,12 @@ import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.domain.repo.LoginRepository
+import org.comon.moviefriends.domain.repo.UserRepository
 import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel @Inject constructor  (
-    private val repository: LoginRepository,
+    private val repository: UserRepository,
     private val auth: FirebaseAuth,
 ): ViewModel() {
 

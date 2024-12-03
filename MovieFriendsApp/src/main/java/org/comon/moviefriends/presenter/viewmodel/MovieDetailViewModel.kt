@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.QuerySnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -19,17 +20,18 @@ import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
-import org.comon.moviefriends.domain.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.ChatRepository
+import org.comon.moviefriends.domain.repo.MovieRepository
 import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor (
-    private val repository: TMDBRepository,
+    private val movieRepository: MovieRepository,
+    private val chatRepository: ChatRepository,
     private val locationManager: MFLocationManager
 ): ViewModel() {
 
@@ -113,18 +115,6 @@ class MovieDetailViewModel @Inject constructor (
         _movieInfo.value = movieInfo
     }
 
-    private val _allChatRequestCount = MutableStateFlow<APIResult<Map<String, Int>>>(APIResult.NoConstructor)
-    val allChatRequestCount = _allChatRequestCount.asStateFlow()
-
-    private val _myChatRequestList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
-    val myChatRequestList = _myChatRequestList.asStateFlow()
-
-    private val _myChatReceiveList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
-    val myChatReceiveList = _myChatReceiveList.asStateFlow()
-
-    private val _requestState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
-    val requestState = _requestState.asStateFlow()
-
     fun getAllMovieInfo(){
         getMovieDetail()
         getMovieCredit()
@@ -132,24 +122,23 @@ class MovieDetailViewModel @Inject constructor (
         getStateWantThisMovie()
         getAllUserRate()
         getUserWantList()
-        getMyRequestList()
         getUserReview()
     }
 
     private fun getMovieDetail() = viewModelScope.launch {
-        repository.getMovieDetail(movieId.value).collectLatest {
+        movieRepository.getMovieDetail(movieId.value).collectLatest {
             _movieDetail.emit(it)
         }
     }
 
     private fun getMovieCredit() = viewModelScope.launch {
-        repository.getMovieCredit(movieId.value).collectLatest {
+        movieRepository.getMovieCredit(movieId.value).collectLatest {
             _movieCredit.emit(it)
         }
     }
 
     private fun getMovieVideo() = viewModelScope.launch {
-        repository.getMovieVideo(movieId.value).collectLatest {
+        movieRepository.getMovieVideo(movieId.value).collectLatest {
             _movieVideo.emit(it)
         }
     }
@@ -167,7 +156,7 @@ class MovieDetailViewModel @Inject constructor (
                 when(result){
                     is APIResult.Success -> {
                         _movieInfo.value?.let {
-                            repository.changeStateWantThisMovie(it, _userInfo.value!!, result.resultData).collectLatest { result ->
+                            movieRepository.changeStateWantThisMovie(it, _userInfo.value!!, result.resultData).collectLatest { result ->
                                 _wantThisMovieState.emit(result)
                             }
                         }
@@ -185,14 +174,14 @@ class MovieDetailViewModel @Inject constructor (
     private fun getStateWantThisMovie() {
         if(userInfo.value == null) return
         viewModelScope.launch {
-            repository.getStateWantThisMovie(_movieId.value, _userInfo.value!!).collectLatest { result ->
+            movieRepository.getStateWantThisMovie(_movieId.value, _userInfo.value!!).collectLatest { result ->
                 _wantThisMovieState.emit(result)
             }
         }
     }
 
     fun getUserWantList() = viewModelScope.launch {
-        repository.getUserWantList(_movieId.value, _userInfo.value?.id ?: "").collectLatest { result ->
+        movieRepository.getUserWantList(_movieId.value, _userInfo.value?.id ?: "").collectLatest { result ->
             when(result){
                 is APIResult.Success -> {
                     userWantListState.value = true
@@ -208,37 +197,12 @@ class MovieDetailViewModel @Inject constructor (
         }
     }
 
-    private val _allUserWantList = MutableStateFlow<APIResult<List<UserWantMovieInfo?>>>(APIResult.NoConstructor)
-    val allUserWantList = _allUserWantList.asStateFlow()
-
-    fun getAllUserWantList() = viewModelScope.launch {
-        repository.getAllUserWantList(_userInfo.value?.id ?: "").collectLatest {
-            _allUserWantList.emit(it)
-        }
-    }
-
-    fun getMyRequestList() = viewModelScope.launch {
-        repository.getMyRequestList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatRequestList.emit(it)
-            when(it){
-                is APIResult.Success -> _myRequestList.emit(it.resultData)
-                else -> {}
-            }
-        }
-    }
-
-    fun getMyReceiveList() = viewModelScope.launch {
-        repository.getMyReceiveList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatReceiveList.emit(it)
-        }
-    }
-
-    fun requestWatchTogether(
+    suspend fun requestWatchTogether(
         movieId: Int,
         moviePosterPath: String,
         receiveUser: UserInfo,
         receiveUserRegion: String
-    ): Result<Task<QuerySnapshot>> {
+    ): Flow<APIResult<Boolean>> {
         val requestChatInfo = RequestChatInfo(
             movieId = movieId,
             moviePosterPath = moviePosterPath,
@@ -246,32 +210,18 @@ class MovieDetailViewModel @Inject constructor (
             receiveUser = receiveUser,
             receiveUserRegion = receiveUserRegion
         )
-        return repository.requestWatchTogether(requestChatInfo)
+        return chatRepository.requestWatchTogether(requestChatInfo)
     }
 
-
     private fun getAllUserRate() = viewModelScope.launch {
-        repository.getAllUserMovieRating(_movieId.value).collectLatest {
+        movieRepository.getAllUserMovieRating(_movieId.value).collectLatest {
             when(it){
                 is APIResult.Success -> {
-                    mfAllUserMovieRatingState.intValue = getRateAverage(it.resultData)
+                    mfAllUserMovieRatingState.intValue = it.resultData
                 }
                 else -> {}
             }
         }
-    }
-
-    private fun getRateAverage(list: List<UserRate?>): Int {
-        var result = 0
-        if(list.isNotEmpty()){
-            list.forEach { rateInfo ->
-                rateInfo?.rate.let { userRate ->
-                    result += userRate!!
-                }
-            }
-            result /= list.size
-        }
-        return result
     }
 
     fun voteUserRate(
@@ -283,10 +233,10 @@ class MovieDetailViewModel @Inject constructor (
             return
         }
         viewModelScope.launch {
-            repository.voteUserMovieRating(_movieId.value, _userInfo.value!!, star).collectLatest {
+            movieRepository.voteUserMovieRating(_movieId.value, _userInfo.value!!, star).collectLatest {
                 when(it){
                     is APIResult.Success -> {
-                        userMovieRatingState.intValue = it.resultData
+                        userMovieRatingState.intValue = star
                         getAllUserRate()
                     }
                     else -> {}
@@ -298,7 +248,7 @@ class MovieDetailViewModel @Inject constructor (
     fun insertUserReview(review: String){
         viewModelScope.launch {
             _userInfo.value?.let {
-                repository.insertUserReview(_movieId.value, it, review).collectLatest { result ->
+                movieRepository.insertUserReview(_movieId.value, it, review).collectLatest { result ->
                     when(result){
                         is APIResult.Success -> {
                             if(result.resultData){
@@ -314,7 +264,7 @@ class MovieDetailViewModel @Inject constructor (
 
     fun deleteUserReview(reviewId: String){
         viewModelScope.launch {
-            repository.deleteUserReview(reviewId).collectLatest { result ->
+            movieRepository.deleteUserReview(reviewId).collectLatest { result ->
                 when(result){
                     is APIResult.Success -> {
                         if(result.resultData){
@@ -329,34 +279,8 @@ class MovieDetailViewModel @Inject constructor (
 
     fun getUserReview(){
         viewModelScope.launch {
-            repository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {
+            movieRepository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {
                 _userReview.emit(it)
-            }
-        }
-    }
-
-    fun getAllWantMovieRequest(){
-        viewModelScope.launch {
-            repository.getAllChatRequestCount(_userInfo.value?.id ?: "").collectLatest {
-                _allChatRequestCount.emit(it)
-            }
-        }
-    }
-
-    fun confirmRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            if(userInfo.value!=null){
-                repository.confirmRequest(userInfo.value!!, requestChatInfo).collectLatest {
-                    _requestState.emit(it)
-                }
-            }
-        }
-    }
-
-    fun denyRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            repository.denyRequest(requestChatInfo).collectLatest {
-                _requestState.emit(it)
             }
         }
     }

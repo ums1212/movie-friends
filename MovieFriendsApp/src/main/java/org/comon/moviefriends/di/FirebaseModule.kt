@@ -11,21 +11,23 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSource
-import org.comon.moviefriends.data.datasource.firebase.AuthenticationDataSourceImpl
-import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSource
-import org.comon.moviefriends.data.datasource.firebase.CommunityPostDataSourceImpl
-import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSource
-import org.comon.moviefriends.data.datasource.firebase.MovieDetailDataSourceImpl
+import org.comon.moviefriends.data.datasource.firebase.UserDataSource
+import org.comon.moviefriends.data.datasource.firebase.UserDataSourceImpl
+import org.comon.moviefriends.data.datasource.firebase.ChatDataSource
+import org.comon.moviefriends.data.datasource.firebase.ChatDataSourceImpl
+import org.comon.moviefriends.data.datasource.firebase.PostDataSource
+import org.comon.moviefriends.data.datasource.firebase.PostDataSourceImpl
+import org.comon.moviefriends.data.datasource.firebase.MovieDataSource
+import org.comon.moviefriends.data.datasource.firebase.MovieDataSourceImpl
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
 import org.comon.moviefriends.data.repo.ChatRepositoryImpl
-import org.comon.moviefriends.domain.repo.CommunityPostRepository
-import org.comon.moviefriends.data.repo.CommunityPostRepositoryImpl
-import org.comon.moviefriends.domain.repo.LoginRepository
-import org.comon.moviefriends.data.repo.LoginRepositoryImpl
-import org.comon.moviefriends.domain.repo.TMDBRepository
-import org.comon.moviefriends.data.repo.TMDBRepositoryImpl
+import org.comon.moviefriends.domain.repo.PostRepository
+import org.comon.moviefriends.data.repo.PostRepositoryImpl
+import org.comon.moviefriends.domain.repo.UserRepository
+import org.comon.moviefriends.data.repo.UserRepositoryImpl
+import org.comon.moviefriends.domain.repo.MovieRepository
+import org.comon.moviefriends.data.repo.MovieRepositoryImpl
 import org.comon.moviefriends.domain.repo.ChatRepository
 import javax.inject.Singleton
 
@@ -51,40 +53,47 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun providesAuthenticationDataSource(auth: FirebaseAuth, db: FirebaseFirestore): AuthenticationDataSource =
-        AuthenticationDataSourceImpl(auth, db)
+    fun providesAuthenticationDataSource(auth: FirebaseAuth, db: FirebaseFirestore): UserDataSource =
+        UserDataSourceImpl(auth, db)
 
     @Singleton
     @Provides
-    fun providesCommunityPostDataSource(db: FirebaseFirestore, storage: FirebaseStorage): CommunityPostDataSource =
-        CommunityPostDataSourceImpl(db, storage)
+    fun providesCommunityPostDataSource(db: FirebaseFirestore, storage: FirebaseStorage): PostDataSource =
+        PostDataSourceImpl(db, storage)
 
     @Singleton
     @Provides
-    fun providesMovieDetailDataSource(db: FirebaseFirestore, mfLocationService: MFLocationService): MovieDetailDataSource =
-        MovieDetailDataSourceImpl(db, mfLocationService)
+    fun providesCommunityChatDataSource(db: FirebaseFirestore): ChatDataSource =
+        ChatDataSourceImpl(db)
 
     @Singleton
     @Provides
-    fun providesCommunityPostRepository(dataSource: CommunityPostDataSource): CommunityPostRepository =
-        CommunityPostRepositoryImpl(dataSource)
+    fun providesMovieDetailDataSource(db: FirebaseFirestore): MovieDataSource =
+        MovieDataSourceImpl(db)
 
     @Singleton
     @Provides
-    fun providesLoginRepository(dataSource: AuthenticationDataSource): LoginRepository =
-        LoginRepositoryImpl(dataSource)
+    fun providesCommunityPostRepository(dataSource: PostDataSource): PostRepository =
+        PostRepositoryImpl(dataSource)
+
+    @Singleton
+    @Provides
+    fun providesLoginRepository(dataSource: UserDataSource): UserRepository =
+        UserRepositoryImpl(dataSource)
 
     @Singleton
     @Provides
     fun providesTMDBRepository(
-        dataSource: MovieDetailDataSource,
+        movieDataSource: MovieDataSource,
+        chatDataSource: ChatDataSource,
+        location: MFLocationService,
         rest: TMDBService,
-    ): TMDBRepository =
-        TMDBRepositoryImpl(dataSource, rest)
+    ): MovieRepository =
+        MovieRepositoryImpl(movieDataSource, chatDataSource, location, rest)
 
     @Singleton
     @Provides
-    fun providesChatRepository(dataSource: MovieDetailDataSource): ChatRepository =
-        ChatRepositoryImpl(dataSource)
+    fun providesChatRepository(chatDataSource: ChatDataSource): ChatRepository =
+        ChatRepositoryImpl(chatDataSource)
 
 }

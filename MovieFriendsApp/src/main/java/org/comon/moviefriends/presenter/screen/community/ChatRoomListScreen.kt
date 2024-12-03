@@ -46,8 +46,9 @@ fun ChatRoomListScreen(
                 authToken = user?.sendBirdToken ?: ""
             )
         )
-        user?.id?.let {
-            viewModel.loadChatList(it)
+        user?.let {
+            viewModel.getUserInfo(it)
+            viewModel.loadChatList(it.id)
         }
     }
 

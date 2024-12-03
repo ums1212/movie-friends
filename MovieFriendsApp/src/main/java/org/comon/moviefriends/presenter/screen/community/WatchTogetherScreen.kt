@@ -31,14 +31,15 @@ import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.components.MFBadge
 import org.comon.moviefriends.presenter.components.MFPostTitle
 import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.components.UserWantThisMovieList
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun WatchTogetherScreen(
@@ -46,12 +47,12 @@ fun WatchTogetherScreen(
     navigateToReceiveList: () -> Unit,
     navigateToChatRoomList: () -> Unit,
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel()
+    viewModel: WatchTogetherViewModel = hiltViewModel()
 ) {
 
     val requestCountMap = viewModel.allChatRequestCount.collectAsStateWithLifecycle()
     val allUserWantList = viewModel.allUserWantList.collectAsStateWithLifecycle()
-    val myRequestList = viewModel.myRequestList.collectAsStateWithLifecycle()
+    val myRequestList = viewModel.myChatRequestList.collectAsStateWithLifecycle()
 
     val localContext = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
@@ -59,7 +60,7 @@ fun WatchTogetherScreen(
 
     LaunchedEffect(key1 = Unit) {
         viewModel.getUserInfo(MFPreferences.getUserInfo())
-        viewModel.getAllWantMovieRequest()
+        viewModel.getAllChatRequestCount()
         viewModel.getAllUserWantList()
         viewModel.getMyRequestList()
     }
@@ -134,7 +135,11 @@ fun WatchTogetherScreen(
                 UserWantThisMovieList(
                     screen = ScaffoldNavRoute.WatchTogether.route,
                     wantList = list.resultData,
-                    myRequestList = myRequestList.value,
+                    myRequestList = if(myRequestList.value is APIResult.Success){
+                        (myRequestList.value as APIResult.Success<List<RequestChatInfo?>>).resultData
+                    }else{
+                        emptyList()
+                    },
                     navigateToMovieDetail = { movieId ->
                         navigateToMovieDetail(movieId)
                     },

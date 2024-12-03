@@ -2,7 +2,7 @@ package org.comon.moviefriends.presenter.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -10,11 +10,13 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.domain.repo.ChatRepository
+import org.comon.moviefriends.domain.repo.MovieRepository
 import javax.inject.Inject
 
-@HiltViewModel
-class ChatViewModel @Inject constructor(
+class WatchTogetherViewModel @Inject constructor (
+    private val movieRepository: MovieRepository,
     private val chatRepository: ChatRepository,
 ): ViewModel() {
 
@@ -36,14 +38,12 @@ class ChatViewModel @Inject constructor(
     private val _requestState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
     val requestState = _requestState.asStateFlow()
 
-    private val _chatList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
-    val chatList = _chatList.asStateFlow()
+    private val _allUserWantList = MutableStateFlow<APIResult<List<UserWantMovieInfo?>>>(APIResult.NoConstructor)
+    val allUserWantList = _allUserWantList.asStateFlow()
 
-    fun loadChatList(userId: String) {
-        viewModelScope.launch {
-            chatRepository.loadChatList(userId).collectLatest {
-                _chatList.value = it
-            }
+    fun getAllUserWantList() = viewModelScope.launch {
+        movieRepository.getAllUserWantListExceptMe(_userInfo.value?.id ?: "").collectLatest {
+            _allUserWantList.emit(it)
         }
     }
 
@@ -53,6 +53,34 @@ class ChatViewModel @Inject constructor(
                 _allChatRequestCount.emit(it)
             }
         }
+    }
+
+    fun getMyRequestList() = viewModelScope.launch {
+        chatRepository.getRequestChatList(_userInfo.value?.id ?: "").collectLatest {
+            _myChatRequestList.emit(it)
+        }
+    }
+
+    fun getMyReceiveList() = viewModelScope.launch {
+        chatRepository.getReceiveChatList(_userInfo.value?.id ?: "").collectLatest {
+            _myChatReceiveList.emit(it)
+        }
+    }
+
+    suspend fun requestWatchTogether(
+        movieId: Int,
+        moviePosterPath: String,
+        receiveUser: UserInfo,
+        receiveUserRegion: String
+    ): Flow<APIResult<Boolean>> {
+        val requestChatInfo = RequestChatInfo(
+            movieId = movieId,
+            moviePosterPath = moviePosterPath,
+            sendUser = _userInfo.value!!,
+            receiveUser = receiveUser,
+            receiveUserRegion = receiveUserRegion
+        )
+        return chatRepository.requestWatchTogether(requestChatInfo)
     }
 
     fun confirmRequest(requestChatInfo: RequestChatInfo){
@@ -70,22 +98,6 @@ class ChatViewModel @Inject constructor(
             chatRepository.denyRequest(requestChatInfo).collectLatest {
                 _requestState.emit(it)
             }
-        }
-    }
-
-    fun getMyRequestList() = viewModelScope.launch {
-        chatRepository.getRequestChatList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatRequestList.emit(it)
-//            when(it){
-//                is APIResult.Success -> _myRequestList.emit(it.resultData)
-//                else -> {}
-//            }
-        }
-    }
-
-    fun getMyReceiveList() = viewModelScope.launch {
-        chatRepository.getReceiveChatList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatReceiveList.emit(it)
         }
     }
 }

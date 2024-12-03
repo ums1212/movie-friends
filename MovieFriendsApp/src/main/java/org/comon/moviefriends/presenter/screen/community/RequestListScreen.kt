@@ -54,21 +54,23 @@ import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.components.UserWantListItem
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun RequestListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel()
+    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
+    watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(key1 = Unit) {
-        viewModel.getUserInfo(MFPreferences.getUserInfo())
-        viewModel.getMyRequestList()
+        movieDetailViewModel.getUserInfo(MFPreferences.getUserInfo())
+        watchTogetherViewModel.getMyRequestList()
     }
 
     val localContext = LocalContext.current
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    val requestList = viewModel.myChatRequestList.collectAsStateWithLifecycle()
+    val requestList = watchTogetherViewModel.myChatRequestList.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -141,9 +143,8 @@ fun RequestListScreen(
                                     }
                                     val requestState = remember { mutableStateOf(true) }
                                     MFButtonWatchTogether(
-                                        clickEvent = { viewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
+                                        clickEvent = { watchTogetherViewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
                                         requestState = requestState,
-                                        showErrorSnackBar = {},
                                         proposalFlag = when(item.proposalFlag){
                                             ProposalFlag.DENIED.str -> ProposalFlag.DENIED
                                             ProposalFlag.CONFIRMED.str -> ProposalFlag.CONFIRMED

@@ -14,13 +14,13 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.LikeInfo
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
-import org.comon.moviefriends.domain.repo.CommunityPostRepository
+import org.comon.moviefriends.domain.repo.PostRepository
 import org.comon.moviefriends.presenter.viewmodel.uistate.PostUiState
 import javax.inject.Inject
 
 @HiltViewModel
 class CommunityPostViewModel @Inject constructor (
-    private val repository: CommunityPostRepository
+    private val repository: PostRepository
 ): ViewModel() {
 
     private val _user = MFPreferences.getUserInfo()

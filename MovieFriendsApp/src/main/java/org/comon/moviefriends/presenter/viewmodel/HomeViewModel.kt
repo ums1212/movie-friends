@@ -11,13 +11,13 @@ import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
-import org.comon.moviefriends.domain.repo.TMDBRepository
+import org.comon.moviefriends.domain.repo.MovieRepository
 import retrofit2.Response
 import javax.inject.Inject
 
 @HiltViewModel
 class HomeViewModel @Inject constructor  (
-    private val repository: TMDBRepository
+    private val repository: MovieRepository
 ): ViewModel() {
 
     private val _nowList = MutableStateFlow<List<ResponseMoviesDto.MovieInfo>>(emptyList())

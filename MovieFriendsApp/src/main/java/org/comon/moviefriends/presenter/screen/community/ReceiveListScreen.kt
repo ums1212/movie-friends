@@ -33,22 +33,24 @@ import org.comon.moviefriends.presenter.components.ReceiveListItem
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun ReceiveListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel()
+    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
+    watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel()
 ) {
 
     LaunchedEffect(key1 = Unit) {
-        viewModel.getUserInfo(MFPreferences.getUserInfo())
-        viewModel.getMyReceiveList()
+        movieDetailViewModel.getUserInfo(MFPreferences.getUserInfo())
+        watchTogetherViewModel.getMyReceiveList()
     }
 
     val localContext = LocalContext.current
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    val receiveList = viewModel.myChatReceiveList.collectAsStateWithLifecycle()
+    val receiveList = watchTogetherViewModel.myChatReceiveList.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -81,8 +83,8 @@ fun ReceiveListScreen(
                     items(list.resultData.filterNotNull()){ item ->
                         ReceiveListItem(
                             navigateToMovieDetail = navigateToMovieDetail,
-                            confirmRequest = { viewModel.confirmRequest(it) },
-                            denyRequest = { viewModel.denyRequest(it) },
+                            confirmRequest = { watchTogetherViewModel.confirmRequest(it) },
+                            denyRequest = { watchTogetherViewModel.denyRequest(it) },
                             item = item
                         )
                     }

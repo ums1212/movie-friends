@@ -16,6 +16,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -26,10 +27,12 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.ScaffoldNavRoute
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
@@ -43,9 +46,11 @@ fun UserWantThisMovieList(
     wantList: List<UserWantMovieInfo?>,
     myRequestList: List<RequestChatInfo?>,
     navigateToMovieDetail: ((id:Int) -> Unit)?,
-    requestWatchTogether: ((Int, String, UserInfo, String) -> Result<Task<QuerySnapshot>>)?,
+    requestWatchTogether: suspend (Int, String, UserInfo, String) -> Flow<APIResult<Boolean>>,
     showErrorSnackBar: () -> Unit,
 ){
+
+    val coroutineScope = rememberCoroutineScope()
 
     LazyColumn(
         modifier = Modifier
@@ -93,16 +98,39 @@ fun UserWantThisMovieList(
                         UserWantListItem(wantMovieInfo.userInfo, wantMovieInfo.userLocation)
                     }
 
-                    if (requestWatchTogether != null) {
-                        val requestState = remember {
-                            mutableStateOf(myRequestList.find { it?.receiveUser?.id == wantMovieInfo.userInfo.id } == null)
-                        }
-                        MFButtonWatchTogether(
-                            clickEvent = { requestWatchTogether(wantMovieInfo.movieId, wantMovieInfo.moviePosterPath, wantMovieInfo.userInfo, wantMovieInfo.userLocation) },
-                            requestState = requestState,
-                            showErrorSnackBar = showErrorSnackBar
+                    val requestState = remember {
+                        mutableStateOf(
+                            myRequestList.find {
+                                it?.receiveUser?.id == wantMovieInfo.userInfo.id
+                            } == null
                         )
                     }
+                    val loadingState = remember {
+                        mutableStateOf(false)
+                    }
+                    MFButtonWatchTogether(
+                        clickEvent = {
+                            coroutineScope.launch {
+                                requestWatchTogether(
+                                    wantMovieInfo.movieId,
+                                    wantMovieInfo.moviePosterPath,
+                                    wantMovieInfo.userInfo,
+                                    wantMovieInfo.userLocation
+                                ).collectLatest {
+                                    when(it){
+                                        APIResult.Loading -> loadingState.value = true
+                                        is APIResult.NetworkError -> {
+                                            loadingState.value = false
+                                            showErrorSnackBar()
+                                        }
+                                        is APIResult.Success -> requestState.value = it.resultData
+                                        else -> loadingState.value = false
+                                    }
+                                }
+                            }
+                        },
+                        requestState = requestState,
+                    )
                 }
                 Spacer(Modifier.padding(bottom = 8.dp))
             }
