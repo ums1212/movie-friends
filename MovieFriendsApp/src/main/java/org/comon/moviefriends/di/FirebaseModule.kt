@@ -83,7 +83,7 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun providesTMDBRepository(
+    fun providesMovieRepository(
         movieDataSource: MovieDataSource,
         chatDataSource: ChatDataSource,
         location: MFLocationService,

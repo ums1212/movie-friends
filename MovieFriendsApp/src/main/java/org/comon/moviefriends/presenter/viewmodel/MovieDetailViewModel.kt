@@ -6,8 +6,6 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,9 +104,6 @@ class MovieDetailViewModel @Inject constructor (
     val userWantList get() = _userWantList.asStateFlow()
     val userWantListState = mutableStateOf(false)
 
-    private val _myRequestList = MutableStateFlow<List<RequestChatInfo?>>(emptyList())
-    val myRequestList get() = _myRequestList.asStateFlow()
-
     private val _movieInfo = MutableStateFlow<ResponseMovieDetailDto?>(null)
     val movieInfo get() = _movieInfo.asStateFlow()
     fun setMovieInfo(movieInfo: ResponseMovieDetailDto) {
@@ -195,22 +190,6 @@ class MovieDetailViewModel @Inject constructor (
                 }
             }
         }
-    }
-
-    suspend fun requestWatchTogether(
-        movieId: Int,
-        moviePosterPath: String,
-        receiveUser: UserInfo,
-        receiveUserRegion: String
-    ): Flow<APIResult<Boolean>> {
-        val requestChatInfo = RequestChatInfo(
-            movieId = movieId,
-            moviePosterPath = moviePosterPath,
-            sendUser = _userInfo.value!!,
-            receiveUser = receiveUser,
-            receiveUserRegion = receiveUserRegion
-        )
-        return chatRepository.requestWatchTogether(requestChatInfo)
     }
 
     private fun getAllUserRate() = viewModelScope.launch {

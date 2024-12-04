@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
@@ -30,7 +31,7 @@ import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 @Composable
 fun MFWantMovieBottomSheet(
     dismissSheet: () -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel(),
+    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
     watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel(),
 ) {
 
@@ -38,11 +39,11 @@ fun MFWantMovieBottomSheet(
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    val userWantList = viewModel.userWantList.collectAsStateWithLifecycle()
-    val myRequestList = viewModel.myRequestList.collectAsStateWithLifecycle()
+    val userWantList = movieDetailViewModel.userWantList.collectAsStateWithLifecycle()
+    val myRequestList = watchTogetherViewModel.myChatRequestList.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getUserWantList()
+        movieDetailViewModel.getUserWantList()
         watchTogetherViewModel.getMyRequestList()
     }
 
@@ -56,16 +57,22 @@ fun MFWantMovieBottomSheet(
             if(userWantList.value.isEmpty()){
                 MFText(text = stringResource(id = R.string.no_data))
             }else{
-                UserWantThisMovieList(
-                    screen = FullScreenNavRoute.MovieDetail.route,
-                    wantList = userWantList.value,
-                    myRequestList = myRequestList.value,
-                    navigateToMovieDetail = null,
-                    requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion ->
-                        watchTogetherViewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion)
-                    },
-                    showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
-                )
+                when(val rList = myRequestList.value){
+                    APIResult.Loading -> CircularProgressIndicator()
+                    is APIResult.Success -> {
+                        UserWantThisMovieList(
+                            screen = FullScreenNavRoute.MovieDetail.route,
+                            wantList = userWantList.value,
+                            myRequestList = rList.resultData,
+                            navigateToMovieDetail = null,
+                            requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion ->
+                                watchTogetherViewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion)
+                            },
+                            showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
+                        )
+                    }
+                    else -> MFText(text = stringResource(id = R.string.no_data))
+                }
             }
         }
         SnackbarHost(snackBarHost)
