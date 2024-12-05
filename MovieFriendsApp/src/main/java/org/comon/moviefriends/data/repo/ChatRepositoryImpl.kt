@@ -1,5 +1,6 @@
 package org.comon.moviefriends.data.repo
 
+import android.util.Log
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.ktx.extension.channel.awaitCreateChannel
 import com.sendbird.android.ktx.extension.channel.awaitInvite
@@ -66,7 +67,7 @@ class ChatRepositoryImpl @Inject constructor(
         chatDataSource.getRequestAlreadyExist(requestChatInfo)
             .onSuccess {
                 // 기존 요청 데이터가 있는 경우 삭제
-                chatDataSource.deleteRequestChatInfo(requestChatInfo).getOrThrow()
+                chatDataSource.deleteRequestChatInfo(requestChatInfo.id).getOrThrow()
                 emit(APIResult.Success(false))
             }
             .onFailure {
@@ -88,6 +89,7 @@ class ChatRepositoryImpl @Inject constructor(
                 }
             }
     }.catch {
+        Log.d("test1234", "requestWatchTogether: $it")
         emit(APIResult.NetworkError(it))
     }
 

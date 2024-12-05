@@ -24,7 +24,7 @@ interface ChatDataSource {
     // 채팅 요청 데이터 저장
     suspend fun insertRequestChatInfo(requestChatInfo: RequestChatInfo): Result<Boolean>
     // 채팅 요청 데이터 삭제
-    suspend fun deleteRequestChatInfo(requestChatInfo: RequestChatInfo): Result<Boolean>
+    suspend fun deleteRequestChatInfo(requestChatInfoId: String): Result<Boolean>
     // 승인 대기중인 요청한 채팅 건 수 불러오기
     suspend fun getWaitingSendRequestCount(userId: String): Result<Int>
     // 승인 대기중인 받은 채팅 건 수 불러오기

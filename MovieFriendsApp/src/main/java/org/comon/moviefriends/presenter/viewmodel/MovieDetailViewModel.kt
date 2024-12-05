@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -184,6 +183,7 @@ class MovieDetailViewModel @Inject constructor (
                 }
                 is APIResult.NetworkError -> {
                     Log.e("getUserWantList", "${result.exception}")
+                    userWantListState.value = false
                 }
                 else -> {
                     userWantListState.value = false
@@ -191,6 +191,9 @@ class MovieDetailViewModel @Inject constructor (
             }
         }
     }
+
+    suspend fun requestWatchTogether(requestChatInfo: RequestChatInfo) =
+        chatRepository.requestWatchTogether(requestChatInfo)
 
     private fun getAllUserRate() = viewModelScope.launch {
         movieRepository.getAllUserMovieRating(_movieId.value).collectLatest {

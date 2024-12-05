@@ -103,9 +103,9 @@ class ChatDataSourceImpl @Inject constructor (
             true
         }
 
-    override suspend fun deleteRequestChatInfo(requestChatInfo: RequestChatInfo): Result<Boolean>
+    override suspend fun deleteRequestChatInfo(requestChatInfoId: String): Result<Boolean>
         = runCatching {
-            fs.collection("request_chat").whereEqualTo("id", requestChatInfo.id)
+            fs.collection("request_chat").whereEqualTo("id", requestChatInfoId)
                 .get().await()
                 .first().reference.delete().await()
             true

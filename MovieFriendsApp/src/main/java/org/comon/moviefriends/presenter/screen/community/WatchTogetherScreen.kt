@@ -31,7 +31,6 @@ import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.common.WATCH_TOGETHER_MENU
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.components.MFBadge
@@ -135,16 +134,11 @@ fun WatchTogetherScreen(
                 UserWantThisMovieList(
                     screen = ScaffoldNavRoute.WatchTogether.route,
                     wantList = list.resultData,
-                    myRequestList = if(myRequestList.value is APIResult.Success){
-                        (myRequestList.value as APIResult.Success<List<RequestChatInfo?>>).resultData
-                    }else{
-                        emptyList()
-                    },
                     navigateToMovieDetail = { movieId ->
                         navigateToMovieDetail(movieId)
                     },
-                    requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion ->
-                        viewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion)
+                    requestWatchTogether = { requestChatInfo ->
+                        viewModel.requestWatchTogether(requestChatInfo)
                     },
                     showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
                 )

@@ -3,7 +3,6 @@ package org.comon.moviefriends.presenter.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -69,21 +68,8 @@ class WatchTogetherViewModel @Inject constructor (
         }
     }
 
-    suspend fun requestWatchTogether(
-        movieId: Int,
-        moviePosterPath: String,
-        receiveUser: UserInfo,
-        receiveUserRegion: String
-    ): Flow<APIResult<Boolean>> {
-        val requestChatInfo = RequestChatInfo(
-            movieId = movieId,
-            moviePosterPath = moviePosterPath,
-            sendUser = _userInfo.value!!,
-            receiveUser = receiveUser,
-            receiveUserRegion = receiveUserRegion
-        )
-        return chatRepository.requestWatchTogether(requestChatInfo)
-    }
+    suspend fun requestWatchTogether(requestChatInfo: RequestChatInfo) =
+        chatRepository.requestWatchTogether(requestChatInfo)
 
     fun confirmRequest(requestChatInfo: RequestChatInfo){
         viewModelScope.launch {

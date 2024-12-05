@@ -23,6 +23,7 @@ object FCMSendService {
         return withContext(Dispatchers.IO) {
             try {
                 val accessToken = getAccessToken()
+                Log.d("test1234", "accessToken : $accessToken")
                 val jsonBody = JSONObject().apply {
                     put("message", JSONObject().apply {
                         put("token", token)

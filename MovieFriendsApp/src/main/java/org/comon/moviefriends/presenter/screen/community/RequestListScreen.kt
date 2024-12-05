@@ -143,7 +143,7 @@ fun RequestListScreen(
                                     }
                                     val requestState = remember { mutableStateOf(true) }
                                     MFButtonWatchTogether(
-                                        clickEvent = { watchTogetherViewModel.requestWatchTogether(item.movieId, item.moviePosterPath, item.receiveUser, item.receiveUserRegion) },
+                                        clickEvent = { watchTogetherViewModel.requestWatchTogether(item) },
                                         requestState = requestState,
                                         proposalFlag = when(item.proposalFlag){
                                             ProposalFlag.DENIED.str -> ProposalFlag.DENIED
