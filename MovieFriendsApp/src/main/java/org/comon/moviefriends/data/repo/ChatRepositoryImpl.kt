@@ -1,6 +1,5 @@
 package org.comon.moviefriends.data.repo
 
-import android.util.Log
 import com.sendbird.android.channel.GroupChannel
 import com.sendbird.android.ktx.extension.channel.awaitCreateChannel
 import com.sendbird.android.ktx.extension.channel.awaitInvite
@@ -89,7 +88,6 @@ class ChatRepositoryImpl @Inject constructor(
                 }
             }
     }.catch {
-        Log.d("test1234", "requestWatchTogether: $it")
         emit(APIResult.NetworkError(it))
     }
 

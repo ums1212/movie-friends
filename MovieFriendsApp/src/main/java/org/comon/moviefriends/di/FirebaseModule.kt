@@ -5,6 +5,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.storage
 import dagger.Module
@@ -53,8 +54,13 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun providesAuthenticationDataSource(auth: FirebaseAuth, db: FirebaseFirestore): UserDataSource =
-        UserDataSourceImpl(auth, db)
+    fun providesFirebaseMessaging(): FirebaseMessaging =
+        FirebaseMessaging.getInstance()
+
+    @Singleton
+    @Provides
+    fun providesUserDataSource(db: FirebaseFirestore): UserDataSource =
+        UserDataSourceImpl(db)
 
     @Singleton
     @Provides
@@ -78,8 +84,12 @@ object FirebaseModule {
 
     @Singleton
     @Provides
-    fun providesLoginRepository(dataSource: UserDataSource): UserRepository =
-        UserRepositoryImpl(dataSource)
+    fun providesUserRepository(
+        userDataSource: UserDataSource,
+        auth: FirebaseAuth,
+        fcm: FirebaseMessaging
+    ): UserRepository =
+        UserRepositoryImpl(userDataSource, auth, fcm)
 
     @Singleton
     @Provides

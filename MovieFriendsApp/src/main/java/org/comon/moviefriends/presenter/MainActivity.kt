@@ -25,13 +25,9 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.MFPreferences
@@ -41,7 +37,6 @@ import org.comon.moviefriends.presenter.common.checkScreenNeedBottomBar
 import org.comon.moviefriends.presenter.common.checkScreenNeedTopBar
 import org.comon.moviefriends.presenter.navigation.MovieFriendsNavigation
 import org.comon.moviefriends.presenter.theme.MovieFriendsTheme
-import org.comon.moviefriends.presenter.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import org.comon.moviefriends.presenter.viewmodel.LoginViewModel
 import org.comon.moviefriends.presenter.components.MFNavigationBar
@@ -105,20 +100,18 @@ class MainActivity : ComponentActivity() {
     private val startDestination = mutableStateOf(IntroNavRoute.Login.route)
 
     private fun checkLogin(startDestination: MutableState<String>, loginViewModel: LoginViewModel){
-        lifecycleScope.launch {
-            loginViewModel.checkLogin().collectLatest { result ->
-                when(result){
-                    is LoginResult.Loading -> Log.d("checkLogin", "로그인여부확인로딩")
-                    is LoginResult.Success -> {
-                        if(result.resultData) {
-                            startDestination.value = ScaffoldNavRoute.Home.route
-                        }else{
-                            startDestination.value = IntroNavRoute.Login.route
-                        }
-                    }
-                    else -> {
+        collectFlowInActivity(loginViewModel.checkLogin()){ result ->
+            when(result){
+                is LoginResult.Loading -> Log.d("checkLogin", "로그인여부확인로딩")
+                is LoginResult.Success -> {
+                    if(result.resultData) {
+                        startDestination.value = ScaffoldNavRoute.Home.route
+                    }else{
                         startDestination.value = IntroNavRoute.Login.route
                     }
+                }
+                else -> {
+                    startDestination.value = IntroNavRoute.Login.route
                 }
             }
         }
