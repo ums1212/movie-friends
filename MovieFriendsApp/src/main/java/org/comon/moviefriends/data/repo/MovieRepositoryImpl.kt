@@ -174,7 +174,7 @@ class MovieRepositoryImpl @Inject constructor (
             // 이미 요청 내역에 있는 경우 제외
             requestList.find { request ->
                 request.receiveUser.id == want.userInfo.id
-                        && request.movieId == want.movieId
+                        && request.sendUser.id == userId
             } == null
         }.filter { want ->
             // 이미 받은 내역에 있는 경우 제외

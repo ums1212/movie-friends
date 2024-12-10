@@ -16,7 +16,7 @@ class ChatDataSourceImpl @Inject constructor (
             val requestQuerySnapshot = fs.collection("request_chat")
                 .whereEqualTo("sendUser.id", userId)
                 .whereEqualTo("movieId", movieId)
-                .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
+//                .whereNotEqualTo("proposalFlag", ProposalFlag.WAITING.str)
                 .get().await()
             requestQuerySnapshot.toObjects(RequestChatInfo::class.java)
         }

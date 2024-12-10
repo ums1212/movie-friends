@@ -90,6 +90,8 @@ class MovieDetailViewModel @Inject constructor (
         }
         viewModelScope.launch {
             _userWantBottomSheetState.emit(!_userWantBottomSheetState.value)
+            // 이 영화를 보고 싶은 사람 새로고침
+            getUserWantList()
         }
     }
 
