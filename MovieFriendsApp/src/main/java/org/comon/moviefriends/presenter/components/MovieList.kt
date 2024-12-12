@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.components
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,16 +31,19 @@ import coil3.request.crossfade
 import coil3.request.error
 import kotlinx.coroutines.flow.StateFlow
 import org.comon.moviefriends.R
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.presenter.common.clickableOnce
+import retrofit2.Response
 
 
 @Composable
 fun MovieList(
     category: MovieCategory,
-    list: StateFlow<List<ResponseMoviesDto.MovieInfo>>,
+    showErrorSnackBar: () -> Unit,
+    list: StateFlow<APIResult<Response<ResponseMoviesDto>>>,
     onNavigateToMovieDetail: (movieId: Int) -> Unit
 ) {
 
@@ -49,61 +53,71 @@ fun MovieList(
         Modifier.height(280.dp)
     ) {
         MFPostTitle(text = category.str)
-        if(stateLists.value.isEmpty()){
-            Row(
-                Modifier.fillMaxWidth()
+        when(val list = stateLists.value){
+            APIResult.NoConstructor -> Log.d("TAG", "MovieList: NoConstructor")
+            APIResult.Loading -> Row(
+                modifier = Modifier.fillMaxWidth()
             ) {
                 ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
                 ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
                 ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
                 ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
             }
-        }else{
-            LazyRow(
-                Modifier.fillMaxWidth()
-            ) {
-                items(stateLists.value) { item ->
-                    Column(
-                        modifier = Modifier
-                            .width(160.dp)
-                            .clickableOnce { onNavigateToMovieDetail(item.id) },
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .width(150.dp)
-                                .height(200.dp)
-                                .padding(8.dp),
-                            shape = RoundedCornerShape(8.dp),
-                            border = BorderStroke(1.dp, Color.LightGray),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 8.dp,
-                                pressedElevation = 16.dp
-                            )
-                        ) {
-                            AsyncImage(
-                                modifier = Modifier.fillMaxSize(),
-                                model = ImageRequest.Builder(LocalContext.current)
-                                    .data("$BASE_TMDB_IMAGE_URL${item.posterPath}")
-                                    .crossfade(true)
-                                    .error(R.drawable.yoshicat)
-                                    .build(),
-                                contentDescription = "작품 정보",
-                                contentScale = ContentScale.Fit
-                            )
+            is APIResult.NetworkError -> showErrorSnackBar()
+            is APIResult.Success -> {
+                LazyRow(
+                    Modifier.fillMaxWidth()
+                ) {
+                    list.resultData.body()?.let {
+                        items(it.results) { item ->
+                            Column(
+                                modifier = Modifier
+                                    .width(160.dp)
+                                    .clickableOnce { onNavigateToMovieDetail(item.id) },
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Card(
+                                    modifier = Modifier
+                                        .width(150.dp)
+                                        .height(200.dp)
+                                        .padding(8.dp),
+                                    shape = RoundedCornerShape(8.dp),
+                                    border = BorderStroke(1.dp, Color.LightGray),
+                                    elevation = CardDefaults.cardElevation(
+                                        defaultElevation = 8.dp,
+                                        pressedElevation = 16.dp
+                                    )
+                                ) {
+                                    AsyncImage(
+                                        modifier = Modifier.fillMaxSize(),
+                                        model = ImageRequest.Builder(LocalContext.current)
+                                            .data("$BASE_TMDB_IMAGE_URL${item.posterPath}")
+                                            .crossfade(true)
+                                            .error(R.drawable.yoshicat)
+                                            .build(),
+                                        contentDescription = "작품 정보",
+                                        contentScale = ContentScale.Fit
+                                    )
+                                }
+                                Text(
+                                    text = item.title,
+                                    color = colorResource(id = R.color.friends_white),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                )
+                                Text(
+                                    text = item.releaseDate,
+                                    color = colorResource(id = R.color.friends_white),
+                                    overflow = TextOverflow.Ellipsis,
+                                    maxLines = 1,
+                                )
+                            }
                         }
-                        Text(
-                            text = item.title,
-                            color = colorResource(id = R.color.friends_white),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
-                        Text(
-                            text = item.releaseDate,
-                            color = colorResource(id = R.color.friends_white),
-                            overflow = TextOverflow.Ellipsis,
-                            maxLines = 1,
-                        )
+                    } ?: run {
+                        showErrorSnackBar()
+                        items(4) {
+                            ShimmerEffect(modifier = Modifier.width(150.dp).height(200.dp).padding(8.dp))
+                        }
                     }
                 }
             }
