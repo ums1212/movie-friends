@@ -38,6 +38,8 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.getDateString
@@ -53,17 +55,15 @@ import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.components.UserWantListItem
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun RequestListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
     watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(key1 = Unit) {
-        movieDetailViewModel.getUserInfo(MFPreferences.getUserInfo())
+        watchTogetherViewModel.getUserInfo(MFPreferences.getUserInfo())
         watchTogetherViewModel.getMyRequestList()
     }
 
@@ -142,8 +142,29 @@ fun RequestListScreen(
                                         UserWantListItem(item.receiveUser, item.receiveUserRegion)
                                     }
                                     val requestState = remember { mutableStateOf(true) }
+                                    val loadingState = remember { mutableStateOf(false) }
                                     MFButtonWatchTogether(
-                                        clickEvent = { watchTogetherViewModel.requestWatchTogether(item) },
+                                        clickEvent = {
+                                            coroutineScope.launch {
+                                                watchTogetherViewModel.requestWatchTogether(item).collectLatest {
+                                                    when(it){
+                                                        APIResult.Loading -> {
+                                                            loadingState.value = true
+                                                        }
+                                                        is APIResult.NetworkError -> {
+                                                            loadingState.value = false
+                                                            showSnackBar(coroutineScope, snackBarHost, localContext)
+                                                        }
+                                                        is APIResult.Success -> {
+                                                            requestState.value = it.resultData
+                                                            loadingState.value = false
+                                                        }
+                                                        else -> loadingState.value = false
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        loadingState = loadingState,
                                         requestState = requestState,
                                         proposalFlag = when(item.proposalFlag){
                                             ProposalFlag.DENIED.str -> ProposalFlag.DENIED

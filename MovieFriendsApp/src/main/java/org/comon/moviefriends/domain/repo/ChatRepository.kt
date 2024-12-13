@@ -1,7 +1,5 @@
 package org.comon.moviefriends.domain.repo
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo

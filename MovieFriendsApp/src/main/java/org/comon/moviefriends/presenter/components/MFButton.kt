@@ -25,14 +25,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,12 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
@@ -153,20 +142,15 @@ fun MFButtonWantThisMovie(
 
 @Composable
 fun MFButtonWatchTogether(
-    clickEvent: suspend () -> Unit,
+    clickEvent: () -> Unit,
     requestState: MutableState<Boolean>,
     loadingState: MutableState<Boolean> = mutableStateOf(false),
     proposalFlag: ProposalFlag = ProposalFlag.WAITING,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Button(
         enabled = proposalFlag==ProposalFlag.WAITING,
         shape = RoundedCornerShape(25),
-        onClick = {
-            coroutineScope.launch {
-                clickEvent()
-            }
-        },
+        onClick = { clickEvent() },
         modifier = Modifier
             .width(80.dp),
         border = if(proposalFlag==ProposalFlag.WAITING) BorderStroke(1.dp, FriendsTextGrey) else BorderStroke(0.dp, Color.Transparent),
