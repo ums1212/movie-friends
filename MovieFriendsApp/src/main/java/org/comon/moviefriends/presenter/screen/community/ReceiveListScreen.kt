@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -32,18 +33,15 @@ import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.ReceiveListItem
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun ReceiveListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
     watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = Unit) {
-        movieDetailViewModel.getUserInfo(MFPreferences.getUserInfo())
+        watchTogetherViewModel.getUserInfo(MFPreferences.getUserInfo())
         watchTogetherViewModel.getMyReceiveList()
     }
 
@@ -81,10 +79,13 @@ fun ReceiveListScreen(
                         .fillMaxSize()
                 ) {
                     items(list.resultData.filterNotNull()){ item ->
+                        val requestState = remember { mutableStateOf<RequestState>(RequestState.NoConstructor) }
                         ReceiveListItem(
                             navigateToMovieDetail = navigateToMovieDetail,
-                            confirmRequest = { watchTogetherViewModel.confirmRequest(it) },
-                            denyRequest = { watchTogetherViewModel.denyRequest(it) },
+                            confirmRequest = { watchTogetherViewModel.confirmRequest(item) },
+                            denyRequest = { watchTogetherViewModel.denyRequest(item) },
+                            requestState = requestState,
+                            showSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) },
                             item = item
                         )
                     }
@@ -104,4 +105,11 @@ fun ReceiveListShimmer(){
                 .height(100.dp))
         }
     }
+}
+
+sealed class RequestState {
+    data object NoConstructor : RequestState()
+    data object Loading : RequestState()
+    data object Denied : RequestState()
+    data object Confirmed : RequestState()
 }

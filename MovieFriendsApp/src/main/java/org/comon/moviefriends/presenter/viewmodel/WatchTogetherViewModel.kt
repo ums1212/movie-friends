@@ -36,9 +36,6 @@ class WatchTogetherViewModel @Inject constructor (
     private val _myChatReceiveList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
     val myChatReceiveList = _myChatReceiveList.asStateFlow()
 
-    private val _requestState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
-    val requestState = _requestState.asStateFlow()
-
     private val _allUserWantList = MutableStateFlow<APIResult<List<UserWantMovieInfo?>>>(APIResult.NoConstructor)
     val allUserWantList = _allUserWantList.asStateFlow()
 
@@ -71,21 +68,9 @@ class WatchTogetherViewModel @Inject constructor (
     suspend fun requestWatchTogether(requestChatInfo: RequestChatInfo) =
         chatRepository.requestWatchTogether(requestChatInfo)
 
-    fun confirmRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            if(userInfo.value!=null){
-                chatRepository.confirmRequest(userInfo.value!!, requestChatInfo).collectLatest {
-                    _requestState.emit(it)
-                }
-            }
-        }
-    }
+    suspend fun confirmRequest(requestChatInfo: RequestChatInfo) =
+        chatRepository.confirmRequest(requestChatInfo)
 
-    fun denyRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            chatRepository.denyRequest(requestChatInfo).collectLatest {
-                _requestState.emit(it)
-            }
-        }
-    }
+    suspend fun denyRequest(requestChatInfo: RequestChatInfo) =
+        chatRepository.denyRequest(requestChatInfo)
 }

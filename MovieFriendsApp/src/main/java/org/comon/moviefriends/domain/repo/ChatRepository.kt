@@ -3,7 +3,6 @@ package org.comon.moviefriends.domain.repo
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
-import org.comon.moviefriends.data.model.firebase.UserInfo
 
 interface ChatRepository {
 
@@ -17,7 +16,7 @@ interface ChatRepository {
 
     suspend fun requestWatchTogether(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 
-    suspend fun confirmRequest(userInfo: UserInfo, requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
+    suspend fun confirmRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 
     suspend fun denyRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
 

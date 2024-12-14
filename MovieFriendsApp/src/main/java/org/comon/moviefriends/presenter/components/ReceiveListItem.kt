@@ -6,13 +6,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,20 +27,29 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.getDateString
+import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.screen.community.RequestState
 
 @Composable
 fun ReceiveListItem(
     navigateToMovieDetail: (Int) -> Unit,
-    confirmRequest: (RequestChatInfo) -> Unit,
-    denyRequest: (RequestChatInfo) -> Unit,
+    confirmRequest: suspend () -> Flow<APIResult<Boolean>>,
+    denyRequest: suspend () -> Flow<APIResult<Boolean>>,
+    requestState: MutableState<RequestState>,
+    showSnackBar: () -> Unit,
     item: RequestChatInfo,
 ){
+    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.End
@@ -52,7 +65,8 @@ fun ReceiveListItem(
             ) {
                 Card(
                     modifier = Modifier
-                        .width(60.dp)
+                        .width(80.dp)
+                        .height(120.dp)
                         .padding(4.dp)
                         .clickableOnce {
                             navigateToMovieDetail(item.movieId)
@@ -77,21 +91,53 @@ fun ReceiveListItem(
                 }
                 UserWantListItem(item.sendUser, item.receiveUserRegion)
             }
-            if(item.proposalFlag== ProposalFlag.WAITING.str){
-                Column {
-                    MFButtonReceive("승인"){
-                        confirmRequest(item)
-                    }
-                    MFButtonReceive("거절"){
-                        denyRequest(item)
+            when(requestState.value){
+                RequestState.NoConstructor -> {
+                    if(item.proposalFlag== ProposalFlag.WAITING.str){
+                        Column {
+                            MFButtonReceive("승인"){
+                                requestCollect(true, coroutineScope, confirmRequest, requestState, showSnackBar)
+                            }
+                            MFButtonReceive("거절"){
+                                requestCollect(false, coroutineScope, denyRequest, requestState, showSnackBar)
+                            }
+                        }
+                    }else{
+                        MFText(text = item.proposalFlag)
                     }
                 }
-            }else{
-                MFText(text = item.proposalFlag)
+                RequestState.Loading -> CircularProgressIndicator()
+                RequestState.Denied -> MFText(text = "거절함")
+                RequestState.Confirmed -> MFText(text = "승인함")
             }
         }
         MFPostDate(getDateString(item.createdDate.seconds))
     }
     Spacer(Modifier.padding(vertical = 4.dp))
     HorizontalDivider()
+}
+
+fun requestCollect(
+    isRequestConfirmed: Boolean,
+    coroutineScope: CoroutineScope,
+    request: suspend () -> Flow<APIResult<Boolean>>,
+    requestState: MutableState<RequestState>,
+    showSnackBar: () -> Unit
+){
+    coroutineScope.launch {
+        request().collectLatest {
+            when(it){
+                APIResult.NoConstructor -> requestState.value = RequestState.NoConstructor
+                APIResult.Loading -> requestState.value = RequestState.Loading
+                is APIResult.NetworkError -> showSnackBar()
+                is APIResult.Success -> {
+                    if(isRequestConfirmed){
+                        requestState.value = RequestState.Confirmed
+                    }else{
+                        requestState.value = RequestState.Denied
+                    }
+                }
+            }
+        }
+    }
 }

@@ -58,7 +58,7 @@ class ChatViewModel @Inject constructor(
     fun confirmRequest(requestChatInfo: RequestChatInfo){
         viewModelScope.launch {
             if(userInfo.value!=null){
-                chatRepository.confirmRequest(userInfo.value!!, requestChatInfo).collectLatest {
+                chatRepository.confirmRequest(requestChatInfo).collectLatest {
                     _requestState.emit(it)
                 }
             }
