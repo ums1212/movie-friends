@@ -24,18 +24,6 @@ class ChatViewModel @Inject constructor(
         _userInfo.value = userInfo
     }
 
-    private val _allChatRequestCount = MutableStateFlow<APIResult<Map<String, Int>>>(APIResult.NoConstructor)
-    val allChatRequestCount = _allChatRequestCount.asStateFlow()
-
-    private val _myChatRequestList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
-    val myChatRequestList = _myChatRequestList.asStateFlow()
-
-    private val _myChatReceiveList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
-    val myChatReceiveList = _myChatReceiveList.asStateFlow()
-
-    private val _requestState = MutableStateFlow<APIResult<Boolean>>(APIResult.NoConstructor)
-    val requestState = _requestState.asStateFlow()
-
     private val _chatList = MutableStateFlow<APIResult<List<RequestChatInfo?>>>(APIResult.NoConstructor)
     val chatList = _chatList.asStateFlow()
 
@@ -44,48 +32,6 @@ class ChatViewModel @Inject constructor(
             chatRepository.loadChatList(userId).collectLatest {
                 _chatList.value = it
             }
-        }
-    }
-
-    fun getAllChatRequestCount(){
-        viewModelScope.launch {
-            chatRepository.getAllChatRequestCount(_userInfo.value?.id ?: "").collectLatest {
-                _allChatRequestCount.emit(it)
-            }
-        }
-    }
-
-    fun confirmRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            if(userInfo.value!=null){
-                chatRepository.confirmRequest(requestChatInfo).collectLatest {
-                    _requestState.emit(it)
-                }
-            }
-        }
-    }
-
-    fun denyRequest(requestChatInfo: RequestChatInfo){
-        viewModelScope.launch {
-            chatRepository.denyRequest(requestChatInfo).collectLatest {
-                _requestState.emit(it)
-            }
-        }
-    }
-
-    fun getMyRequestList() = viewModelScope.launch {
-        chatRepository.getRequestChatList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatRequestList.emit(it)
-//            when(it){
-//                is APIResult.Success -> _myRequestList.emit(it.resultData)
-//                else -> {}
-//            }
-        }
-    }
-
-    fun getMyReceiveList() = viewModelScope.launch {
-        chatRepository.getReceiveChatList(_userInfo.value?.id ?: "").collectLatest {
-            _myChatReceiveList.emit(it)
         }
     }
 }
