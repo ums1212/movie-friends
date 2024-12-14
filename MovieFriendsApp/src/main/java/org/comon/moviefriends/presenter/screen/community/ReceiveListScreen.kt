@@ -31,6 +31,7 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.components.MFPostTitle
 import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.ReceiveListItem
+import org.comon.moviefriends.presenter.components.RequestState
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
@@ -105,11 +106,4 @@ fun ReceiveListShimmer(){
                 .height(100.dp))
         }
     }
-}
-
-sealed class RequestState {
-    data object NoConstructor : RequestState()
-    data object Loading : RequestState()
-    data object Denied : RequestState()
-    data object Confirmed : RequestState()
 }

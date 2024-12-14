@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -38,7 +39,6 @@ import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
-import org.comon.moviefriends.presenter.screen.community.RequestState
 
 @Composable
 fun ReceiveListItem(
@@ -95,10 +95,10 @@ fun ReceiveListItem(
                 RequestState.NoConstructor -> {
                     if(item.proposalFlag== ProposalFlag.WAITING.str){
                         Column {
-                            MFButtonReceive("승인"){
+                            MFButtonReceive(stringResource(R.string.label_receive_confirm)){
                                 requestCollect(true, coroutineScope, confirmRequest, requestState, showSnackBar)
                             }
-                            MFButtonReceive("거절"){
+                            MFButtonReceive(stringResource(R.string.label_receive_deny)){
                                 requestCollect(false, coroutineScope, denyRequest, requestState, showSnackBar)
                             }
                         }
@@ -107,8 +107,8 @@ fun ReceiveListItem(
                     }
                 }
                 RequestState.Loading -> CircularProgressIndicator()
-                RequestState.Denied -> MFText(text = "거절함")
-                RequestState.Confirmed -> MFText(text = "승인함")
+                RequestState.Denied -> MFText(stringResource(R.string.button_request_denied))
+                RequestState.Confirmed -> MFText(stringResource(R.string.button_request_confirmed))
             }
         }
         MFPostDate(getDateString(item.createdDate.seconds))
@@ -140,4 +140,11 @@ fun requestCollect(
             }
         }
     }
+}
+
+sealed class RequestState {
+    data object NoConstructor : RequestState()
+    data object Loading : RequestState()
+    data object Denied : RequestState()
+    data object Confirmed : RequestState()
 }
