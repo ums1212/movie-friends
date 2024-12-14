@@ -1,21 +1,17 @@
 package org.comon.moviefriends.domain.repo
 
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserRate
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
 import retrofit2.Response
 
-interface TMDBRepository {
+interface MovieRepository {
 
     fun getNowPlaying(): Flow<APIResult<Response<ResponseMoviesDto>>>
 
@@ -37,27 +33,15 @@ interface TMDBRepository {
 
     suspend fun getUserWantList(movieId: Int, userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
 
-    suspend fun getAllUserWantList(userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
+    suspend fun getAllUserWantListExceptMe(userId: String): Flow<APIResult<List<UserWantMovieInfo?>>>
 
-    suspend fun getMyRequestList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
+    suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Boolean>>
 
-    suspend fun getMyReceiveList(userId: String): Flow<APIResult<List<RequestChatInfo?>>>
-
-    fun requestWatchTogether(requestChatInfo: RequestChatInfo): Result<Task<QuerySnapshot>>
-
-    suspend fun voteUserMovieRating(movieId: Int, userInfo: UserInfo, rating: Int): Flow<APIResult<Int>>
-
-    suspend fun getAllUserMovieRating(movieId: Int): Flow<APIResult<List<UserRate?>>>
+    suspend fun getAllUserMovieRating(movieId: Int): Flow<APIResult<Int>>
 
     suspend fun insertUserReview(movieId: Int, userInfo: UserInfo, review: String): Flow<APIResult<Boolean>>
 
     suspend fun deleteUserReview(reviewId: String): Flow<APIResult<Boolean>>
 
-    suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview?>>>
-
-    suspend fun getAllChatRequestCount(userId: String): Flow<APIResult<Map<String, Int>>>
-
-    suspend fun confirmRequest(userInfo: UserInfo, requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
-
-    suspend fun denyRequest(requestChatInfo: RequestChatInfo): Flow<APIResult<Boolean>>
+    suspend fun getUserReview(movieId: Int, userId: String): Flow<APIResult<List<UserReview>>>
 }

@@ -29,19 +29,17 @@ import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 @Composable
 fun MFWantMovieBottomSheet(
     dismissSheet: () -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel(),
+    movieDetailViewModel: MovieDetailViewModel = hiltViewModel(),
 ) {
 
     val localContext = LocalContext.current
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    val userWantList = viewModel.userWantList.collectAsStateWithLifecycle()
-    val myRequestList = viewModel.myRequestList.collectAsStateWithLifecycle()
+    val userWantList = movieDetailViewModel.userWantList.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.getUserWantList()
-        viewModel.getMyRequestList()
+        movieDetailViewModel.getUserWantList()
     }
 
     ModalBottomSheet(onDismissRequest = dismissSheet) {
@@ -57,9 +55,9 @@ fun MFWantMovieBottomSheet(
                 UserWantThisMovieList(
                     screen = FullScreenNavRoute.MovieDetail.route,
                     wantList = userWantList.value,
-                    myRequestList = myRequestList.value,
-                    navigateToMovieDetail = null,
-                    requestWatchTogether = { movieId, moviePosterPath, receiveUser, receiveUserRegion -> viewModel.requestWatchTogether(movieId, moviePosterPath, receiveUser, receiveUserRegion) },
+                    requestWatchTogether = { requestChatInfo ->
+                        movieDetailViewModel.requestWatchTogether(requestChatInfo)
+                    },
                     showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) }
                 )
             }

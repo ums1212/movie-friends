@@ -46,13 +46,14 @@ fun ChatRoomListScreen(
                 authToken = user?.sendBirdToken ?: ""
             )
         )
-        user?.id?.let {
-            viewModel.loadChatList(it)
+        user?.let {
+            viewModel.getUserInfo(it)
+            viewModel.loadChatList(it.id)
         }
     }
 
     Column(Modifier.fillMaxSize().padding(12.dp)) {
-        MFPostTitle("대화 중인 채팅방")
+        MFPostTitle(stringResource(R.string.label_chat_room_lst))
         when(val list = chatList.value){
             APIResult.Loading -> LinearProgressIndicator()
             is APIResult.NetworkError -> OnDevelopMark()

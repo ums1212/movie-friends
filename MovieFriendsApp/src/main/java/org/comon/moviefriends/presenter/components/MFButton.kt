@@ -27,7 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -37,9 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.Task
-import com.google.firebase.firestore.QuerySnapshot
-import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
@@ -145,26 +142,15 @@ fun MFButtonWantThisMovie(
 
 @Composable
 fun MFButtonWatchTogether(
-    clickEvent: () -> Result<Task<QuerySnapshot>>,
+    clickEvent: () -> Unit,
     requestState: MutableState<Boolean>,
-    showErrorSnackBar: () -> Unit,
+    loadingState: MutableState<Boolean> = mutableStateOf(false),
     proposalFlag: ProposalFlag = ProposalFlag.WAITING,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     Button(
         enabled = proposalFlag==ProposalFlag.WAITING,
         shape = RoundedCornerShape(25),
-        onClick = {
-            coroutineScope.launch {
-                clickEvent().onSuccess { task ->
-                    task.addOnSuccessListener { snapshot ->
-                        requestState.value = snapshot.isEmpty
-                    }.addOnFailureListener {
-                        showErrorSnackBar()
-                    }
-                }
-            }
-        },
+        onClick = { clickEvent() },
         modifier = Modifier
             .width(80.dp),
         border = if(proposalFlag==ProposalFlag.WAITING) BorderStroke(1.dp, FriendsTextGrey) else BorderStroke(0.dp, Color.Transparent),
@@ -181,18 +167,22 @@ fun MFButtonWatchTogether(
             bottom = 2.dp,
         )
     ) {
-        when(proposalFlag){
-            ProposalFlag.DENIED -> {
-                Text(ProposalFlag.DENIED.str)
-            }
-            ProposalFlag.CONFIRMED -> {
-                Text(ProposalFlag.CONFIRMED.str)
-            }
-            else -> {
-                if(requestState.value){
-                    Text(stringResource(R.string.button_cancel))
-                }else {
-                    Text(stringResource(R.string.button_watch_together))
+        if(loadingState.value){
+            CircularProgressIndicator(Modifier.size(24.dp))
+        }else{
+            when(proposalFlag){
+                ProposalFlag.DENIED -> {
+                    Text(ProposalFlag.DENIED.str)
+                }
+                ProposalFlag.CONFIRMED -> {
+                    Text(ProposalFlag.CONFIRMED.str)
+                }
+                else -> {
+                    if(requestState.value){
+                        Text(stringResource(R.string.button_cancel))
+                    }else {
+                        Text(stringResource(R.string.button_watch_together))
+                    }
                 }
             }
         }

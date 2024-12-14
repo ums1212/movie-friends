@@ -103,7 +103,6 @@ fun MovieDetailScreen(
     val rateModalState by viewModel.rateModalState.collectAsStateWithLifecycle()
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
     val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
-    val myRequestList by viewModel.myRequestList.collectAsStateWithLifecycle()
     val movieInfo by viewModel.movieInfo.collectAsStateWithLifecycle()
     val userReviewList by viewModel.userReview.collectAsStateWithLifecycle()
 

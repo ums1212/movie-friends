@@ -9,7 +9,7 @@ import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.data.model.firebase.UserInfo
 
-interface CommunityPostDataSource {
+interface PostDataSource {
     suspend fun insertPost(post: PostInfo): Flow<APIResult<String>>
 
     suspend fun uploadImage(imageUri: Uri, fileName: String): Flow<APIResult<Boolean>>

@@ -15,6 +15,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -30,25 +31,25 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presenter.components.MFPostTitle
 import org.comon.moviefriends.presenter.components.MFText
 import org.comon.moviefriends.presenter.components.ReceiveListItem
+import org.comon.moviefriends.presenter.components.RequestState
 import org.comon.moviefriends.presenter.components.ShimmerEffect
 import org.comon.moviefriends.presenter.theme.FriendsBlack
-import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
 fun ReceiveListScreen(
     navigateToMovieDetail: (id:Int) -> Unit,
-    viewModel: MovieDetailViewModel = hiltViewModel()
+    watchTogetherViewModel: WatchTogetherViewModel = hiltViewModel()
 ) {
-
     LaunchedEffect(key1 = Unit) {
-        viewModel.getUserInfo(MFPreferences.getUserInfo())
-        viewModel.getMyReceiveList()
+        watchTogetherViewModel.getUserInfo(MFPreferences.getUserInfo())
+        watchTogetherViewModel.getMyReceiveList()
     }
 
     val localContext = LocalContext.current
     val snackBarHost = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
-    val receiveList = viewModel.myChatReceiveList.collectAsStateWithLifecycle()
+    val receiveList = watchTogetherViewModel.myChatReceiveList.collectAsStateWithLifecycle()
 
     Column(
         modifier = Modifier
@@ -79,10 +80,13 @@ fun ReceiveListScreen(
                         .fillMaxSize()
                 ) {
                     items(list.resultData.filterNotNull()){ item ->
+                        val requestState = remember { mutableStateOf<RequestState>(RequestState.NoConstructor) }
                         ReceiveListItem(
                             navigateToMovieDetail = navigateToMovieDetail,
-                            confirmRequest = { viewModel.confirmRequest(it) },
-                            denyRequest = { viewModel.denyRequest(it) },
+                            confirmRequest = { watchTogetherViewModel.confirmRequest(item) },
+                            denyRequest = { watchTogetherViewModel.denyRequest(item) },
+                            requestState = requestState,
+                            showSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) },
                             item = item
                         )
                     }

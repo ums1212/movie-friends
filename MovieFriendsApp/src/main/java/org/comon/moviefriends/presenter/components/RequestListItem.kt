@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presenter.components
 
+import android.content.Context
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,44 +13,43 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.getDateString
+import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.model.firebase.ProposalFlag
 import org.comon.moviefriends.data.model.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.viewmodel.WatchTogetherViewModel
 
 @Composable
-fun ReceiveListItem(
-    navigateToMovieDetail: (Int) -> Unit,
-    confirmRequest: suspend () -> Flow<APIResult<Boolean>>,
-    denyRequest: suspend () -> Flow<APIResult<Boolean>>,
-    requestState: MutableState<RequestState>,
-    showSnackBar: () -> Unit,
-    item: RequestChatInfo,
+fun RequestListItem(
+    coroutineScope: CoroutineScope,
+    snackBarHost: SnackbarHostState,
+    localContext: Context,
+    navigateToMovieDetail: (id:Int) -> Unit,
+    watchTogetherViewModel: WatchTogetherViewModel,
+    item: RequestChatInfo
 ){
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp),
         horizontalAlignment = Alignment.End
@@ -89,62 +89,42 @@ fun ReceiveListItem(
                         contentScale = ContentScale.FillBounds
                     )
                 }
-                UserWantListItem(item.sendUser, item.receiveUserRegion)
+                UserWantListItem(item.receiveUser, item.receiveUserRegion)
             }
-            when(requestState.value){
-                RequestState.NoConstructor -> {
-                    if(item.proposalFlag== ProposalFlag.WAITING.str){
-                        Column {
-                            MFButtonReceive(stringResource(R.string.label_receive_confirm)){
-                                requestCollect(true, coroutineScope, confirmRequest, requestState, showSnackBar)
-                            }
-                            MFButtonReceive(stringResource(R.string.label_receive_deny)){
-                                requestCollect(false, coroutineScope, denyRequest, requestState, showSnackBar)
+            val requestState = remember { mutableStateOf(true) }
+            val loadingState = remember { mutableStateOf(false) }
+            MFButtonWatchTogether(
+                clickEvent = {
+                    coroutineScope.launch {
+                        watchTogetherViewModel.requestWatchTogether(item).collectLatest {
+                            when(it){
+                                APIResult.Loading -> {
+                                    loadingState.value = true
+                                }
+                                is APIResult.NetworkError -> {
+                                    loadingState.value = false
+                                    showSnackBar(coroutineScope, snackBarHost, localContext)
+                                }
+                                is APIResult.Success -> {
+                                    requestState.value = it.resultData
+                                    loadingState.value = false
+                                }
+                                else -> loadingState.value = false
                             }
                         }
-                    }else{
-                        MFText(text = item.proposalFlag)
                     }
+                },
+                loadingState = loadingState,
+                requestState = requestState,
+                proposalFlag = when(item.proposalFlag){
+                    ProposalFlag.DENIED.str -> ProposalFlag.DENIED
+                    ProposalFlag.CONFIRMED.str -> ProposalFlag.CONFIRMED
+                    else -> ProposalFlag.WAITING
                 }
-                RequestState.Loading -> CircularProgressIndicator()
-                RequestState.Denied -> MFText(stringResource(R.string.button_request_denied))
-                RequestState.Confirmed -> MFText(stringResource(R.string.button_request_confirmed))
-            }
+            )
         }
         MFPostDate(getDateString(item.createdDate.seconds))
     }
     Spacer(Modifier.padding(vertical = 4.dp))
     HorizontalDivider()
-}
-
-fun requestCollect(
-    isRequestConfirmed: Boolean,
-    coroutineScope: CoroutineScope,
-    request: suspend () -> Flow<APIResult<Boolean>>,
-    requestState: MutableState<RequestState>,
-    showSnackBar: () -> Unit
-){
-    coroutineScope.launch {
-        request().collectLatest {
-            when(it){
-                APIResult.NoConstructor -> requestState.value = RequestState.NoConstructor
-                APIResult.Loading -> requestState.value = RequestState.Loading
-                is APIResult.NetworkError -> showSnackBar()
-                is APIResult.Success -> {
-                    if(isRequestConfirmed){
-                        requestState.value = RequestState.Confirmed
-                    }else{
-                        requestState.value = RequestState.Denied
-                    }
-                }
-            }
-        }
-    }
-}
-
-sealed class RequestState {
-    data object NoConstructor : RequestState()
-    data object Loading : RequestState()
-    data object Denied : RequestState()
-    data object Confirmed : RequestState()
 }
