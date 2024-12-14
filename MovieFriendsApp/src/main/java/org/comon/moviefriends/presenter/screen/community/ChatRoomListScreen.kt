@@ -53,7 +53,7 @@ fun ChatRoomListScreen(
     }
 
     Column(Modifier.fillMaxSize().padding(12.dp)) {
-        MFPostTitle("대화 중인 채팅방")
+        MFPostTitle(stringResource(R.string.label_chat_room_lst))
         when(val list = chatList.value){
             APIResult.Loading -> LinearProgressIndicator()
             is APIResult.NetworkError -> OnDevelopMark()

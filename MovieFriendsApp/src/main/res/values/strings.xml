@@ -61,6 +61,7 @@
     <string name="label_receive_confirm">승인</string>
     <string name="label_receive_deny">거절</string>
     <string name="label_chat_room">채팅방</string>
+    <string name="label_chat_room_lst">대화 중인 채팅방</string>
     <string name="title_user_want_movies">아래의 유저가 영화를 보고 싶어 합니다</string>
 
     <string name="label_menu_recommendation">영화 추천</string>
