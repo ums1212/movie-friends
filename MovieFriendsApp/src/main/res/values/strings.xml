@@ -34,6 +34,7 @@
     <string name="title_user_review">유저 리뷰</string>
     <string name="button_more_user_review">리뷰 더 보기</string>
     <string name="hint_user_review">리뷰 입력</string>
+    <string name="user_review_empty">내용을 입력해주세요.</string>
     <string name="button_user_review">입력</string>
 
     <string name="label_menu_community">커뮤니티</string>

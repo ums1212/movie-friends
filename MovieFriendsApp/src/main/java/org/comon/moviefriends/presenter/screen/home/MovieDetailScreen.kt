@@ -104,7 +104,7 @@ fun MovieDetailScreen(
     val reviewBottomSheetState by viewModel.reviewBottomSheetState.collectAsStateWithLifecycle()
     val userWantList by viewModel.userWantList.collectAsStateWithLifecycle()
     val movieInfo by viewModel.movieInfo.collectAsStateWithLifecycle()
-    val userReviewList by viewModel.userReview.collectAsStateWithLifecycle()
+    val userReviewList by viewModel.userReviews.collectAsStateWithLifecycle()
 
     val isPlayerShown = remember { mutableStateOf(false) }
     val videoKey = remember { mutableStateOf("") }
@@ -287,17 +287,13 @@ fun MovieDetailScreen(
         if(reviewBottomSheetState){
             MFReviewBottomSheet(
                 dismissSheet= { viewModel.toggleReviewBottomSheetState() },
-                insertUserReview = { content -> viewModel.insertUserReview(content) },
-                deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
             )
         }
     }
     if(isPlayerShown.value){
         MFYouTubePlayer(videoKey.value, snackBarHost, localContext, isPlayerShown)
     }
-    Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Bottom){
-        SnackbarHost(snackBarHost)
-    }
+    SnackbarHost(snackBarHost)
 }
 
 @Composable

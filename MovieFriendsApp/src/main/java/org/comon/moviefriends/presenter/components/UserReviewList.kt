@@ -43,13 +43,15 @@ import org.comon.moviefriends.common.getTimeDiff
 import org.comon.moviefriends.data.model.firebase.UserInfo
 import org.comon.moviefriends.data.model.firebase.UserReview
 import org.comon.moviefriends.presenter.common.clickableOnce
+import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 
 /** 유저 리뷰 화면 */
 @Composable
 fun UserReviewList(
     reviewList: List<UserReview?>,
-    insertUserReview: ((String) -> Unit)? = null,
+    insertUserReview: (() -> Unit)? = null,
     deleteUserReview: ((String) -> Unit)? = null,
+    viewModel: MovieDetailViewModel,
     user: UserInfo? = MFPreferences.getUserInfo()
 ){
     if(user!=null){
@@ -62,9 +64,15 @@ fun UserReviewList(
             OutlinedTextField(
                 placeholder = { Text(stringResource(R.string.hint_user_review)) },
                 shape = RoundedCornerShape(12.dp),
-                value = textValue.value,
+                value = viewModel.reviewContent,
                 onValueChange = {
-                    textValue.value = it
+                    viewModel.updateReview(it)
+                },
+                isError = viewModel.reviewHasErrors,
+                supportingText = {
+                    if (viewModel.reviewHasErrors) {
+                        Text(stringResource(R.string.user_review_empty))
+                    }
                 },
                 modifier = Modifier
                     .padding(end = 8.dp)
@@ -74,14 +82,14 @@ fun UserReviewList(
                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = {
                     if (insertUserReview != null) {
-                        insertUserReview(textValue.value)
+                        insertUserReview()
                     }
                     textValue.value = ""
                 })
             )
             MFButtonWidthResizable({
                 if (insertUserReview != null) {
-                    insertUserReview(textValue.value)
+                    insertUserReview()
                 }
                 textValue.value = ""
             }, stringResource(R.string.button_user_review), 200.dp)

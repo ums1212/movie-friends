@@ -2,8 +2,10 @@ package org.comon.moviefriends.presenter.viewmodel
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -70,13 +72,20 @@ class MovieDetailViewModel @Inject constructor (
         }
     }
 
-    private val _userReview = MutableStateFlow<APIResult<List<UserReview?>>>(APIResult.NoConstructor)
-    val userReview = _userReview.asStateFlow()
+    private val _userReviews = MutableStateFlow<APIResult<List<UserReview?>>>(APIResult.NoConstructor)
+    val userReviews = _userReviews.asStateFlow()
 
     private val _reviewBottomSheetState = MutableStateFlow(false)
     val reviewBottomSheetState get() = _reviewBottomSheetState.asStateFlow()
     fun toggleReviewBottomSheetState() = viewModelScope.launch {
         _reviewBottomSheetState.emit(!_reviewBottomSheetState.value)
+    }
+    var reviewContent by mutableStateOf("")
+        private set
+    var reviewHasErrors by mutableStateOf(false)
+        private set
+    fun updateReview(input: String) {
+        reviewContent = input
     }
 
     private val _userWantBottomSheetState = MutableStateFlow(false)
@@ -229,12 +238,19 @@ class MovieDetailViewModel @Inject constructor (
         }
     }
 
-    fun insertUserReview(review: String){
+    fun insertUserReview(){
+        if(reviewContent.isEmpty()){
+            reviewHasErrors = true
+            return
+        }else{
+            reviewHasErrors = false
+        }
         viewModelScope.launch {
             _userInfo.value?.let {
-                movieRepository.insertUserReview(_movieId.value, it, review).collectLatest { result ->
+                movieRepository.insertUserReview(_movieId.value, it, reviewContent).collectLatest { result ->
                     when(result){
                         is APIResult.Success -> {
+                            reviewContent = ""
                             if(result.resultData){
                                 getUserReview()
                             }
@@ -264,7 +280,7 @@ class MovieDetailViewModel @Inject constructor (
     fun getUserReview(){
         viewModelScope.launch {
             movieRepository.getUserReview(_movieId.value, _userInfo.value?.id ?: "").collectLatest {
-                _userReview.emit(it)
+                _userReviews.emit(it)
             }
         }
     }

@@ -71,11 +71,9 @@ fun MFWantMovieBottomSheet(
 fun MFReviewBottomSheet(
     dismissSheet: () -> Unit,
     viewModel: MovieDetailViewModel = hiltViewModel(),
-    insertUserReview: ((String) -> Unit)? = null,
-    deleteUserReview: ((String) -> Unit)? = null,
 ) {
 
-    val userReviewList = viewModel.userReview.collectAsStateWithLifecycle()
+    val userReviewList = viewModel.userReviews.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.getUserReview()
@@ -95,8 +93,9 @@ fun MFReviewBottomSheet(
                 is APIResult.Success -> {
                     UserReviewList(
                         reviewList = list.resultData,
-                        insertUserReview = insertUserReview,
-                        deleteUserReview = deleteUserReview
+                        insertUserReview = { viewModel.insertUserReview() },
+                        deleteUserReview = { reviewId -> viewModel.deleteUserReview(reviewId) },
+                        viewModel = viewModel
                     )
                 }
             }
