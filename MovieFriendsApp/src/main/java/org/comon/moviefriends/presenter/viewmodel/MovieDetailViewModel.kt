@@ -56,6 +56,10 @@ class MovieDetailViewModel @Inject constructor (
     val movieVideo get() = _movieVideo.asStateFlow()
 
     val userMovieRatingState = mutableIntStateOf(0)
+    var userMovieRatingErrorMessage by mutableStateOf<UserRateState>(UserRateState.NoConstructor)
+    fun resetUserMovieRatingErrorMessage(){
+        userMovieRatingErrorMessage = UserRateState.NoConstructor
+    }
     val mfAllUserMovieRatingState = mutableIntStateOf(0)
 
     private val _rateModalState = MutableStateFlow(false)
@@ -69,6 +73,9 @@ class MovieDetailViewModel @Inject constructor (
         }
         viewModelScope.launch {
             _rateModalState.emit(!_rateModalState.value)
+            if(!_rateModalState.value){
+                getAllUserRate()
+            }
         }
     }
 
@@ -225,12 +232,26 @@ class MovieDetailViewModel @Inject constructor (
             navigateToLogin()
             return
         }
+
+        if(userMovieRatingState.intValue == 0){
+            userMovieRatingErrorMessage = UserRateState.NotVote
+            return
+        }
+        userMovieRatingErrorMessage = UserRateState.NoConstructor
+
         viewModelScope.launch {
             movieRepository.voteUserMovieRating(_movieId.value, _userInfo.value!!, star).collectLatest {
                 when(it){
                     is APIResult.Success -> {
+                        toggleRateModalState(navigateToLogin)
                         userMovieRatingState.intValue = star
-                        getAllUserRate()
+                        userMovieRatingErrorMessage = UserRateState.NoConstructor
+                    }
+                    is APIResult.NetworkError -> {
+                        userMovieRatingErrorMessage = UserRateState.Error
+                    }
+                    is APIResult.Loading -> {
+                        userMovieRatingErrorMessage = UserRateState.Loading
                     }
                     else -> {}
                 }
@@ -285,4 +306,11 @@ class MovieDetailViewModel @Inject constructor (
         }
     }
 
+}
+
+sealed class UserRateState {
+    data object NoConstructor : UserRateState()
+    data object Loading : UserRateState()
+    data object NotVote : UserRateState()
+    data object Error : UserRateState()
 }

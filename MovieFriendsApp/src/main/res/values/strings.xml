@@ -31,6 +31,7 @@
     <string name="title_user_rate">MovieFriends 유저 평균 평점</string>
     <string name="button_user_rate">평점 주기</string>
     <string name="label_user_rate">평점 남기기</string>
+    <string name="label_user_rate_empty">평점을 매겨주세요.</string>
     <string name="title_user_review">유저 리뷰</string>
     <string name="button_more_user_review">리뷰 더 보기</string>
     <string name="hint_user_review">리뷰 입력</string>
