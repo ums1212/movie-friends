@@ -4,6 +4,7 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="friends_red">#C50C15</color>
+    <color name="validation_red">#EEB5B2</color>
     <color name="friends_black">#0f0f0f</color>
     <color name="friends_white">#B9B7B7</color>
     <color name="friends_text_grey">#676767</color>

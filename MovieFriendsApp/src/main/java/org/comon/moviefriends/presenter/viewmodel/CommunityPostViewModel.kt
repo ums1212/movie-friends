@@ -15,7 +15,6 @@ import org.comon.moviefriends.data.model.firebase.LikeInfo
 import org.comon.moviefriends.data.model.firebase.PostInfo
 import org.comon.moviefriends.data.model.firebase.ReplyInfo
 import org.comon.moviefriends.domain.repo.PostRepository
-import org.comon.moviefriends.presenter.viewmodel.uistate.PostUiState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -70,26 +69,62 @@ class CommunityPostViewModel @Inject constructor (
     private val _getAllReplyState = MutableStateFlow<APIResult<List<ReplyInfo?>>>(APIResult.NoConstructor)
     val getAllReplyState get() = _getAllReplyState.asStateFlow()
 
-    val postUiState = PostUiState()
-    private fun setPostUiState(postInfo: PostInfo) {
-        postUiState.postTitle.value = postInfo.title
-        postUiState.postContent.value = postInfo.content
-        postUiState.postCategory.value = postInfo.category
-        postUiState.postImageUrI.value = postInfo.imageLink
+    var postCategory = MutableStateFlow("")
+    var postCategoryState = MutableStateFlow(false)
+
+    var postTitle = MutableStateFlow("")
+    fun setPostTitle(title: String){
+        postTitle.value = title
+    }
+    var postTitleState = MutableStateFlow(false)
+
+    var postContent = MutableStateFlow("")
+    fun setPostContent(content: String){
+        postContent.value = content
+    }
+    var postContentState = MutableStateFlow(false)
+
+    var postImageUrl = MutableStateFlow("")
+
+    private fun setPostInfo(postInfo: PostInfo){
+        postCategory.value = postInfo.category
+        postTitle.value = postInfo.title
+        postContent.value = postInfo.content
+        postImageUrl.value = postInfo.imageLink
+    }
+
+    private fun checkPostValidation(): Boolean {
+        if(postCategory.value.isEmpty()){
+            postCategoryState.value = true
+        }
+        if(postTitle.value.isEmpty()){
+            postTitleState.value = true
+        }
+        if(postContent.value.isEmpty()){
+            postContentState.value = true
+        }
+        return postCategoryState.value || postTitleState.value || postContentState.value
+    }
+    private fun resetPostValidation(){
+        postCategoryState.value = false
+        postTitleState.value = false
+        postContentState.value = false
     }
 
     fun insertPost(
         navigateToPostDetail: (String) -> Unit,
     ) {
+        resetPostValidation()
+        if(checkPostValidation()) return
         viewModelScope.launch {
             if(_user != null){
                 val post = PostInfo(
                     user = _user,
                     id = _postId.value,
-                    category = postUiState.postCategory.value,
-                    title = postUiState.postTitle.value,
-                    content = postUiState.postContent.value,
-                    imageLink = postUiState.postImageUrI.value
+                    category = postCategory.value,
+                    title = postTitle.value,
+                    content = postContent.value,
+                    imageLink = postImageUrl.value
                 )
                 repository.insertPost(post).collectLatest { result ->
                     when(result){
@@ -125,10 +160,10 @@ class CommunityPostViewModel @Inject constructor (
                 val post = PostInfo(
                     user = _user,
                     id = _postId.value,
-                    category = postUiState.postCategory.value,
-                    title = postUiState.postTitle.value,
-                    content = postUiState.postContent.value,
-                    imageLink = postUiState.postImageUrI.value
+                    category = postCategory.value,
+                    title = postTitle.value,
+                    content = postContent.value,
+                    imageLink = postImageUrl.value
                 )
                 repository.updatePost(post).collectLatest {
                     _updateState.emit(it)
@@ -158,7 +193,7 @@ class CommunityPostViewModel @Inject constructor (
                     is APIResult.Success -> {
                         isLoading.value = false
                         result.resultData?.let {
-                            setPostUiState(it)
+                            setPostInfo(it)
                         }
                     }
                     else -> {

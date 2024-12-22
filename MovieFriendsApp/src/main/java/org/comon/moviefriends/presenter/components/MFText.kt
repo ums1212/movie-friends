@@ -7,10 +7,12 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.comon.moviefriends.R
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 import org.comon.moviefriends.presenter.theme.FriendsTextGrey
@@ -24,6 +26,15 @@ fun MFText(text:String, modifier: Modifier = Modifier, textStyle: TextStyle = Te
         color = FriendsWhite,
         style = textStyle,
         overflow = overflow,
+    )
+}
+@Composable
+fun ValidationText(text:String){
+    Text(
+        modifier = Modifier.padding(top = 4.dp, start = 14.dp),
+        text = text,
+        color = colorResource(R.color.validation_red),
+        style = TextStyle(fontSize = 12.sp),
     )
 }
 

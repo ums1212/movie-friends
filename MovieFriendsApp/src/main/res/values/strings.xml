@@ -51,6 +51,9 @@
     <string name="label_write_like">좋아요</string>
     <string name="label_write_reply">댓글</string>
     <string name="label_write_total_reply">전체 댓글</string>
+    <string name="category_empty">카테고리를 선택해주세요.</string>
+    <string name="title_empty">제목을 입력해주세요.</string>
+    <string name="content_empty">내용을 입력해주세요.</string>
 
 
     <string name="label_menu_watch_together">영화 같이 보기</string>

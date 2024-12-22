@@ -108,7 +108,12 @@ fun NavGraphBuilder.fullScreenGraph(
             ) + fadeOut()
         },
     ) {
-        WritePostScreen(postId = null)
+        WritePostScreen(
+            postId = null,
+            navigateToPostDetail = { postId ->
+                navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
+            }
+        )
     }
 
     /** 커뮤니티 글수정 화면 */
@@ -128,7 +133,12 @@ fun NavGraphBuilder.fullScreenGraph(
         },
     ) { backStackEntry ->
         val postId = backStackEntry.arguments?.getString("postId") ?: ""
-        WritePostScreen(postId = postId)
+        WritePostScreen(
+            postId = postId,
+            navigateToPostDetail = { _ ->
+                navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
+            }
+        )
     }
 
     /** 내 정보 수정 화면 */

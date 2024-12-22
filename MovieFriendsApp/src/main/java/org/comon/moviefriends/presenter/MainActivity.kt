@@ -150,11 +150,6 @@ class MainActivity : ComponentActivity() {
                             navigateToSearch = {
                                 navController.navigate(FullScreenNavRoute.Search.route)
                             },
-                            navigateToPostDetail = { postId ->
-                                navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}"){
-                                    popUpTo(FullScreenNavRoute.WritePost.route){ inclusive = true }
-                                }
-                            },
                             navigateToProfileSetting = {
                                 navController.navigate(FullScreenNavRoute.ProfileSetting.route)
                             },

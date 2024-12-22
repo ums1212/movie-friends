@@ -40,10 +40,8 @@ fun MFTopAppBar(
     navigatePop: () -> Unit,
     navigateToCommunityMenu: (String) -> Unit,
     navigateToSearch: () -> Unit,
-    navigateToPostDetail: (String) -> Unit,
     navigateToProfileSetting: () -> Unit,
     navigateToLogin: () -> Unit,
-    postViewModel: CommunityPostViewModel = hiltViewModel()
 ) {
 
     Column {
@@ -99,27 +97,6 @@ fun MFTopAppBar(
                         Icon(
                             Icons.Filled.Search,
                             contentDescription = "검색 버튼",
-                            tint = colorResource(R.color.friends_white)
-                        )
-                    }
-                }
-
-                if(route.contains(FullScreenNavRoute.WritePost.route)){
-                    /** 글 작성 버튼 */
-                    IconButton(
-                        onClick = {
-                            if(postViewModel.isUpdate.value){
-                                postViewModel.updatePost()
-                            }else{
-                                postViewModel.insertPost{ postId ->
-                                    navigateToPostDetail(postId)
-                                }
-                            }
-                        },
-                    ) {
-                        Icon(
-                            Icons.Filled.Check,
-                            contentDescription = "글 작성 버튼",
                             tint = colorResource(R.color.friends_white)
                         )
                     }
