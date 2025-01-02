@@ -1,9 +1,9 @@
 package org.comon.moviefriends.data.datasource.tmdb
 
-import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieVideoDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMoviesDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

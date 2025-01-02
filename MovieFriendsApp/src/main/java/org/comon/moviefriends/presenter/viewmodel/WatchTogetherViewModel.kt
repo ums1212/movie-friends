@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 import org.comon.moviefriends.domain.repo.ChatRepository
 import org.comon.moviefriends.domain.repo.MovieRepository
 import javax.inject.Inject

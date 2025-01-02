@@ -1,6 +1,6 @@
 package org.comon.moviefriends.data.datasource.firebase
 
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
 
 interface ChatDataSource {
     // 해당 영화의 요청 승인한 대화 요청한 리스트 불러오기

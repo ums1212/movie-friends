@@ -1,9 +1,9 @@
 package org.comon.moviefriends.data.datasource.firebase
 
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserRate
-import org.comon.moviefriends.data.model.firebase.UserReview
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserRate
+import org.comon.moviefriends.data.entity.firebase.UserReview
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 
 interface MovieDataSource {
     // 해당 유저의 "이 영화를 보고 싶다" 데이터 가져오기

@@ -40,7 +40,7 @@ import androidx.core.content.ContextCompat
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.lbs.MFLocationManager
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.ProposalFlag
+import org.comon.moviefriends.data.entity.firebase.ProposalFlag
 import org.comon.moviefriends.presenter.theme.Black
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey

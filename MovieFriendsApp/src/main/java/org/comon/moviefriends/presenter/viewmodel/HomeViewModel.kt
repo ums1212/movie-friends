@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.domain.repo.MovieRepository
 import retrofit2.Response
 import javax.inject.Inject

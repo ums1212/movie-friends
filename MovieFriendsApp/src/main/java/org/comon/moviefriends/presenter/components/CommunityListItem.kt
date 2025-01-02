@@ -15,7 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.common.getTimeDiff
-import org.comon.moviefriends.data.model.firebase.PostInfo
+import org.comon.moviefriends.data.entity.firebase.PostInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBoxGrey
 

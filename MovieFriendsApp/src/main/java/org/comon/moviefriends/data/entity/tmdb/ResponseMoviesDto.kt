@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model.tmdb
+package org.comon.moviefriends.data.entity.tmdb
 
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.Field

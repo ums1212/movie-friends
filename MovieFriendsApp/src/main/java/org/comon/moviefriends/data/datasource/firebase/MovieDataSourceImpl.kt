@@ -3,10 +3,10 @@ package org.comon.moviefriends.data.datasource.firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserRate
-import org.comon.moviefriends.data.model.firebase.UserReview
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserRate
+import org.comon.moviefriends.data.entity.firebase.UserReview
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 import javax.inject.Inject
 
 class MovieDataSourceImpl @Inject constructor (

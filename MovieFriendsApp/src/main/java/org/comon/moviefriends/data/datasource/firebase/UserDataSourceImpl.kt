@@ -3,7 +3,7 @@ package org.comon.moviefriends.data.datasource.firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 import javax.inject.Inject
 
 class UserDataSourceImpl @Inject constructor (

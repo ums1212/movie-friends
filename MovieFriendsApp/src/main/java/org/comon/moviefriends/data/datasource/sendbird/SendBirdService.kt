@@ -1,8 +1,8 @@
 package org.comon.moviefriends.data.datasource.sendbird
 
 import com.google.gson.GsonBuilder
-import org.comon.moviefriends.data.model.sendbird.CreateSendBirdUserDto
-import org.comon.moviefriends.data.model.sendbird.ResponseSendBirdUserDto
+import org.comon.moviefriends.data.entity.sendbird.CreateSendBirdUserDto
+import org.comon.moviefriends.data.entity.sendbird.ResponseSendBirdUserDto
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

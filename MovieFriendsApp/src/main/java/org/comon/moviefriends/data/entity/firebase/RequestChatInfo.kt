@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model.firebase
+package org.comon.moviefriends.data.entity.firebase
 
 import com.google.firebase.Timestamp
 import java.util.UUID

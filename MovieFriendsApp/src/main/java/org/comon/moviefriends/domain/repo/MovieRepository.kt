@@ -2,13 +2,13 @@ package org.comon.moviefriends.domain.repo
 
 import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserReview
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMoviesDto
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserReview
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieVideoDto
 import retrofit2.Response
 
 interface MovieRepository {

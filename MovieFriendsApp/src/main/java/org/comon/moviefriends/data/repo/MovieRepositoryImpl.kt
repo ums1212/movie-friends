@@ -7,11 +7,11 @@ import org.comon.moviefriends.data.datasource.firebase.MovieDataSource
 import org.comon.moviefriends.data.datasource.lbs.MFLocationService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.TMDBService
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserRate
-import org.comon.moviefriends.data.model.firebase.UserReview
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserRate
+import org.comon.moviefriends.data.entity.firebase.UserReview
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 import org.comon.moviefriends.domain.repo.MovieRepository
 import javax.inject.Inject
 

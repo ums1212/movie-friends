@@ -23,7 +23,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.components.MFText
 

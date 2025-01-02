@@ -3,8 +3,8 @@ package org.comon.moviefriends.data.datasource.firebase
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import kotlinx.coroutines.tasks.await
-import org.comon.moviefriends.data.model.firebase.ProposalFlag
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.ProposalFlag
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
 import javax.inject.Inject
 
 class ChatDataSourceImpl @Inject constructor (

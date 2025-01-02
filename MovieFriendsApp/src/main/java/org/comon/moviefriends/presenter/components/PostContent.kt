@@ -20,7 +20,7 @@ import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.getDateString
-import org.comon.moviefriends.data.model.firebase.PostInfo
+import org.comon.moviefriends.data.entity.firebase.PostInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsWhite
 

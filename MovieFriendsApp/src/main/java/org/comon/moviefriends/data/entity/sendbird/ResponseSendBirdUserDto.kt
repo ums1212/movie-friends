@@ -1,4 +1,4 @@
-package org.comon.moviefriends.data.model.sendbird
+package org.comon.moviefriends.data.entity.sendbird
 
 import com.google.gson.annotations.SerializedName
 

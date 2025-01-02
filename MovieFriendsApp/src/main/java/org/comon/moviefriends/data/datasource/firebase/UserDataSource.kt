@@ -1,6 +1,6 @@
 package org.comon.moviefriends.data.datasource.firebase
 
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 
 interface UserDataSource {
 

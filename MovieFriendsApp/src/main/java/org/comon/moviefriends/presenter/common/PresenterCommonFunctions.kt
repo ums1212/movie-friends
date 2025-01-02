@@ -4,7 +4,7 @@ import com.sendbird.uikit.compose.navigation.SendbirdNavigationRoute
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.common.ScaffoldNavRoute
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 
 fun checkTopBarNeedTitle(route: String) =
     !FullScreenNavRoute::class.sealedSubclasses.map { it.objectInstance?.route }.contains(route)

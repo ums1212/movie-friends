@@ -1,6 +1,6 @@
 package org.comon.moviefriends.data.datasource.lbs
 
-import org.comon.moviefriends.data.model.tmdb.ResponseRegionDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseRegionDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

@@ -16,7 +16,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.request.error
 import org.comon.moviefriends.R
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 
 @Composable

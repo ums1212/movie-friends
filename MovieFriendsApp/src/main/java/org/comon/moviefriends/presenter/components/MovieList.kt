@@ -34,7 +34,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.MovieCategory
-import org.comon.moviefriends.data.model.tmdb.ResponseMoviesDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMoviesDto
 import org.comon.moviefriends.presenter.common.clickableOnce
 import retrofit2.Response
 

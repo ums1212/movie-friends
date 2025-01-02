@@ -35,8 +35,8 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.ScaffoldNavRoute
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
-import org.comon.moviefriends.data.model.firebase.UserWantMovieInfo
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 import org.comon.moviefriends.presenter.common.clickableOnce
 
 /** 이 영화를 보고 싶은 사람 목록 화면 */

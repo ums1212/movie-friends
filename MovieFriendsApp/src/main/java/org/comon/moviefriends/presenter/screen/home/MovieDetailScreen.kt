@@ -60,9 +60,9 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.BASE_TMDB_IMAGE_URL
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.tmdb.ResponseCreditDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieDetailDto
-import org.comon.moviefriends.data.model.tmdb.ResponseMovieVideoDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseCreditDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieDetailDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseMovieVideoDto
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.theme.FriendsBlack
 import org.comon.moviefriends.presenter.theme.FriendsRed

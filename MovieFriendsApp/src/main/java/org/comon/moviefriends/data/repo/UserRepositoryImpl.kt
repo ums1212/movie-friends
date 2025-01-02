@@ -17,9 +17,9 @@ import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.datasource.firebase.UserDataSource
 import org.comon.moviefriends.data.datasource.sendbird.SendBirdService
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.sendbird.CreateSendBirdUserDto
-import org.comon.moviefriends.data.model.sendbird.ResponseSendBirdUserDto
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.sendbird.CreateSendBirdUserDto
+import org.comon.moviefriends.data.entity.sendbird.ResponseSendBirdUserDto
 import org.comon.moviefriends.domain.repo.UserRepository
 import org.comon.moviefriends.presenter.viewmodel.LoginResult
 import javax.inject.Inject

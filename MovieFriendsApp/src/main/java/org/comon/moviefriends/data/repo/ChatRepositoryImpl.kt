@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.firebase.ChatDataSource
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.RequestChatInfo
+import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
 import org.comon.moviefriends.domain.repo.ChatRepository
 import org.comon.moviefriends.presenter.service.FCMSendService
 import javax.inject.Inject

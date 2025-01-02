@@ -40,8 +40,8 @@ import coil3.request.error
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.getTimeDiff
-import org.comon.moviefriends.data.model.firebase.UserInfo
-import org.comon.moviefriends.data.model.firebase.UserReview
+import org.comon.moviefriends.data.entity.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserReview
 import org.comon.moviefriends.presenter.common.clickableOnce
 import org.comon.moviefriends.presenter.viewmodel.MovieDetailViewModel
 

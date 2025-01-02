@@ -1,10 +1,9 @@
 package org.comon.moviefriends.common
 
-import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 
 object MFPreferences {
 
