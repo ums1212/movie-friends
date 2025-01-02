@@ -77,7 +77,7 @@ fun PostDetailScreen(
                 PostContent(postResult.resultData)
                 Spacer(Modifier.padding(vertical = 8.dp))
                 // 좋아요
-                PostLike(viewModel, postResult.resultData.likes.size, user)
+                PostLike(viewModel, postResult.resultData, user)
                 HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
                 if(user!=null){
                     // 댓글 입력 필드

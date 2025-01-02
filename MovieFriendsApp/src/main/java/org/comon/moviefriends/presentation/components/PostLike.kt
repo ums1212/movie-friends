@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.entity.firebase.PostInfo
 import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.presentation.common.clickableOnce
 import org.comon.moviefriends.presentation.theme.FriendsWhite
@@ -24,7 +25,7 @@ import org.comon.moviefriends.presentation.viewmodel.CommunityPostViewModel
 @Composable
 fun PostLike(
     viewModel: CommunityPostViewModel,
-    initialLikeCount: Int,
+    postInfo: PostInfo,
     user: UserInfo?
 ){
     val like = viewModel.postLikeState.collectAsStateWithLifecycle()
@@ -39,18 +40,11 @@ fun PostLike(
             APIResult.Loading -> CircularProgressIndicator(Modifier.size(24.dp))
             is APIResult.NetworkError -> CircularProgressIndicator(Modifier.size(24.dp))
             APIResult.NoConstructor -> {
-                MFText("$initialLikeCount")
-                Icon(
-                    modifier = Modifier
-                        .padding(start = 8.dp),
-                    tint = FriendsWhite,
-                    imageVector = Icons.Outlined.ThumbUp,
-                    contentDescription = "좋아요"
-                )
+                MFText("${postInfo.likes.size}")
             }
             is APIResult.Success -> {
                 MFText("${likeInfo.resultData.likeCount}")
-                if(user!=null){
+                if(user!=null && user.id != postInfo.user.id){
                     Icon(
                         modifier = Modifier
                             .padding(start = 8.dp)
