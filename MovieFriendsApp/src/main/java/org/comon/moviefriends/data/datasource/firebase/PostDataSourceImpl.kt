@@ -12,10 +12,10 @@ import kotlinx.coroutines.tasks.await
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MovieFriendsApplication
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.LikeInfo
-import org.comon.moviefriends.data.model.firebase.PostInfo
-import org.comon.moviefriends.data.model.firebase.ReplyInfo
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.LikeInfo
+import org.comon.moviefriends.data.entity.firebase.PostInfo
+import org.comon.moviefriends.data.entity.firebase.ReplyInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 import javax.inject.Inject
 
 class PostDataSourceImpl @Inject constructor (
@@ -40,6 +40,25 @@ class PostDataSourceImpl @Inject constructor (
     override suspend fun uploadImage(imageUri: Uri, fileName: String) = flow {
         emit(APIResult.Loading)
         storage.reference.child("post_image").child(fileName).putFile(imageUri).await()
+        emit(APIResult.Success(true))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun getImageUrl(fileName: String) = flow {
+        emit(APIResult.Loading)
+        val downloadUrl = storage.reference
+            .child("post_image")
+            .child(fileName)
+            .downloadUrl.await()
+        emit(APIResult.Success(downloadUrl.toString()))
+    }.catch {
+        emit(APIResult.NetworkError(it))
+    }
+
+    override suspend fun deleteImage(fileName: String) = flow {
+        emit(APIResult.Loading)
+        storage.reference.child("post_image").child(fileName).delete().await()
         emit(APIResult.Success(true))
     }.catch {
         emit(APIResult.NetworkError(it))

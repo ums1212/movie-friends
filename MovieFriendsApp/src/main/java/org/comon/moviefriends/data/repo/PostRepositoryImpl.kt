@@ -2,9 +2,9 @@ package org.comon.moviefriends.data.repo
 
 import android.net.Uri
 import org.comon.moviefriends.data.datasource.firebase.PostDataSource
-import org.comon.moviefriends.data.model.firebase.PostInfo
-import org.comon.moviefriends.data.model.firebase.ReplyInfo
-import org.comon.moviefriends.data.model.firebase.UserInfo
+import org.comon.moviefriends.data.entity.firebase.PostInfo
+import org.comon.moviefriends.data.entity.firebase.ReplyInfo
+import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.domain.repo.PostRepository
 import javax.inject.Inject
 
@@ -16,6 +16,12 @@ class PostRepositoryImpl @Inject constructor (
 
     override suspend fun uploadImage(imageUri: Uri, fileName: String) =
         fs.uploadImage(imageUri, fileName)
+
+    override suspend fun getImageUrl(fileName: String) =
+        fs.getImageUrl(fileName)
+
+    override suspend fun deleteImage(fileName: String) =
+        fs.deleteImage(fileName)
 
     override suspend fun updatePost(post: PostInfo) =
         fs.updatePost(post)

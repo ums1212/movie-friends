@@ -7,13 +7,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.model.firebase.LikeInfo
-import org.comon.moviefriends.data.model.firebase.PostInfo
-import org.comon.moviefriends.data.model.firebase.ReplyInfo
+import org.comon.moviefriends.data.entity.firebase.LikeInfo
+import org.comon.moviefriends.data.entity.firebase.PostInfo
+import org.comon.moviefriends.data.entity.firebase.ReplyInfo
 import org.comon.moviefriends.domain.repo.PostRepository
 import javax.inject.Inject
 
@@ -69,46 +71,64 @@ class CommunityPostViewModel @Inject constructor (
     private val _getAllReplyState = MutableStateFlow<APIResult<List<ReplyInfo?>>>(APIResult.NoConstructor)
     val getAllReplyState get() = _getAllReplyState.asStateFlow()
 
-    var postCategory = MutableStateFlow("")
-    var postCategoryState = MutableStateFlow(false)
+    private val _postCategory = MutableStateFlow("")
+    val postCategory = _postCategory.asStateFlow()
+    fun setPostCategory(category: String){
+        _postCategory.value = category
+    }
 
-    var postTitle = MutableStateFlow("")
+    private val _postCategoryState = MutableStateFlow(false)
+    val postCategoryState = _postCategoryState.asStateFlow()
+
+    private val _postTitle = MutableStateFlow("")
+    val postTitle = _postTitle.asStateFlow()
     fun setPostTitle(title: String){
-        postTitle.value = title
+        _postTitle.value = title
     }
-    var postTitleState = MutableStateFlow(false)
 
-    var postContent = MutableStateFlow("")
+    private val _postTitleState = MutableStateFlow(false)
+    val postTitleState = _postTitleState.asStateFlow()
+
+    private val _postContent = MutableStateFlow("")
+    val postContent = _postContent.asStateFlow()
     fun setPostContent(content: String){
-        postContent.value = content
+        _postContent.value = content
     }
-    var postContentState = MutableStateFlow(false)
 
-    var postImageUrl = MutableStateFlow("")
+    private val _postContentState = MutableStateFlow(false)
+    val postContentState = _postContentState.asStateFlow()
+
+    private val _postImageUrl = MutableStateFlow("")
+
+    private val _imageUriFromAlbum = MutableStateFlow<Uri?>(null)
+    val imageUriFromAlbum get() = _imageUriFromAlbum.asStateFlow()
+    fun setImageUriFromAlbum(uri: Uri?){
+        _imageUriFromAlbum.value = uri
+    }
 
     private fun setPostInfo(postInfo: PostInfo){
-        postCategory.value = postInfo.category
-        postTitle.value = postInfo.title
-        postContent.value = postInfo.content
-        postImageUrl.value = postInfo.imageLink
+        _postCategory.value = postInfo.category
+        _postTitle.value = postInfo.title
+        _postContent.value = postInfo.content
+        _postImageUrl.value = postInfo.imageLink
     }
 
     private fun checkPostValidation(): Boolean {
         if(postCategory.value.isEmpty()){
-            postCategoryState.value = true
+            _postCategoryState.value = true
         }
         if(postTitle.value.isEmpty()){
-            postTitleState.value = true
+            _postTitleState.value = true
         }
         if(postContent.value.isEmpty()){
-            postContentState.value = true
+            _postContentState.value = true
         }
-        return postCategoryState.value || postTitleState.value || postContentState.value
+        return _postCategoryState.value || _postTitleState.value || _postContentState.value
     }
     private fun resetPostValidation(){
-        postCategoryState.value = false
-        postTitleState.value = false
-        postContentState.value = false
+        _postCategoryState.value = false
+        _postTitleState.value = false
+        _postContentState.value = false
     }
 
     fun insertPost(
@@ -124,7 +144,7 @@ class CommunityPostViewModel @Inject constructor (
                     category = postCategory.value,
                     title = postTitle.value,
                     content = postContent.value,
-                    imageLink = postImageUrl.value
+                    imageLink = _postImageUrl.value
                 )
                 repository.insertPost(post).collectLatest { result ->
                     when(result){
@@ -144,13 +164,29 @@ class CommunityPostViewModel @Inject constructor (
         }
     }
 
-    fun uploadImage(){
+    fun uploadImage(uri: Uri){
         viewModelScope.launch {
-            val imageUri = Uri.EMPTY
-            val fileName = ""
-            repository.uploadImage(imageUri, fileName).collectLatest {
-                _uploadImageState.emit(it)
-            }
+            setImageUriFromAlbum(uri)
+            val fileName = "${_user?.id}_${_postId.value}"
+            repository.uploadImage(_imageUriFromAlbum.value!!, fileName)
+                .onEach { _uploadImageState.emit(it) }.collect()
+            repository.getImageUrl(fileName)
+                .onEach {
+                    when(it){
+                        is APIResult.Success -> {
+                            _postImageUrl.emit(it.resultData)
+                        }
+                        else -> {}
+                    }
+                }.collect()
+        }
+    }
+
+    fun deleteImage(){
+        viewModelScope.launch {
+            repository.deleteImage("${_user?.id}_${_postId.value}").collect()
+            _postImageUrl.emit("")
+            setImageUriFromAlbum(null)
         }
     }
 
@@ -163,7 +199,7 @@ class CommunityPostViewModel @Inject constructor (
                     category = postCategory.value,
                     title = postTitle.value,
                     content = postContent.value,
-                    imageLink = postImageUrl.value
+                    imageLink = _postImageUrl.value
                 )
                 repository.updatePost(post).collectLatest {
                     _updateState.emit(it)

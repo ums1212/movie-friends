@@ -10,6 +10,19 @@
     <!-- Target SDK API 33 이상부터 Notification 에 다음의 Runtime Permission 이 추가됨 -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
 
+    <!-- 카메라 권한 -->
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 외부저장소 읽기 권한 -->
+    <!-- targetSDK 32 이하 -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+    <!-- targetSDK 33 이상 -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
