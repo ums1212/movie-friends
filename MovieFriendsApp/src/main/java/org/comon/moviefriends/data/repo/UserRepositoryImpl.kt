@@ -21,7 +21,7 @@ import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.data.entity.sendbird.CreateSendBirdUserDto
 import org.comon.moviefriends.data.entity.sendbird.ResponseSendBirdUserDto
 import org.comon.moviefriends.domain.repo.UserRepository
-import org.comon.moviefriends.presenter.viewmodel.LoginResult
+import org.comon.moviefriends.presentation.viewmodel.LoginResult
 import javax.inject.Inject
 
 class UserRepositoryImpl @Inject constructor (

@@ -10,7 +10,7 @@ import org.comon.moviefriends.data.datasource.firebase.ChatDataSource
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.entity.firebase.RequestChatInfo
 import org.comon.moviefriends.domain.repo.ChatRepository
-import org.comon.moviefriends.presenter.service.FCMSendService
+import org.comon.moviefriends.presentation.service.FCMSendService
 import javax.inject.Inject
 
 class ChatRepositoryImpl @Inject constructor(

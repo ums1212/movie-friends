@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 import org.comon.moviefriends.data.datasource.firebase.FirebaseAuthResult
 import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.data.entity.sendbird.ResponseSendBirdUserDto
-import org.comon.moviefriends.presenter.viewmodel.LoginResult
+import org.comon.moviefriends.presentation.viewmodel.LoginResult
 
 interface UserRepository {
 
