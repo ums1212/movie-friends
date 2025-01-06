@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +26,7 @@ import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
@@ -161,10 +163,20 @@ class MainActivity : ComponentActivity() {
                     if(checkScreenNeedBottomBar(currentRoute)){
                         MFNavigationBar(
                             selectedItem = selectedBottomMenuItem,
-                            navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
+                            setSelectedBottomMenuItemIndex = {
+                                setSelectedBottomMenuItemIndex(navController, selectedBottomMenuItem)
+                            },
+                            setSelectedCommunityTabItemIndex = {
+                                setSelectedCommunityTabItemIndex(navController, selectedCommunityTabItem)
+                            },
+                            popBackStack = {
+                                appPopBackStack(navController)
+                            },
+                            communityTabMenuState = isCommunityTabMenuShown.value,
                             hideCommunityTabMenu = {
                                 isCommunityTabMenuShown.value = false
                             },
+                            navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
                             navigateToMenu = { route, index ->
                                 selectedBottomMenuItem.intValue = index
                                 navController.navigate(route) {
@@ -194,6 +206,59 @@ class MainActivity : ComponentActivity() {
                 )
             }
         }
+    }
+
+    private fun appPopBackStack(navController: NavHostController) {
+        navController.popBackStack()
+        if (navController.currentBackStackEntry?.destination?.route == null) {
+            finish()
+        }
+    }
+
+    private fun setSelectedBottomMenuItemIndex(
+        navController: NavHostController,
+        selectedBottomMenuItem: MutableIntState,
+    ) = try {
+        val currentDestination =
+            navController.currentBackStackEntry?.destination?.route ?: ScaffoldNavRoute.Home.route
+
+        selectedBottomMenuItem.intValue = when (currentDestination) {
+            ScaffoldNavRoute.Home.route -> 0
+            ScaffoldNavRoute.Community.route -> 1
+            ScaffoldNavRoute.WatchTogether.route -> 1
+            ScaffoldNavRoute.MovieRecommend.route -> 1
+            ScaffoldNavRoute.MovieWorldCup.route -> 1
+            ScaffoldNavRoute.RequestList.route -> 1
+            ScaffoldNavRoute.ReceiveList.route -> 1
+            ScaffoldNavRoute.ChatList.route -> 1
+            ScaffoldNavRoute.Profile.route -> 2
+            else -> throw Exception("Null Current Destination")
+        }
+    } catch (e: Exception) {
+        Log.e(MainActivity::getClassLoader.name, e.message.toString())
+        finish()
+    }
+
+    private fun setSelectedCommunityTabItemIndex(
+        navController: NavHostController,
+        selectedCommunityTabItem: MutableIntState,
+    ) = try {
+        val currentDestination =
+            navController.currentBackStackEntry?.destination?.route ?: ScaffoldNavRoute.Home.route
+
+        selectedCommunityTabItem.intValue = when (currentDestination) {
+            ScaffoldNavRoute.Community.route -> 0
+            ScaffoldNavRoute.WatchTogether.route -> 1
+            ScaffoldNavRoute.RequestList.route -> 1
+            ScaffoldNavRoute.ReceiveList.route -> 1
+            ScaffoldNavRoute.ChatList.route -> 1
+            ScaffoldNavRoute.MovieRecommend.route -> 2
+            ScaffoldNavRoute.MovieWorldCup.route -> 3
+            else -> selectedCommunityTabItem.intValue
+        }
+    } catch (e: Exception) {
+        Log.e(MainActivity::getClassLoader.name, e.message.toString())
+        finish()
     }
 
     // 사용자 허락시 동작할 코드
