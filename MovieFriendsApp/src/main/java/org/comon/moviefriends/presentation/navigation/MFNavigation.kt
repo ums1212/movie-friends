@@ -16,6 +16,7 @@ fun MovieFriendsNavigation(
     navController: NavHostController,
     startDestination: String,
     innerPadding: PaddingValues,
+    closeCommunityTabMenu: () -> Unit
 ){
     NavHost(
         navController = navController,
@@ -24,7 +25,10 @@ fun MovieFriendsNavigation(
     ){
         introGraph(navController)
         fullScreenGraph(navController)
-        scaffoldScreenGraph(navController)
+        scaffoldScreenGraph(
+            navController = navController,
+            closeCommunityTabMenu = closeCommunityTabMenu
+        )
         sendbirdGroupChannelNavGraph(
             navController = navController,
             channelScreen = { channelUrl ->

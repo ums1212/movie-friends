@@ -188,12 +188,11 @@ class MainActivity : ComponentActivity() {
                     navController = navController,
                     startDestination = startDestination.value,
                     innerPadding = innerPadding,
+                    closeCommunityTabMenu = {
+                        isCommunityTabMenuShown.value = false
+                    }
                 )
             }
-//            Box(modifier = Modifier
-//                .background(FriendsBlack)
-//                .fillMaxSize()){
-//            }
         }
     }
 

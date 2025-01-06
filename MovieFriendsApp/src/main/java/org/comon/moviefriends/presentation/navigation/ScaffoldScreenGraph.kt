@@ -22,7 +22,10 @@ import org.comon.moviefriends.presentation.screen.community.WorldCupScreen
 import org.comon.moviefriends.presentation.screen.home.HomeScreen
 import org.comon.moviefriends.presentation.screen.profile.ProfileScreen
 
-fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
+fun NavGraphBuilder.scaffoldScreenGraph(
+    navController: NavHostController,
+    closeCommunityTabMenu: () -> Unit
+){
     /** 홈 화면 */
     composable(
         route = ScaffoldNavRoute.Home.route,
@@ -52,7 +55,10 @@ fun NavGraphBuilder.scaffoldScreenGraph(navController: NavHostController){
             moveToCommunityDetailScreen = { postId ->
                 navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
             },
-            moveToWritePostScreen = { navController.navigate(FullScreenNavRoute.WritePost.route) },
+            moveToWritePostScreen = {
+                closeCommunityTabMenu()
+                navController.navigate(FullScreenNavRoute.WritePost.route)
+            },
             navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
         )
     }
