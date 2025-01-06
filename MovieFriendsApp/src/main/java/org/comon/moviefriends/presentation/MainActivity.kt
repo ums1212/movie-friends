@@ -162,7 +162,6 @@ class MainActivity : ComponentActivity() {
                         MFNavigationBar(
                             selectedItem = selectedBottomMenuItem,
                             navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
-                            communityTabMenuState = isCommunityTabMenuShown,
                             hideCommunityTabMenu = {
                                 isCommunityTabMenuShown.value = false
                             },

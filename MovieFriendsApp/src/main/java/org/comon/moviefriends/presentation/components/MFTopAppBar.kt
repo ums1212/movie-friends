@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presentation.components
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
@@ -39,6 +40,10 @@ fun MFTopAppBar(
     navigateToProfileSetting: () -> Unit,
     navigateToLogin: () -> Unit,
 ) {
+
+    BackHandler(enabled = isCommunityTabMenuShown.value) {
+        isCommunityTabMenuShown.value = false
+    }
 
     Column {
         TopAppBar(

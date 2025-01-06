@@ -1,6 +1,5 @@
 package org.comon.moviefriends.presentation.components
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
 import androidx.compose.material.icons.filled.Create
@@ -11,7 +10,6 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.IntState
-import androidx.compose.runtime.State
 import androidx.compose.ui.res.colorResource
 import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
@@ -22,13 +20,9 @@ import org.comon.moviefriends.presentation.screen.profile.ProfileType
 fun MFNavigationBar(
     selectedItem: IntState,
     navigateToLogin: () -> Unit,
-    communityTabMenuState: State<Boolean>,
     hideCommunityTabMenu: () -> Unit,
     navigateToMenu: (String, Int) -> Unit,
 ) {
-    BackHandler(enabled = communityTabMenuState.value) {
-        hideCommunityTabMenu()
-    }
 
     NavigationBar(
         containerColor = colorResource(R.color.friends_black),
