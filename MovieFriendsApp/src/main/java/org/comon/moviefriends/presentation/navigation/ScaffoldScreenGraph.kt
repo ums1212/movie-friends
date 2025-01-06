@@ -41,6 +41,11 @@ fun NavGraphBuilder.scaffoldScreenGraph(
         }
     }
 
+    /** 커뮤니티 화면에서 탭메뉴가 열려있을 경우 navigate시 닫아줌 */
+    fun NavHostController.navigateAndCloseTabMenu(route: String) {
+        closeCommunityTabMenu()
+        navigate(route)
+    }
     /** 커뮤니티 화면 */
     composable(
         route = ScaffoldNavRoute.Community.route,
@@ -53,13 +58,12 @@ fun NavGraphBuilder.scaffoldScreenGraph(
     ) {
         CommunityScreen(
             moveToCommunityDetailScreen = { postId ->
-                navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
+                navController.navigateAndCloseTabMenu("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
             },
             moveToWritePostScreen = {
-                closeCommunityTabMenu()
-                navController.navigate(FullScreenNavRoute.WritePost.route)
+                navController.navigateAndCloseTabMenu(FullScreenNavRoute.WritePost.route)
             },
-            navigateToLogin = { navController.navigate(IntroNavRoute.Login.route) },
+            navigateToLogin = { navController.navigateAndCloseTabMenu(IntroNavRoute.Login.route) },
         )
     }
 
@@ -74,11 +78,14 @@ fun NavGraphBuilder.scaffoldScreenGraph(
         },
     ) {
         WatchTogetherScreen(
-            navigateToRequestList = { navController.navigate(ScaffoldNavRoute.RequestList.route) },
-            navigateToReceiveList = { navController.navigate(ScaffoldNavRoute.ReceiveList.route) },
-            navigateToChatRoomList = { navController.navigate(ScaffoldNavRoute.ChatList.route) },
+            navigateToRequestList = {
+                navController.navigateAndCloseTabMenu(ScaffoldNavRoute.RequestList.route) },
+            navigateToReceiveList = {
+                navController.navigateAndCloseTabMenu(ScaffoldNavRoute.ReceiveList.route) },
+            navigateToChatRoomList = {
+                navController.navigateAndCloseTabMenu(ScaffoldNavRoute.ChatList.route) },
             navigateToMovieDetail = { movieId ->
-                navController.navigate("${FullScreenNavRoute.MovieDetail.route}/${movieId}")
+                navController.navigateAndCloseTabMenu("${FullScreenNavRoute.MovieDetail.route}/${movieId}")
             },
         )
     }
