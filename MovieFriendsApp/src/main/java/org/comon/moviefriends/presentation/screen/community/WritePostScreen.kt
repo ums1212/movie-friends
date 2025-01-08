@@ -1,6 +1,7 @@
 package org.comon.moviefriends.presentation.screen.community
 
-import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
@@ -136,7 +137,11 @@ fun WritePostScreen(
     val permissionLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
     ) { grantedPermissionMap ->
-        
+        // 권한이 허용되었을 경우 앨범 인텐트 실행
+        if(grantedPermissionMap[READ_MEDIA_IMAGES] == true
+            || grantedPermissionMap[READ_EXTERNAL_STORAGE] == true){
+            albumLauncher.launch(imageAlbumIntent)
+        }
     }
 
 
@@ -356,9 +361,9 @@ fun checkPermission(
     startAlbumLauncher: () -> Unit
 ) {
     val permissions = if (Build.VERSION.SDK_INT >= 33) {
-        arrayOf( Manifest.permission.READ_MEDIA_IMAGES)
+        arrayOf(READ_MEDIA_IMAGES)
     } else {
-        arrayOf( Manifest.permission.READ_EXTERNAL_STORAGE)
+        arrayOf(READ_EXTERNAL_STORAGE)
     }
     val isPermissionGranted = permissions.all {
         ContextCompat.checkSelfPermission(
