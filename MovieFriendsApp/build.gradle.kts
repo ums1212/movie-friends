@@ -44,6 +44,7 @@ android {
         buildConfigField("String", "KAKAO_NATIVE_KEY", localProperties.getProperty("KAKAO_NATIVE_KEY"))
         buildConfigField("String", "SENDBIRD_APP_ID", localProperties.getProperty("SENDBIRD_APP_ID"))
         buildConfigField("String", "SENDBIRD_API_TOKEN", localProperties.getProperty("SENDBIRD_API_TOKEN"))
+        buildConfigField("String", "ANTHROPIC_API_KEY", localProperties.getProperty("ANTHROPIC_API_KEY"))
 
         buildConfigField("String", "SERVICE_ACCOUNT_TYPE", localProperties.getProperty("SERVICE_ACCOUNT_TYPE"))
         buildConfigField("String", "PROJECT_ID", localProperties.getProperty("PROJECT_ID"))
