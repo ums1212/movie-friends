@@ -50,8 +50,9 @@ fun HomeScreen(
                     category = category,
                     showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) },
                     list = viewModel.sendList(category),
-                    onNavigateToMovieDetail = { movieId ->
-                        moveToMovieDetailScreen(movieId)
+                    onNavigateToMovieDetail = { movieInfo ->
+                        viewModel.insertMovieActivityHistory(movieInfo)
+                        moveToMovieDetailScreen(movieInfo.id)
                     }
                 )
                 Spacer(modifier = Modifier.padding(bottom = 24.dp))

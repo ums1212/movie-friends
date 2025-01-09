@@ -44,7 +44,7 @@ fun MovieList(
     category: MovieCategory,
     showErrorSnackBar: () -> Unit,
     list: StateFlow<APIResult<Response<ResponseMoviesDto>>>,
-    onNavigateToMovieDetail: (movieId: Int) -> Unit
+    onNavigateToMovieDetail: (movieInfo: ResponseMoviesDto.MovieInfo) -> Unit
 ) {
 
     val stateLists = list.collectAsStateWithLifecycle()
@@ -73,7 +73,7 @@ fun MovieList(
                             Column(
                                 modifier = Modifier
                                     .width(160.dp)
-                                    .clickableOnce { onNavigateToMovieDetail(item.id) },
+                                    .clickableOnce { onNavigateToMovieDetail(item) },
                                 horizontalAlignment = Alignment.CenterHorizontally,
                             ) {
                                 Card(

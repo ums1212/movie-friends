@@ -28,6 +28,7 @@ kakaoV2User = "2.20.6"
 lottie = "6.5.2"
 navigationCompose = "2.8.3"
 playServicesAuth = "20.5.0"
+roomRuntime = "2.6.1"
 secretsGradlePlugin = "2.0.1"
 shimmer = "0.5.0"
 retrofit = "2.9.0"
@@ -44,6 +45,9 @@ androidx-credentials-play-services-auth = { module = "androidx.credentials:crede
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 circleimageview = { module = "de.hdodenhof:circleimageview", version.ref = "circleimageview" }
 compose-ratingbar-library = { module = "com.github.MhmoudAlim:Compose-Ratingbar-library", version.ref = "composeRatingbarLibrary" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
