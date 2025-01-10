@@ -41,6 +41,10 @@ fun RecommendScreen(
     val scrollState = rememberScrollState()
     val recommendState = recommendViewModel.recommendState.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = Unit) {
+        recommendViewModel.getViewingHistory()
+    }
+
     Column(
         Modifier
             .fillMaxSize()
@@ -72,7 +76,7 @@ fun RecommendScreen(
                 LottieAnimation()
             }
             is APIResult.Success -> {
-                MFPostTitle(text = response.resultData.body()?.content?.first()?.text ?: "값 없음")
+                MFPostTitle(text = response.resultData.body()?.recommendation.toString() ?: "값 없음")
             }
         }
     }

@@ -56,6 +56,8 @@ android {
         buildConfigField("String", "TOKEN_URI", localProperties.getProperty("TOKEN_URI"))
         buildConfigField("String", "AUTH_PROVIDER_X509_CERT_URL", localProperties.getProperty("AUTH_PROVIDER_X509_CERT_URL"))
         buildConfigField("String", "CLIENT_X509_CERT_URL", localProperties.getProperty("CLIENT_X509_CERT_URL"))
+
+        buildConfigField("String", "BASE_ANTHROPIC_URL", localProperties.getProperty("BASE_ANTHROPIC_URL"))
     }
 
     buildTypes {

@@ -8,9 +8,9 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.data.datasource.ai.AnthropicInterceptor
 import org.comon.moviefriends.data.datasource.ai.AnthropicService
-import org.comon.moviefriends.data.datasource.ai.BASE_ANTHROPIC_URL
 import org.comon.moviefriends.data.repo.AiRepositoryImpl
 import org.comon.moviefriends.domain.repo.AiRepository
 import retrofit2.Retrofit
@@ -53,7 +53,7 @@ object AnthropicApiModule {
         @Named("anthropicOkHttpClient") anthropicOkHttpClient: OkHttpClient,
     ): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BASE_ANTHROPIC_URL)
+            .baseUrl(BuildConfig.BASE_ANTHROPIC_URL)
             .addConverterFactory(gsonConverterFactory)
             .client(anthropicOkHttpClient)
             .build()
