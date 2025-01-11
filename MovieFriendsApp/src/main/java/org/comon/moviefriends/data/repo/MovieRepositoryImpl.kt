@@ -95,6 +95,16 @@ class MovieRepositoryImpl @Inject constructor (
         error -> emit(APIResult.NetworkError(error))
     }
 
+    override fun searchMovieByTitle(
+        movieTitle: String,
+        releaseYear: String
+    ) = flow {
+        emit(APIResult.Loading)
+        emit(APIResult.Success(rest.searchMovieByTitle(movieTitle = movieTitle, releaseYear = releaseYear)))
+    }.catch {
+        error -> emit(APIResult.NetworkError(error))
+    }
+
     /** 
      * 해당 영화의 "보고 싶다" 체크 여부를 반환합니다.  
      * @param movieId 영화 ID

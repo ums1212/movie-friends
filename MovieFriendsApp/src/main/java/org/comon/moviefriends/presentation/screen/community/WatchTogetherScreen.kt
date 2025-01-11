@@ -34,7 +34,7 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.presentation.common.clickableOnce
 import org.comon.moviefriends.presentation.theme.FriendsBlack
 import org.comon.moviefriends.presentation.components.MFBadge
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.MFText
 import org.comon.moviefriends.presentation.components.ShimmerEffect
 import org.comon.moviefriends.presentation.components.UserWantThisMovieList
@@ -69,7 +69,7 @@ fun WatchTogetherScreen(
             .fillMaxSize()
             .background(FriendsBlack),
     ) {
-        MFPostTitle(text = stringResource(R.string.label_menu_watch_together), modifier = Modifier.padding(8.dp))
+        MFTitle(text = stringResource(R.string.label_menu_watch_together), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         WATCH_TOGETHER_MENU.entries.forEach { menu ->

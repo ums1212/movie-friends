@@ -9,6 +9,7 @@ import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.data.entity.firebase.UserReview
 import org.comon.moviefriends.data.entity.firebase.UserWantMovieInfo
 import org.comon.moviefriends.data.entity.tmdb.ResponseMovieVideoDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseSearchMovieDto
 import retrofit2.Response
 
 interface MovieRepository {
@@ -26,6 +27,8 @@ interface MovieRepository {
     fun getMovieCredit(movieId: Int): Flow<APIResult<Response<ResponseCreditDto>>>
 
     fun getMovieVideo(movieId: Int): Flow<APIResult<Response<ResponseMovieVideoDto>>>
+
+    fun searchMovieByTitle(movieTitle: String, releaseYear: String): Flow<APIResult<Response<ResponseSearchMovieDto>>>
 
     suspend fun getStateWantThisMovie(movieId: Int, userInfo: UserInfo): Flow<APIResult<Boolean>>
 

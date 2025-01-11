@@ -48,7 +48,7 @@ import org.comon.moviefriends.presentation.common.clickableOnce
 import org.comon.moviefriends.presentation.theme.FriendsTextGrey
 import org.comon.moviefriends.presentation.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presentation.components.MFButtonWantThisMovie
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.MFText
 
 @Composable
@@ -68,7 +68,7 @@ fun ProfileWantMovieScreen(
         modifier = Modifier
             .fillMaxSize(),
     ) {
-        MFPostTitle(stringResource(R.string.button_profile_want_movie), modifier = Modifier.padding(8.dp))
+        MFTitle(stringResource(R.string.button_profile_want_movie), modifier = Modifier.padding(8.dp))
         Spacer(Modifier.padding(vertical = 16.dp))
         Row(
             modifier = Modifier
@@ -144,7 +144,7 @@ fun ProfileWantMovieScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            MFPostTitle("영화 제목")
+            MFTitle("영화 제목")
             MFText("개봉연도 / 장르 / 상영시간")
         }
 

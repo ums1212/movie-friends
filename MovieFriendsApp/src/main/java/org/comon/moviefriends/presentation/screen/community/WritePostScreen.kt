@@ -78,7 +78,7 @@ import org.comon.moviefriends.presentation.theme.FriendsWhite
 import org.comon.moviefriends.presentation.viewmodel.CommunityPostViewModel
 import org.comon.moviefriends.presentation.components.CategoryModal
 import org.comon.moviefriends.presentation.components.MFButton
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.ValidationText
 import java.util.UUID
 
@@ -209,7 +209,7 @@ fun WritePostScreen(
         Row(
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MFPostTitle(
+            MFTitle(
                 "제목",
                 Modifier.padding(end = 8.dp)
             )
@@ -250,7 +250,7 @@ fun WritePostScreen(
             )
         }
         Spacer(Modifier.padding(vertical = 8.dp))
-        MFPostTitle("내용")
+        MFTitle("내용")
         Spacer(Modifier.padding(vertical = 8.dp))
         TextField(
             modifier = Modifier

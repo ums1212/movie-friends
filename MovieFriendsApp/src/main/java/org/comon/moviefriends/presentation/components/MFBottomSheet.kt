@@ -48,7 +48,7 @@ fun MFWantMovieBottomSheet(
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp)
         ) {
-            MFPostTitle(stringResource(R.string.title_user_want_this_movie))
+            MFTitle(stringResource(R.string.title_user_want_this_movie))
             if(userWantList.value.isEmpty()){
                 MFText(text = stringResource(id = R.string.no_data))
             }else{
@@ -85,11 +85,11 @@ fun MFReviewBottomSheet(
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            MFPostTitle(stringResource(R.string.title_user_review))
+            MFTitle(stringResource(R.string.title_user_review))
             when(val list = userReviewList.value){
-                APIResult.NoConstructor -> MFPostTitle(text = stringResource(id = R.string.no_data))
+                APIResult.NoConstructor -> MFTitle(text = stringResource(id = R.string.no_data))
                 APIResult.Loading -> LinearProgressIndicator()
-                is APIResult.NetworkError -> MFPostTitle(text = stringResource(id = R.string.network_error))
+                is APIResult.NetworkError -> MFTitle(text = stringResource(id = R.string.network_error))
                 is APIResult.Success -> {
                     UserReviewList(
                         reviewList = list.resultData,

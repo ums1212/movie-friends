@@ -29,7 +29,7 @@ import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.entity.firebase.UserInfo
 import org.comon.moviefriends.presentation.theme.FriendsBlack
 import org.comon.moviefriends.presentation.viewmodel.CommunityPostViewModel
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.OnDevelopMark
 import org.comon.moviefriends.presentation.components.PostContent
 import org.comon.moviefriends.presentation.components.PostLike
@@ -90,7 +90,7 @@ fun PostDetailScreen(
             }
             is APIResult.NetworkError -> {
                 OnDevelopMark()
-                MFPostTitle(stringResource(R.string.network_error))
+                MFTitle(stringResource(R.string.network_error))
                 showSnackBar(coroutineScope, snackBarHost, localContext)
             }
             else -> PostDetailShimmer()

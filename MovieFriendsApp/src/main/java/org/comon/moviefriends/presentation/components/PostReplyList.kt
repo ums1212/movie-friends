@@ -40,7 +40,7 @@ fun PostReplyList(
     when(val replyResult = reply.value){
         APIResult.Loading -> ShimmerEffect(Modifier.fillMaxWidth().height(80.dp))
         is APIResult.Success -> {
-            MFPostTitle("댓글 ${if(replyResult.resultData.isEmpty()) "없음" else "(${replyResult.resultData.size})"}")
+            MFTitle("댓글 ${if(replyResult.resultData.isEmpty()) "없음" else "(${replyResult.resultData.size})"}")
             Spacer(Modifier.padding(vertical = 8.dp))
             if(replyResult.resultData.isEmpty()) return
             Column(Modifier.fillMaxWidth()) {
@@ -88,7 +88,7 @@ fun PostReplyList(
             }
         }
         is APIResult.NetworkError -> {
-            MFPostTitle(stringResource(R.string.network_error))
+            MFTitle(stringResource(R.string.network_error))
         }
         else -> ShimmerEffect(Modifier.fillMaxWidth().height(80.dp))
     }

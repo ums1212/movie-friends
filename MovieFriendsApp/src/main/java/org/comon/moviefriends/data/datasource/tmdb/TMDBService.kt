@@ -4,6 +4,7 @@ import org.comon.moviefriends.data.entity.tmdb.ResponseCreditDto
 import org.comon.moviefriends.data.entity.tmdb.ResponseMovieDetailDto
 import org.comon.moviefriends.data.entity.tmdb.ResponseMovieVideoDto
 import org.comon.moviefriends.data.entity.tmdb.ResponseMoviesDto
+import org.comon.moviefriends.data.entity.tmdb.ResponseSearchMovieDto
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -59,4 +60,12 @@ interface TMDBService {
         @Path("movie_id") movieId:Int,
         @Query("language") language:String = "ko-KR",
     ): Response<ResponseMovieVideoDto>
+
+    // 영화 검색
+    @GET("search/movie")
+    suspend fun searchMovieByTitle(
+        @Query("query") movieTitle:String,
+        @Query("language") language:String = "ko-KR",
+        @Query("primary_release_year") releaseYear:String,
+    ): Response<ResponseSearchMovieDto>
 }

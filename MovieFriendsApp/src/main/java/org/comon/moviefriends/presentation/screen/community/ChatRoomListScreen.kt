@@ -23,7 +23,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.entity.firebase.UserInfo
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.MFText
 import org.comon.moviefriends.presentation.components.OnDevelopMark
 import org.comon.moviefriends.presentation.viewmodel.ChatViewModel
@@ -53,7 +53,7 @@ fun ChatRoomListScreen(
     }
 
     Column(Modifier.fillMaxSize().padding(12.dp)) {
-        MFPostTitle(stringResource(R.string.label_chat_room_lst))
+        MFTitle(stringResource(R.string.label_chat_room_lst))
         when(val list = chatList.value){
             APIResult.Loading -> LinearProgressIndicator()
             is APIResult.NetworkError -> OnDevelopMark()

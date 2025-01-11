@@ -16,7 +16,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.presentation.theme.FriendsBlack
 import org.comon.moviefriends.presentation.components.CommunityFab
 import org.comon.moviefriends.presentation.components.CommunityList
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -43,7 +43,7 @@ fun CommunityScreen(
                     .nestedScroll(scrollBehavior.nestedScrollConnection),
                 title = {
                     Column(Modifier.fillMaxSize()) {
-                        MFPostTitle(stringResource(R.string.label_menu_community))
+                        MFTitle(stringResource(R.string.label_menu_community))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = FriendsBlack)

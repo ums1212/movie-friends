@@ -150,7 +150,7 @@ fun UserReviewList(
                             }
                         }
                     }
-                    MFPostTitle("${review?.content}")
+                    MFTitle("${review?.content}")
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
                     MFText(text = "${review?.createdDate?.let { getTimeDiff(it.seconds) }}")
                     Spacer(modifier = Modifier.padding(vertical = 4.dp))
@@ -161,6 +161,6 @@ fun UserReviewList(
         }
     }else{
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
-        MFPostTitle(text = stringResource(id = R.string.no_data))
+        MFTitle(text = stringResource(id = R.string.no_data))
     }
 }

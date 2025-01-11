@@ -58,7 +58,7 @@ fun MFPostCategory(text:String, modifier: Modifier = Modifier){
 }
 
 @Composable
-fun MFPostTitle(text:String, modifier: Modifier = Modifier){
+fun MFTitle(text:String, modifier: Modifier = Modifier){
     Text(
         modifier = modifier,
         text = text,

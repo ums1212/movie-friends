@@ -43,7 +43,7 @@ fun CommunityListItem(
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
-            MFPostTitle(post.title)
+            MFTitle(post.title)
             Spacer(Modifier.padding(vertical = 4.dp))
             MFPostListItemContent(post.content)
             Spacer(Modifier.padding(vertical = 4.dp))

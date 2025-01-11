@@ -43,16 +43,16 @@ import retrofit2.Response
 fun MovieList(
     category: MovieCategory,
     showErrorSnackBar: () -> Unit,
-    list: StateFlow<APIResult<Response<ResponseMoviesDto>>>,
+    responseList: StateFlow<APIResult<Response<ResponseMoviesDto>>>,
     onNavigateToMovieDetail: (movieInfo: ResponseMoviesDto.MovieInfo) -> Unit
 ) {
 
-    val stateLists = list.collectAsStateWithLifecycle()
+    val stateLists = responseList.collectAsStateWithLifecycle()
 
     Column(
         Modifier.height(280.dp)
     ) {
-        MFPostTitle(text = category.str)
+        MFTitle(text = category.str)
         when(val list = stateLists.value){
             APIResult.NoConstructor -> Log.d("TAG", "MovieList: NoConstructor")
             APIResult.Loading -> Row(

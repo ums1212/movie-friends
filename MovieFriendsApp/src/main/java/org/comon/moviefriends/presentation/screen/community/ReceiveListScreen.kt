@@ -28,7 +28,7 @@ import org.comon.moviefriends.R
 import org.comon.moviefriends.common.MFPreferences
 import org.comon.moviefriends.common.showSnackBar
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.MFText
 import org.comon.moviefriends.presentation.components.ReceiveListItem
 import org.comon.moviefriends.presentation.components.RequestState
@@ -56,7 +56,7 @@ fun ReceiveListScreen(
             .fillMaxWidth()
             .background(FriendsBlack),
     ) {
-        MFPostTitle(text = stringResource(R.string.label_receive_list), modifier = Modifier.padding(8.dp))
+        MFTitle(text = stringResource(R.string.label_receive_list), modifier = Modifier.padding(8.dp))
         Spacer(modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
         SnackbarHost(hostState = snackBarHost)

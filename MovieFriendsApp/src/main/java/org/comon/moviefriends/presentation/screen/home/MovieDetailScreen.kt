@@ -70,7 +70,7 @@ import org.comon.moviefriends.presentation.viewmodel.MovieDetailViewModel
 import org.comon.moviefriends.presentation.components.MFButton
 import org.comon.moviefriends.presentation.components.MFButtonWantThisMovie
 import org.comon.moviefriends.presentation.components.MFButtonWidthResizable
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 import org.comon.moviefriends.presentation.components.MFReviewBottomSheet
 import org.comon.moviefriends.presentation.components.MFText
 import org.comon.moviefriends.presentation.components.MFWantMovieBottomSheet
@@ -161,7 +161,7 @@ fun MovieDetailScreen(
 
         /** 주요 출연진 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_credits))
+        MFTitle(stringResource(R.string.title_credits))
         MovieDetailListView(
             MovieDetailListViewType.CREDIT,
             movieCredit,
@@ -173,7 +173,7 @@ fun MovieDetailScreen(
 
         /** 관련 영상 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_videos))
+        MFTitle(stringResource(R.string.title_videos))
         MovieDetailListView(
             MovieDetailListViewType.VIDEO,
             movieVideo,
@@ -185,7 +185,7 @@ fun MovieDetailScreen(
 
         /** 이 영화를 보고 싶은 사람 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_want_this_movie))
+        MFTitle(stringResource(R.string.title_user_want_this_movie))
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -226,7 +226,7 @@ fun MovieDetailScreen(
 
         /** 유저 평점 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_rate))
+        MFTitle(stringResource(R.string.title_user_rate))
         Column(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -254,7 +254,7 @@ fun MovieDetailScreen(
 
         /** 유저 리뷰 */
         Spacer(Modifier.padding(vertical = 12.dp))
-        MFPostTitle(stringResource(R.string.title_user_review))
+        MFTitle(stringResource(R.string.title_user_review))
         Column(
             modifier = Modifier
                 .padding(12.dp)
@@ -323,7 +323,7 @@ private fun MovieDetailView(
                 Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                MFPostTitle(item?.title ?: "")
+                MFTitle(item?.title ?: "")
                 MFText("${item?.releaseDate} / ${item?.genres?.joinToString(",") { it.name }} / ${item?.runtime}분")
                 Spacer(Modifier.padding(vertical = 4.dp))
                 MFText(item?.overview ?: "")

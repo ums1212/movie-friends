@@ -10,7 +10,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.comon.moviefriends.R
 import org.comon.moviefriends.presentation.components.CommunityList
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +21,7 @@ fun ProfileCommunityPostScreen(
     Column(
         modifier = Modifier.padding(12.dp)
     ) {
-        MFPostTitle(stringResource(R.string.button_profile_community_write))
+        MFTitle(stringResource(R.string.button_profile_community_write))
         Spacer(Modifier.padding(vertical = 12.dp))
         CommunityList { postId ->
             moveToCommunityDetailScreen(postId)

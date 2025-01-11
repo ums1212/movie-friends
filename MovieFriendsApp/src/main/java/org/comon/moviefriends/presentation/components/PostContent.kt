@@ -28,7 +28,7 @@ import org.comon.moviefriends.presentation.theme.FriendsWhite
 fun PostContent(post: PostInfo){
     MFPostCategory(post.category)
     Spacer(Modifier.padding(vertical = 8.dp))
-    MFPostTitle(post.title)
+    MFTitle(post.title)
     MFPostDate(
         text = getDateString(post.createdDate.seconds),
         modifier = Modifier.padding(end = 8.dp)

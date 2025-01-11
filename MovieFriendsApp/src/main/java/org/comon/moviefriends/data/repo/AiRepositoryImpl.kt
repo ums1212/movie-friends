@@ -6,7 +6,6 @@ import kotlinx.coroutines.flow.flow
 import org.comon.moviefriends.data.datasource.ai.AnthropicService
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
 import org.comon.moviefriends.data.entity.ai.RequestRecommendationApiDto
-import org.comon.moviefriends.data.entity.ai.ResponseAnthropicDto
 import org.comon.moviefriends.data.entity.ai.ResponseRecommendationApiDto
 import org.comon.moviefriends.domain.repo.AiRepository
 import retrofit2.Response

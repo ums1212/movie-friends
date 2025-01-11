@@ -42,7 +42,7 @@ import org.comon.moviefriends.presentation.theme.FriendsBoxGrey
 import org.comon.moviefriends.presentation.theme.FriendsTextGrey
 import org.comon.moviefriends.presentation.theme.FriendsWhite
 import org.comon.moviefriends.presentation.viewmodel.ProfileViewModel
-import org.comon.moviefriends.presentation.components.MFPostTitle
+import org.comon.moviefriends.presentation.components.MFTitle
 
 @Composable
 fun ProfileScreen(
@@ -93,7 +93,7 @@ fun ProfileScreen(
                 contentScale = ContentScale.Crop,
             )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
-            MFPostTitle(user.value?.nickName ?: "")
+            MFTitle(user.value?.nickName ?: "")
         }
         Spacer(modifier = Modifier.padding(vertical = 24.dp))
 
@@ -128,7 +128,7 @@ private fun ProfileMenu(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            MFPostTitle(title)
+            MFTitle(title)
             Icon(imageVector = Icons.Filled.PlayArrow, contentDescription = "", tint = FriendsWhite)
         }
         if(context == null) return@Column
