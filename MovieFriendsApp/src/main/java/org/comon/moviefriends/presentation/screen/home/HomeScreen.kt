@@ -49,7 +49,7 @@ fun HomeScreen(
                 MovieList(
                     category = category,
                     showErrorSnackBar = { showSnackBar(coroutineScope, snackBarHost, localContext) },
-                    list = viewModel.sendList(category),
+                    responseList = viewModel.sendList(category),
                     onNavigateToMovieDetail = { movieInfo ->
                         viewModel.insertMovieActivityHistory(movieInfo)
                         moveToMovieDetailScreen(movieInfo.id)
