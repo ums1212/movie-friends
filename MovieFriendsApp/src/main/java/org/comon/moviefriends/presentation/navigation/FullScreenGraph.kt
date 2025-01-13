@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.presentation.screen.community.PostDetailScreen
+import org.comon.moviefriends.presentation.screen.community.WorldCupGameScreen
 import org.comon.moviefriends.presentation.screen.community.WritePostScreen
 import org.comon.moviefriends.presentation.screen.home.MovieDetailScreen
 import org.comon.moviefriends.presentation.screen.home.SearchScreen
@@ -138,6 +139,27 @@ fun NavGraphBuilder.fullScreenGraph(
             navigateToPostDetail = { _ ->
                 navController.navigate("${FullScreenNavRoute.CommunityDetail.route}/${postId}")
             }
+        )
+    }
+
+    /** 월드컵 게임 진행 화면 */
+    composable(
+        route = "${FullScreenNavRoute.WorldCupGame.route}/{worldCupId}",
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            ) + fadeOut()
+        },
+    ) { backStackEntry ->
+        WorldCupGameScreen(
+            worldCupId = backStackEntry.arguments?.getInt("worldCupId") ?: 0,
         )
     }
 

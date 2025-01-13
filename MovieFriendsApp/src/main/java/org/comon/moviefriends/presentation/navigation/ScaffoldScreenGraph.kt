@@ -178,7 +178,11 @@ fun NavGraphBuilder.scaffoldScreenGraph(
             ) + fadeOut()
         },
     ) {
-        WorldCupScreen()
+        WorldCupScreen(
+            navigateToWorldCupGameScreen = { worldCupId ->
+                navController.navigateAndCloseTabMenu("${FullScreenNavRoute.WorldCupGame.route}/$worldCupId")
+            }
+        )
     }
 
     /** 내 정보 화면 */
