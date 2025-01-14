@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
-import org.comon.moviefriends.data.entity.worldcup.ResponseMovieWorldCupInfoDto
+import org.comon.moviefriends.data.entity.worldcup.ResponseMovieWorldCupInfoListDto
 import org.comon.moviefriends.data.entity.worldcup.ResponseMovieWorldCupItemListDto
 import org.comon.moviefriends.domain.repo.WorldCupRepository
 import org.comon.moviefriends.presentation.components.SelectedWorldCupItemPosition
@@ -21,7 +21,7 @@ class WorldCupViewModel @Inject constructor(
     private val worldCupRepository: WorldCupRepository
 ) : ViewModel() {
 
-    private val _worldCupInfo = MutableStateFlow<APIResult<Response<ResponseMovieWorldCupInfoDto>>>(APIResult.NoConstructor)
+    private val _worldCupInfo = MutableStateFlow<APIResult<Response<ResponseMovieWorldCupInfoListDto>>>(APIResult.NoConstructor)
     val worldCupInfo = _worldCupInfo.asStateFlow()
 
     private val _worldCupItemList = MutableStateFlow<APIResult<Response<ResponseMovieWorldCupItemListDto>>>(APIResult.NoConstructor)
