@@ -1,5 +1,6 @@
 package org.comon.moviefriends.presentation.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -12,6 +13,7 @@ import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
 import org.comon.moviefriends.presentation.screen.community.PostDetailScreen
 import org.comon.moviefriends.presentation.screen.community.WorldCupGameScreen
+import org.comon.moviefriends.presentation.screen.community.WorldCupWinnerScreen
 import org.comon.moviefriends.presentation.screen.community.WritePostScreen
 import org.comon.moviefriends.presentation.screen.home.MovieDetailScreen
 import org.comon.moviefriends.presentation.screen.home.SearchScreen
@@ -159,8 +161,30 @@ fun NavGraphBuilder.fullScreenGraph(
         },
     ) { backStackEntry ->
         WorldCupGameScreen(
-            worldCupId = backStackEntry.arguments?.getInt("worldCupId") ?: 0,
+            worldCupId = (backStackEntry.arguments?.getString("worldCupId") ?: "0").toInt(),
+            navigateToWorldCupWinnerScreen = { winner ->
+                navController.navigate(FullScreenNavRoute.WorldCupGameResult.route)
+            }
         )
+    }
+
+    /** 월드컵 게임 결과 화면 */
+    composable(
+        route = FullScreenNavRoute.WorldCupGameResult.route,
+        enterTransition = {
+            slideIntoContainer(
+                AnimatedContentTransitionScope.SlideDirection.Up,
+                animationSpec = tween(700)
+            )
+        },
+        exitTransition = {
+            slideOutOfContainer(
+                AnimatedContentTransitionScope.SlideDirection.Down,
+                animationSpec = tween(700)
+            ) + fadeOut()
+        },
+    ) {
+        WorldCupWinnerScreen()
     }
 
     /** 내 정보 수정 화면 */

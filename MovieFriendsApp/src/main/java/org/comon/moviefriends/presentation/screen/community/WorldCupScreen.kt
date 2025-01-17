@@ -1,12 +1,10 @@
 package org.comon.moviefriends.presentation.screen.community
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -24,6 +22,7 @@ import com.sendbird.uikit.compose.component.CircularProgressIndicator
 import org.comon.moviefriends.BuildConfig
 import org.comon.moviefriends.R
 import org.comon.moviefriends.data.datasource.tmdb.APIResult
+import org.comon.moviefriends.data.entity.worldcup.ResponseMovieWorldCupItemListDto
 import org.comon.moviefriends.presentation.components.MFButton
 import org.comon.moviefriends.presentation.components.MFText
 import org.comon.moviefriends.presentation.components.MFTitle
@@ -37,6 +36,7 @@ fun WorldCupScreen(
 
     val worldCupInfo = worldCupViewModel.worldCupInfo.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
 
     LaunchedEffect(Unit) {
         worldCupViewModel.getMonthlyWorldCupInfo()
@@ -107,7 +107,7 @@ fun WorldCupScreen(
                             }
                         )
                     }else{
-
+                        MFTitle(text = "현재 진행중인 월드컵이 없습니다.")
                     }
                 }
             }

@@ -17,6 +17,7 @@ sealed class FullScreenNavRoute(val route: String){
     data object ProfileCommunityPost: FullScreenNavRoute("profile_community_post")
     data object ProfileCommunityReply: FullScreenNavRoute("profile_community_reply")
     data object WorldCupGame: FullScreenNavRoute("community_worldcup")
+    data object WorldCupGameResult: FullScreenNavRoute("community_worldcup_result")
 }
 
 sealed class ScaffoldNavRoute(val route: String){
