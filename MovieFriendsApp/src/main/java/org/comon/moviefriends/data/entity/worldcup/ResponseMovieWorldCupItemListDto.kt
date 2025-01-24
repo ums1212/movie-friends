@@ -1,8 +1,10 @@
 package org.comon.moviefriends.data.entity.worldcup
 
 import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Serializable
 
 class ResponseMovieWorldCupItemListDto: ArrayList<ResponseMovieWorldCupItemListDto.ResponseMovieWorldCupItemDto>() {
+    @Serializable
     data class ResponseMovieWorldCupItemDto(
         @SerializedName("worldCupId")
         val worldCupId: Int,

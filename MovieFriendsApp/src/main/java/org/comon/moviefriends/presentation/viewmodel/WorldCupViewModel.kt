@@ -1,6 +1,5 @@
 package org.comon.moviefriends.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -123,6 +122,19 @@ class WorldCupViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    fun resetGame(){
+        _worldCupItemList.value = APIResult.NoConstructor
+        _playingItemList.value = mutableListOf()
+        _nextPlayingItemList.value = mutableListOf()
+        _selectedTotalRound.value = 0
+        _currentRound.value = 0
+        _matchCount.value = 0
+        _topItemIndex.value = 0
+        _bottomItemIndex.value = 1
+        _gameWinner.value = null
+        _selectedBoxPosition.value = SelectedWorldCupItemPosition.NONE
     }
 
 }

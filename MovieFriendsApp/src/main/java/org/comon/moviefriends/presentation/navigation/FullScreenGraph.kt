@@ -1,6 +1,5 @@
 package org.comon.moviefriends.presentation.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
@@ -9,8 +8,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.google.gson.Gson
 import org.comon.moviefriends.common.FullScreenNavRoute
 import org.comon.moviefriends.common.IntroNavRoute
+import org.comon.moviefriends.common.ScaffoldNavRoute
+import org.comon.moviefriends.data.entity.worldcup.ResponseMovieWorldCupItemListDto
 import org.comon.moviefriends.presentation.screen.community.PostDetailScreen
 import org.comon.moviefriends.presentation.screen.community.WorldCupGameScreen
 import org.comon.moviefriends.presentation.screen.community.WorldCupWinnerScreen
@@ -23,6 +25,8 @@ import org.comon.moviefriends.presentation.screen.profile.ProfileRateScreen
 import org.comon.moviefriends.presentation.screen.profile.ProfileReviewScreen
 import org.comon.moviefriends.presentation.screen.profile.ProfileSettingScreen
 import org.comon.moviefriends.presentation.screen.profile.ProfileWantMovieScreen
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 fun NavGraphBuilder.fullScreenGraph(
     navController: NavHostController,
@@ -163,14 +167,20 @@ fun NavGraphBuilder.fullScreenGraph(
         WorldCupGameScreen(
             worldCupId = (backStackEntry.arguments?.getString("worldCupId") ?: "0").toInt(),
             navigateToWorldCupWinnerScreen = { winner ->
-                navController.navigate(FullScreenNavRoute.WorldCupGameResult.route)
+                val worldCupItem = URLEncoder.encode(Gson().toJson(winner), StandardCharsets.UTF_8.toString())
+                navController.navigate("${FullScreenNavRoute.WorldCupGameResult.route}/$worldCupItem")
             }
         )
     }
 
     /** 월드컵 게임 결과 화면 */
     composable(
-        route = FullScreenNavRoute.WorldCupGameResult.route,
+        route = "${FullScreenNavRoute.WorldCupGameResult.route}/{worldCupItem}",
+        arguments = listOf(
+            navArgument("worldCupItem"){
+                type = NavType.StringType
+            }
+        ),
         enterTransition = {
             slideIntoContainer(
                 AnimatedContentTransitionScope.SlideDirection.Up,
@@ -183,8 +193,15 @@ fun NavGraphBuilder.fullScreenGraph(
                 animationSpec = tween(700)
             ) + fadeOut()
         },
-    ) {
-        WorldCupWinnerScreen()
+    ) { backStackEntry ->
+        val worldCupItem = Gson().fromJson(backStackEntry.arguments?.getString("worldCupItem"), ResponseMovieWorldCupItemListDto.ResponseMovieWorldCupItemDto::class.java)
+
+        WorldCupWinnerScreen(
+            worldCupItem = worldCupItem,
+            navigateToWorldCupScreen = {
+                navController.navigate(ScaffoldNavRoute.MovieWorldCup.route)
+            }
+        )
     }
 
     /** 내 정보 수정 화면 */
