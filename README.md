@@ -33,9 +33,10 @@ Jetpack Compose, Material 3
 Firebase  
 Google, Kakao Oauth2.0 API  
 Coroutine, Flow  
-Coil
+Coil  
 MVVM Architecture  
 FusedLocation, Kakao Local API  
+Anthropic API (Claude 3.5 Sonnet)  
 
 ## 03. 프로젝트 상세 기능 및 시연 이미지
 <table>
@@ -67,17 +68,29 @@ FusedLocation, Kakao Local API
     <td></td>
     <td></td>
   </tr>
+  </tr>
+      <tr><th>영화 추천</th><th></th><th></th><th></th></tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/a4ec84d9-0ccb-470a-bb18-4b25331e5fcb" width="200px" /></td>
+    <td><img src="https://github.com/user-attachments/assets/1b0410a2-c6b0-48a0-b6b7-d65b49ee7bc0" width="200px" /></td>
+    <td></td>
+    <td></td>
+  </tr>
+  </tr>
+      <tr><th>영화 월드컵</th><th></th><th></th><th></th></tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/9235eb39-2a6d-42b0-93a6-225aa1751b80" width="200px" /></td>
+    <td><img src="https://github.com/user-attachments/assets/56cb9736-9792-469c-b16f-0ccb09f93240" width="200px" /></td>
+    <td></td>
+    <td></td>
+  </tr>
 </table>
 
 ## 04. 보완점 및 향후 계획
 
-- 사용자 입력폼 유효성 체크 적용 필요
-
-- 한정된 기한에 구현에만 몰두하다보니 Usecase 활용, 함수 분리 등 클린 코드, 클린 아키텍처 지향적인 리팩토링이 필요
+- Usecase 활용, 함수 분리 등 클린 코드, 클린 아키텍처 지향적인 리팩토링이 필요
 
 - 미완성 기능 모두 구현하기
-
-- 가능하다면 인원을 모집하여 팀 프로젝트로 진행
 
 - 구글 플레이스토어 배포 계획
 
